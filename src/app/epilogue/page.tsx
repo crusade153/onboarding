@@ -1,3 +1,4 @@
+// src/app/epilogue/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,15 +33,15 @@ export default function EpiloguePage() {
     fetchParticipants();
   }, []);
 
-  // 2. 부서별로 참여자 이름을 그룹핑합니다. (마케팅: [홍길동, 김철수]...)
+  // 2. 부서별로 참여자 이름을 그룹핑합니다.
   const groupedCast = participants.reduce((acc, p) => {
     if (!acc[p.department]) acc[p.department] = [];
     acc[p.department].push(p.name);
     return acc;
   }, {} as Record<string, string[]>);
 
-  // 3. 참여자 수에 따라 스크롤 속도를 자동으로 조절합니다. (최소 25초)
-  const rollDuration = Math.max(25, participants.length * 0.6 + 20);
+  // 3. 참여자 수에 따라 스크롤 속도를 자동으로 조절합니다. (이름이 커졌으므로 계수를 늘렸습니다)
+  const rollDuration = Math.max(35, participants.length * 1.5 + 20);
 
   return (
     <div 
@@ -64,16 +65,19 @@ export default function EpiloguePage() {
       {step === 'intro' && (
         <div className="slide-container anim-up" style={{ paddingTop: '100px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 'calc(100vh - 56px)' }}>
           <p className="caption" style={{ color: 'var(--red)', marginBottom: '16px' }}>Epilogue</p>
-          <h1 className="display text-gold" style={{ marginBottom: '24px' }}>시스템은 함께 세운 약속</h1>
-          <p className="body-lg" style={{ color: 'var(--text2)', maxWidth: '640px', marginBottom: '48px', lineHeight: 1.8 }}>
-            우리가 배운 것은 단순한 시스템 사용법이 아닙니다.<br/>
-            서로의 업무가 어떻게 숫자로 연결되는지, 그 가치 사슬을 이해하는 과정이었습니다.
+          <h1 className="display text-gold" style={{ marginBottom: '24px', wordBreak: 'keep-all' }}>시스템은 우리가 함께 세운 '약속'입니다</h1>
+          <p className="body-lg" style={{ color: 'var(--text2)', maxWidth: '720px', marginBottom: '48px', lineHeight: 1.8, wordBreak: 'keep-all' }}>
+            우리가 확인한 것은 단순한 전산 프로그램 사용법이 아닙니다.<br/>
+            정확한 <strong style={{ color: '#fff' }}>'기준정보'</strong>와 미루지 않는 <strong style={{ color: '#fff' }}>'일일관리'</strong>가 만났을 때,<br/>
+            비로소 엑셀 없는 투명한 자동화 대시보드가 완성된다는 사실을 배웠습니다.<br/><br/>
+            이제 이 거대한 가치 사슬을 현장에서 직접 연결하고 작동시켜주실<br/>
+            하림산업의 진정한 주역들을 소개합니다.
           </p>
           
           <button 
             onClick={() => setStep('roll')}
             className="btn btn-gold"
-            style={{ padding: '16px 40px', fontSize: '1.125rem', boxShadow: '0 0 30px rgba(201,168,76,0.3)' }}
+            style={{ padding: '16px 40px', fontSize: '1.125rem', boxShadow: '0 0 30px rgba(201,168,76,0.3)', cursor: 'pointer' }}
           >
             가치 사슬의 주역들 보기 (엔딩 크레딧) ▶
           </button>
@@ -91,60 +95,71 @@ export default function EpiloguePage() {
             animation: `scroll-up ${rollDuration}s linear forwards` 
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '15vh' }}>
-            <div style={{ height: '30vh' }}></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10vh' }}>
+            <div style={{ height: '50vh' }}></div>
 
             <div>
-              <h2 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'var(--gold)', marginBottom: '32px', letterSpacing: '-0.02em' }}>
-                Systema
+              <h2 style={{ fontSize: '4.5rem', fontWeight: 900, color: 'var(--gold)', marginBottom: '32px', letterSpacing: '0.1em' }}>
+                4월 10일 신규입사자 온보딩 교육
               </h2>
-              <p style={{ fontSize: '1.5rem', fontWeight: 600, color: '#fff', lineHeight: 1.8 }}>
-                정확한 기준정보가 투명한 손익을 완성합니다.
+              <p style={{ fontSize: '1.5rem', fontWeight: 600, color: '#fff', lineHeight: 1.8, wordBreak: 'keep-all' }}>
+                개인의 역량으로 버텨온 시대가 있었습니다. 이제는 구조로 일하는 시대입니다.
               </p>
             </div>
 
             <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 32px' }}>
               <p style={{ fontSize: '1.25rem', color: '#ccc', lineHeight: 2.2, wordBreak: 'keep-all' }}>
-                현장으로 돌아가서도 오늘 나눈 시스템의 의미를 되뇌이며,<br/>
-                각자의 자리에서 올바른 기준을 지키며 일하는 우리가 되기를 바랍니다.
+                여러분이 입력하는 숫자 하나가, 누군가의 의사결정이 됩니다.<br/>
+                그 무게를 기억해주십시오.
               </p>
             </div>
 
             {/* 참여자 명단 (Cast) */}
-            <div style={{ marginTop: '5vh' }}>
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--gold)', marginBottom: '48px', letterSpacing: '0.3em', opacity: 0.9 }}>
+            <div style={{ marginTop: '10vh' }}>
+              <h3 style={{ fontSize: '1.5rem', color: 'var(--gold)', marginBottom: '80px', letterSpacing: '0.4em', opacity: 0.9 }}>
                 THE CAST (가치 사슬의 주역들)
               </h3>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '56px', maxWidth: '800px', margin: '0 auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '80px', maxWidth: '900px', margin: '0 auto' }}>
                 {Object.entries(groupedCast).length > 0 ? (
                   Object.entries(groupedCast).map(([dept, names]) => (
-                    <div key={dept} style={{ display: 'flex', gap: '40px', padding: '0 32px' }}>
-                      <div style={{ flex: 1, textAlign: 'right', fontSize: '1.125rem', fontWeight: 700, color: 'var(--gold-light)', opacity: 0.8 }}>
+                    <div key={dept} style={{ display: 'flex', gap: '60px', padding: '0 32px' }}>
+                      {/* 부서명 */}
+                      <div style={{ flex: 1, textAlign: 'right', fontSize: '1.5rem', fontWeight: 700, color: 'var(--gold-light)', opacity: 0.8, paddingTop: '12px' }}>
                         {dept}
                       </div>
-                      <div style={{ flex: 1, textAlign: 'left', fontSize: '1.125rem', color: '#fff', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {names.map((name, i) => <span key={i}>{name}</span>)}
+                      {/* 이름 (영화 배우 이름처럼 폰트 대폭 확대) */}
+                      <div style={{ flex: 1.5, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                        {names.map((name, i) => (
+                          <span key={i} style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', letterSpacing: '0.2em' }}>
+                            {name}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div style={{ color: '#888', fontSize: '1rem' }}>참여자 데이터가 없습니다.</div>
+                  <div style={{ color: '#888', fontSize: '1.5rem' }}>참여자 데이터가 없습니다.</div>
                 )}
               </div>
             </div>
 
-            {/* 제작 정보 */}
-            <div style={{ marginTop: '5vh' }}>
-              <h3 style={{ fontSize: '1.125rem', color: 'var(--gold)', marginBottom: '32px', letterSpacing: '0.3em' }}>DIRECTED BY</h3>
-              <div style={{ fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>원가기획팀 TFT</div>
+            {/* 제작 정보 (기획자 폰트 대폭 확대) */}
+            <div style={{ marginTop: '15vh' }}>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--gold)', marginBottom: '40px', letterSpacing: '0.4em' }}>GENERAL DIRECTOR</h3>
+              <div style={{ fontSize: '5rem', color: '#fff', fontWeight: 900, letterSpacing: '0.2em', textShadow: '0 0 30px rgba(212, 175, 55, 0.4)' }}>유 경 덕</div>
             </div>
 
-            <div style={{ marginTop: '2vh' }}>
-              <h3 style={{ fontSize: '1.125rem', color: 'var(--gold)', marginBottom: '32px', letterSpacing: '0.3em' }}>SPECIAL THANKS TO</h3>
-              <div style={{ fontSize: '1.125rem', color: '#ccc', lineHeight: 2 }}>
+            <div style={{ marginTop: '15vh' }}>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--gold)', marginBottom: '40px', letterSpacing: '0.4em' }}>SYSTEM ARCHITECT</h3>
+              <div style={{ fontSize: '4rem', color: '#fff', fontWeight: 900, letterSpacing: '0.15em' }}>원가 TFT</div>
+            </div>
+
+            <div style={{ marginTop: '15vh' }}>
+              <h3 style={{ fontSize: '1.25rem', color: 'var(--gold)', marginBottom: '32px', letterSpacing: '0.4em' }}>SPECIAL THANKS TO</h3>
+              <div style={{ fontSize: '1.5rem', color: '#ccc', lineHeight: 2 }}>
                 경영진 및 현업 부서 리더<br/>
-                그리고 교육에 끝까지 함께해주신 <span style={{ color: '#fff', fontWeight: 700 }}>여러분</span>
+                그리고 교육에 끝까지 함께해주신 <span style={{ color: '#fff', fontWeight: 900 }}>하림산업 임직원 여러분</span>
               </div>
             </div>
 
@@ -159,7 +174,7 @@ export default function EpiloguePage() {
           position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
           animation: 'fade-in 4s ease forwards', backgroundColor: '#000'
         }}>
-          <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)', fontWeight: 800, color: '#fff', textAlign: 'center' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 900, color: '#fff', textAlign: 'center', letterSpacing: '0.1em' }}>
             경청해 주셔서 감사합니다.
           </h1>
         </div>
