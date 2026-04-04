@@ -3,14 +3,18 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'Systema — 함께 세우는 시스템',
-  description: '하림산업 원가기획 교육 플랫폼',
+  title: 'Systema - 하림산업 기준정보 온보딩',
+  description: '데이터와 가치 사슬로 읽는 하림산업',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="ko" className="h-full">
-      <body className="min-h-full flex flex-col">
+    <html lang="ko">
+      <body>
         <ThemeProvider>
           {children}
         </ThemeProvider>

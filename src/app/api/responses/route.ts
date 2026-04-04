@@ -1,24 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { sql } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   const { participant_id, question_type, response_text } = await req.json();
+  
   if (!participant_id || !question_type || !response_text) {
     return NextResponse.json({ error: 'missing fields' }, { status: 400 });
   }
-  const sql = getDb();
+
   const rows = await sql`
     INSERT INTO responses (participant_id, question_type, response_text)
     VALUES (${participant_id}, ${question_type}, ${response_text})
     RETURNING *
-  ` as Record<string, unknown>[];
+  `;
+  
   return NextResponse.json(rows[0], { status: 201 });
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const question_type = searchParams.get('type');
-  const sql = getDb();
 
   let rows;
   if (question_type) {
@@ -37,5 +38,6 @@ export async function GET(req: NextRequest) {
       LIMIT 200
     `;
   }
+  
   return NextResponse.json(rows);
 }

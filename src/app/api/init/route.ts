@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { sql } from '@/lib/db';
 
 export async function POST() {
-  const sql = getDb();
   await sql`
     CREATE TABLE IF NOT EXISTS participants (
       id SERIAL PRIMARY KEY,

@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: { 
+    unoptimized: true 
+  },
+  /* 다른 config options가 필요하다면 여기에 추가 */
 };
 
 export default nextConfig;

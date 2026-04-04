@@ -1,14 +1,8 @@
 import { neon } from '@neondatabase/serverless';
 
-type SqlFn = ReturnType<typeof neon>;
-let _sql: SqlFn | null = null;
-
-export function getDb(): SqlFn {
-  if (!_sql) {
-    if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL is not set');
-    }
-    _sql = neon(process.env.DATABASE_URL);
-  }
-  return _sql;
+if (!process.env.DATABASE_URL) {
+  throw new Error('환경변수에 DATABASE_URL이 설정되지 않았습니다.');
 }
+
+// SQL 태그드 템플릿 리터럴을 통해 안전하게 쿼리 실행
+export const sql = neon(process.env.DATABASE_URL);
