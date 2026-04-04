@@ -56,7 +56,7 @@ const SLIDES = [
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
   // 첫 번째 아코디언(Prologue)을 기본으로 열어둡니다.
-  const [activeIdx, setActiveIdx] = useState<number | null>(0);
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
   // 이미지 로드 실패 상태를 인덱스별로 관리합니다.
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
@@ -102,7 +102,7 @@ export default function Home() {
           {/* SYSTEMA를 시스템으로 일하는 조직으로 변경 */}
           <h1 className="display text-gold" style={{ marginBottom: 16 }}>시스템으로 일하는 조직</h1>
           <p style={{ fontSize: '1.25rem', color: 'var(--text2)', maxWidth: 600, lineHeight: 1.7, letterSpacing: '-0.01em' }}>
-            기준정보 기반의 시스템 연결 및 활용 가이드
+            데이터로 연결되는 우리의 업무: 신규 입사자 온보딩 교육
           </p>
           <hr className="divider" style={{ marginTop: 40 }} />
         </div>

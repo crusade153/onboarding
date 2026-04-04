@@ -40,3 +40,15 @@ export async function POST() {
   `;
   return NextResponse.json({ ok: true });
 }
+
+// src/app/api/init/route.ts (기존 코드의 return NextResponse.json... 바로 위에 추가)
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS survey_responses (
+      id SERIAL PRIMARY KEY,
+      participant_id INTEGER REFERENCES participants(id),
+      has_confusion BOOLEAN NOT NULL,
+      comment TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;

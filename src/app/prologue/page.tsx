@@ -161,7 +161,7 @@ export default function ProloguePage() {
 
                   {/* 결론 명언 영역 */}
                   <p style={{ fontSize:'1.125rem', color:'var(--text)', fontWeight:600, lineHeight:1.7, fontStyle: 'italic' }}>
-                    &ldquo;내가 오늘 입력하는 <span style={{ color: 'var(--gold)' }}>데이터 하나</span>는 단순한 타이핑이 아닙니다.<br/>
+                    &ldquo;나의 꼼꼼한 업무로 확정되는 <span style={{ color: 'var(--gold)' }}>기준정보 하나</span>는 단순한 데이터가 아닙니다.<br/>
                     다음 부서가 안심하고 일할 수 있는 <span style={{ color: 'var(--gold)' }}>신뢰의 바통</span>이며,<br/>
                     막대한 손실을 막아내는 가장 강력한 <span style={{ color: 'var(--red)' }}>첫 번째 방어선</span>입니다.&rdquo;
                   </p>

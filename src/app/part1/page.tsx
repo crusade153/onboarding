@@ -1,10 +1,7 @@
 // src/app/part1/page.tsx
 import Part1Client from './Part1Client';
-import { getBomItems } from '@/actions/db-actions';
 
-export default async function Part1Page() {
-  // Server Action을 통해 미리 데이터를 조회하여 클라이언트로 전달합니다.
-  const bomItems = await getBomItems('NR-A-500-RT');
-
-  return <Part1Client initialBomItems={bomItems} />;
+export default function Part1Page() {
+  // 스토리텔링 위주로 개편되면서 DB에서 BOM을 미리 불러올 필요가 없어졌습니다.
+  return <Part1Client />;
 }
