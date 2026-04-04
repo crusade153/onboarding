@@ -99,7 +99,8 @@ export default function Home() {
         {/* Header */}
         <div style={{ marginBottom: 72 }}>
           <p className="caption" style={{ color: 'var(--gold)', marginBottom: 16 }}>하림산업 원가TFT 교육 플랫폼</p>
-          <h1 className="display text-gold" style={{ marginBottom: 16 }}>Systema</h1>
+          {/* SYSTEMA를 시스템으로 일하는 조직으로 변경 */}
+          <h1 className="display text-gold" style={{ marginBottom: 16 }}>시스템으로 일하는 조직</h1>
           <p style={{ fontSize: '1.25rem', color: 'var(--text2)', maxWidth: 600, lineHeight: 1.7, letterSpacing: '-0.01em' }}>
             기준정보 기반의 시스템 연결 및 활용 가이드
           </p>
@@ -230,6 +231,17 @@ export default function Home() {
                 </div>
               );
             })}
+            
+            {/* 추가된 하단 메시지 영역 */}
+            <div className="anim-up" style={{ textAlign: 'center', marginTop: '64px', paddingBottom: '20px' }}>
+              <p style={{ fontSize: '1rem', color: 'var(--text2)', marginBottom: '8px' }}>
+                기준이 무너지면 시스템이 무너집니다.
+              </p>
+              <p style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>
+                시스템은 단순히 주어지는 것이 아닙니다. 우리가 <span style={{ color: 'var(--gold)' }}>함께 세운 약속</span>입니다.
+              </p>
+            </div>
+
           </div>
 
           {/* Utility panel (우측 메뉴) */}

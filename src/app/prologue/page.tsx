@@ -69,13 +69,23 @@ export default function ProloguePage() {
                   <p style={{ fontSize:'1.375rem', color:'var(--text)', lineHeight:1.75, fontWeight:500, letterSpacing:'-0.01em' }}>
                     하나의 제품이 고객에게 닿기까지.
                   </p>
+                  
+                  {/* 변경된 카피라이트 적용 영역 */}
                   <div style={{ margin:'20px 0', borderLeft:'2px solid rgba(201,168,76,0.4)', paddingLeft:20 }}>
-                    {['마케팅이 이름을 짓고,','영업이 가격을 세우고,','생산이 만들고,','원가기획이 그 모든 것을 숫자로 읽습니다.'].map((line, i) => (
-                      <p key={i} style={{ fontSize:'1.125rem', color:'var(--text2)', lineHeight:1.8 }}>{line}</p>
+                    {[
+                      '마케팅이 브랜딩하고, R&D가 제품을 설계하며,',
+                      'SCM이 S&OP로 수요와 공급의 길을 엽니다.',
+                      '구매가 원료를 조달하고, 생산이 완제품을 만들면,',
+                      '물류가 출고하고, 영업이 최전선에서 판매를 이끕니다.',
+                      '그리고 원가와 회계는 이 모든 가치 사슬을 숫자로 완성합니다.'
+                    ].map((line, i) => (
+                      <p key={i} style={{ fontSize:'1.0625rem', color:'var(--text2)', lineHeight:1.8 }}>{line}</p>
                     ))}
                   </div>
-                  <p style={{ fontSize:'1.25rem', color:'var(--text)', fontWeight:600, lineHeight:1.7, marginTop:8 }}>
-                    그런데 우리는 서로의 기준을 알고 있을까요?
+
+                  <p style={{ fontSize:'1.125rem', color:'var(--text)', fontWeight:600, lineHeight:1.7, marginTop:16 }}>
+                    역할은 다르지만, 우리는 거대한 하나의 가치 사슬로 연결되어 있습니다.<br/>
+                    그런데 우리는 서로의 기준을 제대로 알고 있을까요?
                   </p>
                 </div>
 
