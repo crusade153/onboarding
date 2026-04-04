@@ -1,3 +1,4 @@
+// src/app/part1/Part1Client.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -103,15 +104,15 @@ function IntroSection() {
   );
 }
 
-// 2. 전개: 사소한 오입력
+// 2. 전개: 사소한 오입력 (기존 구조 유지)
 function MistakeSection() {
   const MISTAKES = [
     { type: '단위 오류', dept: '생산/구매', desc: '건더기스프 소요량 2g을 2kg으로 입력' },
     { type: '중량 오류', dept: '물류/생산', desc: '완제품 중량 500g을 500kg으로 입력' },
+    { type: '환산 오류', dept: '영업/물류', desc: '라면 1박스(12개입)를 1개로 입력' },
     { type: '수량 오류', dept: '생산', desc: 'BOM 포장박스 소요량 1개를 10개로 입력' },
     { type: '보관 오류', dept: '물류/마케팅', desc: '냉동식품의 보관조건을 냉장으로 선택' },
     { type: '기한 오류', dept: '품질/영업', desc: '소비기한 300일을 180일로 축소 입력' },
-    { type: '환산 오류', dept: '영업/물류', desc: '라면 1박스(12개입)를 1개로 입력' },
   ];
 
   return (
@@ -135,13 +136,13 @@ function MistakeSection() {
   );
 }
 
-// 3. 위기: 현장의 대혼돈
+// 3. 위기: 현장의 대혼돈 (Mistake와 완벽하게 연결되도록 스토리 보강)
 function ChaosSection() {
   const CHAOS = [
-    { title: '🚚 트럭 100대가 배차되다', cause: '완제품 500g → 500kg 오입력', effect: '트럭 1대면 될 물량의 부피가 1,000배로 계산되어 초대형 배차 사고가 발생합니다.', icon: '🚛' },
+    { title: '📦 창고를 덮친 1,000배 발주', cause: '건더기 2g → 2kg 오입력', effect: '시스템(MRP)이 건더기스프를 1,000배 발주합니다. 현장 창고는 터져나가고, 적재 공간이 없어 공장 라인까지 마비됩니다.', icon: '🏭' },
+    { title: '💣 원가 폭탄과 배부의 붕괴', cause: '완제품 500g → 500kg 오입력', effect: '시스템은 중량을 기준으로 제조간접비와 물류비를 배부합니다. 이 제품 하나에 전체 공장의 비용이 1,000배 비정상적으로 쏠려버립니다.', icon: '⚖️' },
+    { title: '📉 증발해버린 실물 재고', cause: '1박스(12개) → 1개 환산 오류', effect: '100박스(1,200개)를 출고했는데 전산엔 100개만 차감되어 재고 실사 시 현장과 사무실이 대혼란을 겪습니다.', icon: '🕵️‍♂️' },
     { title: '🧊 다 녹아내린 제품들', cause: '냉동 → 냉장 보관조건 오류', effect: 'WMS가 냉동식품을 상온 구역으로 입고 지시하여 수억 원어치가 전량 폐기됩니다.', icon: '🔥' },
-    { title: '📦 재고는 넘치는데 생산 중단', cause: 'BOM 포장박스 1개 → 10개', effect: '현장엔 박스가 산더미인데 전산상 "자재 부족"이 떠서 공장이 멈춥니다.', icon: '🏭' },
-    { title: '📉 증발해버린 실물 재고', cause: '1박스(12개) → 1개 환산 오류', effect: '10박스(120개)를 출고했는데 전산엔 10개만 차감되어 재고 실사 시 대혼란을 겪습니다.', icon: '🕵️‍♂️' },
   ];
 
   return (
@@ -163,33 +164,32 @@ function ChaosSection() {
   );
 }
 
-// 4. 절정: 돌이킬 수 없는 손실
+// 4. 절정: 돌이킬 수 없는 손실 (앞선 Chaos와 인과관계가 명확히 이어지도록 보강)
 function LossSection() {
   return (
     <div className="anim-up" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
       <div className="glass-card-lg" style={{ padding: '24px', border: '1px solid rgba(45,212,191,0.3)' }}>
-        <p className="caption" style={{ color: 'var(--teal)', marginBottom: 8 }}>원가 왜곡 (허위 적자)</p>
+        <p className="caption" style={{ color: 'var(--teal)', marginBottom: 8 }}>재고 과잉 및 폐기 손실</p>
         <p style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: 12, wordBreak: 'keep-all' }}>건더기 2g → 2kg의 최후</p>
         <p style={{ color: 'var(--text2)', lineHeight: 1.6, fontSize: '0.9375rem', wordBreak: 'keep-all' }}>
-          10원이어야 할 스프 원가가 10,000원으로 결산됩니다. 잘 팔리고 있는 효자 상품이 심각한 적자로 보고되어, 경영진이 생산을 강제로 중단시켜버립니다.
+          1,000배 과대 발주된 자재는 유통기한 내에 소진하지 못하고 결국 전량 폐기됩니다. <strong>자재 매입에 묶여있던 회사의 소중한 현금은 고스란히 수억 원의 영업외비용(폐기손실)</strong>으로 재무제표에 꽂힙니다.
         </p>
       </div>
 
       <div className="glass-card-lg" style={{ padding: '24px', border: '1px solid rgba(45,212,191,0.3)' }}>
-        <p className="caption" style={{ color: 'var(--teal)', marginBottom: 8 }}>매출 왜곡과 자산 손실</p>
-        <p style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: 12, wordBreak: 'keep-all' }}>단가 표기 & 소비기한 축소</p>
-        <ul style={{ color: 'var(--text2)', lineHeight: 1.6, fontSize: '0.9375rem', paddingLeft: 16, margin: 0, wordBreak: 'keep-all' }}>
-          <li style={{ marginBottom: 4 }}>1식 1,000원을 1팩(4입) 1,000원으로 입력하여 확정 손실을 입습니다.</li>
-          <li>300일짜리를 180일로 오입력해 멀쩡한 제품을 헐값에 덤핑합니다.</li>
-        </ul>
+        <p className="caption" style={{ color: 'var(--teal)', marginBottom: 8 }}>원가 왜곡 (허위 적자)</p>
+        <p style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: 12, wordBreak: 'keep-all' }}>중량 500g → 500kg의 최후</p>
+        <p style={{ color: 'var(--text2)', lineHeight: 1.6, fontSize: '0.9375rem', wordBreak: 'keep-all' }}>
+          비정상적인 비용 배부 쏠림으로 인해, 잘 팔리던 효자 상품이 팩당 수만 원의 원가를 가진 심각한 적자 품목으로 둔갑합니다. <strong>경영진은 이 잘못된 데이터를 보고 생산을 강제로 중단시키는 치명적 오판</strong>을 내립니다.
+        </p>
       </div>
 
       <div className="glass-card-lg" style={{ gridColumn: '1 / -1', padding: '20px 24px', background: 'rgba(248,113,113,0.05)', border: '1px solid rgba(248,113,113,0.3)', display: 'flex', alignItems: 'center', gap: 20 }}>
          <div style={{ flex: 1 }}>
-           <p className="caption" style={{ color: 'var(--red)', marginBottom: 8 }}>세무 및 감사 리스크</p>
-           <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--red)', marginBottom: 8, wordBreak: 'keep-all' }}>제품을 '상품'으로 오분류</p>
+           <p className="caption" style={{ color: 'var(--red)', marginBottom: 8 }}>매출 누락 및 확정 손실</p>
+           <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--red)', marginBottom: 8, wordBreak: 'keep-all' }}>1박스(12입) → 1개 단위 오류의 최후</p>
            <p style={{ color: 'var(--text)', lineHeight: 1.6, fontSize: '0.9375rem', wordBreak: 'keep-all' }}>
-             제조품을 매입품으로 분류하면 제조원가명세서와 손익계산서가 꼬입니다. <strong>재무 결산이 중단되고 외부 회계감사 거절 등 중대 사고</strong>로 번집니다.
+             12개를 출고하고도 전산에는 1개 분량의 매출만 인식됩니다. <strong>장부상 재고와 실제 창고 재고의 갭(Gap)은 결산 시 결국 회사의 쌩돈(재고자산감모손실)으로 처리</strong>되며, 연말 회계감사 시 중대 리스크로 번집니다.
            </p>
          </div>
       </div>
@@ -197,7 +197,7 @@ function LossSection() {
   );
 }
 
-// 5. 교훈 (실시간 공감 게시판)
+// 5. 교훈 (실시간 공감 게시판 - 기존 코드 유지)
 function LessonSection() {
   const [qrUrl, setQrUrl] = useState('');
   const [totalUsers, setTotalUsers] = useState(0);
