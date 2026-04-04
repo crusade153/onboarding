@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 
+// 모바일에서 글을 작성할 때 (POST)
 export async function POST(req: NextRequest) {
   const { participant_id, has_confusion, comment } = await req.json();
   
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'missing participant_id' }, { status: 400 });
   }
 
-  // 한 사람이 여러 번 제출하는 것을 막으려면 기존 응답 삭제 (선택사항)
+  // 중복 참여를 막기 위해 기존 작성글 삭제
   await sql`DELETE FROM survey_responses WHERE participant_id = ${participant_id}`;
   
   const rows = await sql`
@@ -21,8 +22,9 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(rows[0], { status: 201 });
 }
 
+// 강연자 화면에서 실시간으로 글을 불러올 때 (GET)
 export async function GET() {
-  // 응답 목록과 참여자 정보를 조인해서 가져옵니다.
+  // 응답 목록과 참여자(부서, 이름) 정보를 조인해서 가져옵니다.
   const rows = await sql`
     SELECT s.*, p.name, p.department 
     FROM survey_responses s

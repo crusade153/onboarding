@@ -41,7 +41,7 @@ export async function POST() {
   return NextResponse.json({ ok: true });
 }
 
-// src/app/api/init/route.ts (기존 코드의 return NextResponse.json... 바로 위에 추가)
+// src/app/api/init/route.ts 파일의 return NextResponse.json({ ok: true }); 바로 윗줄에 추가!
 
   await sql`
     CREATE TABLE IF NOT EXISTS survey_responses (
