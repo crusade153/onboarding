@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import NavBar from '@/components/NavBar';
+import QRCode from 'react-qr-code';
 
 const DotCanvas = dynamic(() => import('@/components/DotCanvas'), { ssr: false });
 
@@ -19,6 +20,9 @@ export default function ProloguePage() {
   const [connected, setConnected] = useState(false);
   const [showTitle, setShowTitle] = useState(false);
   const [lastFetched, setLastFetched] = useState('');
+  
+  // Hydration 에러 방지용 상태
+  const [qrUrl, setQrUrl] = useState('/join');
 
   const fetchParticipants = useCallback(async () => {
     try {
@@ -31,10 +35,16 @@ export default function ProloguePage() {
     } catch { /* silent */ }
   }, [lastFetched]);
 
-  useEffect(() => { fetchParticipants(); const t = setInterval(fetchParticipants, 2000); return () => clearInterval(t); }, [fetchParticipants]);
+  useEffect(() => { 
+    // 클라이언트 마운트 시점에 실제 호스트 도메인(/join)으로 업데이트
+    setQrUrl(`${window.location.origin}/join`);
+    
+    fetchParticipants(); 
+    const t = setInterval(fetchParticipants, 2000); 
+    return () => clearInterval(t); 
+  }, [fetchParticipants]);
 
   const deptCounts = participants.reduce<Record<string, number>>((a, p) => { a[p.department] = (a[p.department] ?? 0) + 1; return a; }, {});
-  const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/join` : '/join';
 
   return (
     <div style={{ minHeight:'100vh', position:'relative' }}>
@@ -89,10 +99,14 @@ export default function ProloguePage() {
               <div style={{ width:300, flexShrink:0 }}>
                 <div className="glass-card-lg" style={{ padding:28, textAlign:'center' }}>
                   <p className="caption" style={{ color:'rgba(201,168,76,0.6)', marginBottom:16 }}>지금 바로 참여</p>
-                  <div style={{ background:'rgba(201,168,76,0.08)', border:'1px solid rgba(201,168,76,0.25)', borderRadius:12, padding:'14px 16px', marginBottom:20 }}>
-                    <p style={{ fontFamily:'monospace', fontSize:'1.0625rem', fontWeight:800, color:'#C9A84C', wordBreak:'break-all' }}>{qrUrl}</p>
+                  
+                  {/* 실제 QR 코드 렌더링 영역 */}
+                  <div style={{ background:'white', padding:'16px', borderRadius:'12px', display:'inline-block', marginBottom:'16px' }}>
+                    <QRCode value={qrUrl} size={160} style={{ height: "auto", maxWidth: "100%", width: "100%" }} />
                   </div>
-                  <p style={{ fontSize:'0.875rem', color:'var(--text2)', lineHeight:1.6, marginBottom:20 }}>QR 스캔 또는 주소 입력 후<br />이름과 부서를 등록하세요</p>
+                  
+                  <p style={{ fontSize:'0.875rem', color:'var(--text2)', lineHeight:1.6, marginBottom:20 }}>스마트폰 카메라로 스캔 후<br />이름과 부서를 등록하세요</p>
+                  
                   {participants.length >= 1 && (
                     <button onClick={() => { setConnected(true); setTimeout(() => setShowTitle(true), 1200); }}
                       className="btn btn-gold" style={{ width:'100%' }}>
