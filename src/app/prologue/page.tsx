@@ -83,6 +83,13 @@ export default function ProloguePage() {
                     우리는 각자의 자리에서 데이터라는 바통을 넘기며<br/>
                     하나의 거대한 가치사슬(Value Chain)을 함께 돌리고 있습니다.
                   </p>
+
+                  {/* 원가팀이 기준정보를 이야기하는 이유 */}
+                  <p style={{ fontSize:'0.9375rem', color:'var(--text3)', lineHeight:1.7, marginTop:20, fontStyle:'italic', wordBreak:'keep-all' }}>
+                    원가팀이 기준정보를 이야기하는 이유는 간단합니다.<br/>
+                    모든 부서의 데이터가 마지막으로 모이는 곳이기에,<br/>
+                    기준이 흔들리면 <span style={{ color:'var(--gold)', fontWeight:600, fontStyle:'normal' }}>가장 먼저 숫자로 체감하는 부서</span>이기 때문입니다.
+                  </p>
                 </div>
 
                 {/* Participant stats */}
