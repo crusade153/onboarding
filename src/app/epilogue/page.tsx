@@ -67,9 +67,9 @@ export default function EpiloguePage() {
           <p className="caption" style={{ color: 'var(--red)', marginBottom: '16px' }}>Epilogue</p>
           <h1 className="display text-gold" style={{ marginBottom: '24px', wordBreak: 'keep-all' }}>시스템은 우리가 함께 세운 '약속'입니다</h1>
           <p className="body-lg" style={{ color: 'var(--text2)', maxWidth: '720px', marginBottom: '48px', lineHeight: 1.8, wordBreak: 'keep-all' }}>
-            우리가 확인한 것은 단순한 전산 프로그램 사용법이 아닙니다.<br/>
+            우리가 확인한 것은 단순한 업무 방식의 변화가 아닙니다.<br/>
             정확한 <strong style={{ color: '#fff' }}>'기준정보'</strong>와 미루지 않는 <strong style={{ color: '#fff' }}>'일일관리'</strong>가 만났을 때,<br/>
-            비로소 엑셀 없는 투명한 자동화 대시보드가 완성된다는 사실을 배웠습니다.<br/><br/>
+            비로소 모두가 같은 숫자를 보는 투명한 업무 환경이 완성된다는 사실을 배웠습니다.<br/><br/>
             이제 이 거대한 가치 사슬을 현장에서 직접 연결하고 작동시켜주실<br/>
             하림산업의 진정한 주역들을 소개합니다.
           </p>
@@ -100,7 +100,7 @@ export default function EpiloguePage() {
 
             <div>
               <h2 style={{ fontSize: '4.5rem', fontWeight: 900, color: 'var(--gold)', marginBottom: '32px', letterSpacing: '0.1em' }}>
-                4월 10일 신규입사자 온보딩 교육
+                신규입사자 온보딩 교육
               </h2>
               <p style={{ fontSize: '1.5rem', fontWeight: 600, color: '#fff', lineHeight: 1.8, wordBreak: 'keep-all' }}>
                 개인의 역량으로 버텨온 시대가 있었습니다. 이제는 구조로 일하는 시대입니다.

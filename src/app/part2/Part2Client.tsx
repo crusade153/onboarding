@@ -5,30 +5,29 @@ import { useState } from 'react';
 import NavBar from '@/components/NavBar';
 import Link from 'next/link';
 
-type Tab = 'rewind' | 'principle' | 'habit';
+type Tab = 'ownership' | 'daily' | 'chain';
 
 const TABS: { key: Tab; label: string; sub: string }[] = [
-  { key: 'rewind',    label: '1. 되돌리기', sub: '오류의 추적' },
-  { key: 'principle', label: '2. 관리 원칙', sub: '살아있는 데이터' },
-  { key: 'habit',     label: '3. 하림의 실행습관', sub: '일일관리의 힘' },
+  { key: 'ownership', label: '1. 전원의 책임',     sub: '기준정보의 주인' },
+  { key: 'daily',     label: '2. 일일관리의 힘',   sub: 'Daily Management' },
+  { key: 'chain',     label: '3. 하나의 가치사슬', sub: '모든 부서의 연결' },
 ];
 
 export default function Part2Client() {
-  const [tab, setTab] = useState<Tab>('rewind');
+  const [tab, setTab] = useState<Tab>('ownership');
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
       <NavBar current="Part 2" step="02/04" />
 
-      {/* 헤더 영역 */}
       <div style={{ borderBottom: '1px solid var(--glass-border)', padding: '24px 0 16px' }}>
         <div className="slide-container" style={{ paddingBottom: 0 }}>
           <p className="caption" style={{ color: 'var(--gold)', marginBottom: 6 }}>Part 2</p>
           <h1 className="headline" style={{ color: 'var(--text)', marginBottom: 8, fontSize: '2rem' }}>
-            기준을 세우는 사람들
+            문제를 앞서가는 매일의 습관
           </h1>
           <p className="body-md" style={{ color: 'var(--text2)', maxWidth: 800, wordBreak: 'keep-all', lineHeight: 1.5 }}>
-            Part 1에서 본 끔찍한 나비효과를 막는 방법은 멀리 있지 않습니다. 손익의 왜곡을 역추적해보면 결국 시스템의 근간인 '기준정보'와 그것을 다루는 '우리의 습관'에 도달하게 됩니다.
+            나비효과를 막는 방법은 멀리 있지 않습니다. 내가 매일 만들고 전달하는 정보의 정확성, 그것이 시작입니다.
           </p>
 
           <div style={{ display: 'flex', gap: 4, marginTop: 16, background: 'var(--glass-light)', padding: 4, borderRadius: 12, border: '1px solid var(--glass-border)', width: 'fit-content' }}>
@@ -48,20 +47,18 @@ export default function Part2Client() {
         </div>
       </div>
 
-      {/* 컨텐츠 영역 */}
       <div className="slide-container" style={{ flex: 1, paddingTop: 24, paddingBottom: 24, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <div style={{ flex: 1, overflowY: 'auto' }}>
-          {tab === 'rewind' && <RewindSection />}
-          {tab === 'principle' && <PrincipleSection />}
-          {tab === 'habit' && <HabitSection />}
+          {tab === 'ownership' && <OwnershipSection />}
+          {tab === 'daily' && <DailySection />}
+          {tab === 'chain' && <ChainSection />}
         </div>
 
-        {/* 4. 전환 멘트 (하단 고정) */}
         <div className="anim-up" style={{ marginTop: 24, padding: '20px 24px', background: 'rgba(250, 204, 21, 0.05)', border: '1px solid var(--gold)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--gold)', marginBottom: 4 }}>우리의 '일일관리'가 완벽한 시스템을 만듭니다.</p>
+            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--gold)', marginBottom: 4 }}>우리의 매일이 완벽한 시스템을 만듭니다.</p>
             <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', wordBreak: 'keep-all' }}>
-              현장의 철저한 일일관리와 정확한 기준정보가 만났을 때, 사람의 손을 타지 않는 원가팀의 대시보드에 어떤 마법이 펼쳐지는지 확인해 보세요.
+              모든 부서의 일일관리가 만났을 때, 원가팀의 대시보드에 어떤 일이 일어나는지 확인해 보세요.
             </p>
           </div>
           <Link href="/part3">
@@ -75,141 +72,135 @@ export default function Part2Client() {
   );
 }
 
-// 1. 되돌리기 — 오류는 어디서 잡아야 하는가
-function RewindSection() {
+/* ── 1. 전원의 책임 ── */
+function OwnershipSection() {
+  const DEPTS = [
+    { icon: '🎯', dept: '마케팅', color: 'var(--blue)',    owns: '제품 규격 · 용량 · 포장 기준',       risk: '규격이 모호하면 영업·생산·물류가 각각 다른 기준으로 움직입니다' },
+    { icon: '💼', dept: '영업',   color: 'var(--teal)',     owns: '수주 조건 · 단가 · 납기 · 출하 조건', risk: '납기 오전달 한 건이 긴급 생산과 할증 비용을 만듭니다' },
+    { icon: '🏭', dept: '생산',   color: 'var(--warning)',  owns: 'BOM · 공정 라우팅 · 수율 · 작업 실적', risk: '실적 오기록이 원가 왜곡과 자재 발주 오류로 이어집니다' },
+    { icon: '🛒', dept: '구매',   color: '#A78BFA',         owns: '협력사 정보 · 자재 단가 · 리드타임',   risk: '단가·단위 오류가 예산 왜곡과 매입 채무 차이를 만듭니다' },
+    { icon: '🔬', dept: '품질',   color: 'var(--red)',      owns: '검사 기준 · 보관 조건 · 소비기한',     risk: '보관 조건 한 줄이 전량 폐기 또는 리콜을 결정합니다' },
+    { icon: '💰', dept: '재무·원가', color: 'var(--gold)',  owns: '원가 센터 · 배부 기준 · 세무 분류',    risk: '앞선 부서 데이터가 하나라도 틀리면 손익이 자동 왜곡됩니다' },
+  ];
+
   return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 20, height: '100%', justifyContent: 'center' }}>
-      
-      <div className="glass-card" style={{ padding: '24px', textAlign: 'center', borderLeft: '4px solid var(--red)' }}>
-        <p style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', marginBottom: 8, wordBreak: 'keep-all' }}>
-          "문제는 항상 리포트에서 발견되지만, 답은 항상 기준정보에 있다."
-        </p>
-        <p style={{ color: 'var(--text2)', fontSize: '0.9375rem', wordBreak: 'keep-all' }}>
-          결산이 틀어졌을 때, 현장을 탓하거나 시스템 오류를 의심하기 전 과정을 거슬러 올라가 봅니다.
+    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+      <div className="glass-card" style={{ padding: '20px 24px', textAlign: 'center', borderBottom: '3px solid var(--gold)' }}>
+        <p style={{ fontSize: '1.25rem', fontWeight: 800, wordBreak: 'keep-all' }}>
+          <span className="text-gold">다음 사람이 참고하는 모든 정보</span>가 기준정보입니다.
         </p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
-        {/* Step 3 (역추적 시작) */}
-        <div className="glass-card pop-in" style={{ flex: 1, padding: '24px', textAlign: 'center', background: 'rgba(248,113,113,0.1)' }}>
-          <p style={{ fontSize: '2rem', marginBottom: 12 }}>📉</p>
-          <p className="caption" style={{ color: 'var(--red)', marginBottom: 4 }}>발견 (결산 마감일)</p>
-          <p style={{ fontSize: '1.125rem', fontWeight: 800, wordBreak: 'keep-all' }}>수억 원의 적자 보고</p>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text2)', marginTop: 8 }}>경영진 리포트에서 손익 왜곡 확인</p>
-        </div>
-
-        <div style={{ margin: '0 16px', fontSize: '1.5rem', color: 'var(--text3)' }}>⬅️</div>
-
-        {/* Step 2 (에러 수정: style 평탄화) */}
-        <div className="glass-card pop-in" style={{ flex: 1, padding: '24px', textAlign: 'center', animationDelay: '0.1s' }}>
-          <p style={{ fontSize: '2rem', marginBottom: 12 }}>🏭</p>
-          <p className="caption" style={{ color: 'var(--warning)', marginBottom: 4 }}>추적 (공장 실적)</p>
-          <p style={{ fontSize: '1.125rem', fontWeight: 800, wordBreak: 'keep-all' }}>비정상적인 재료비 투입</p>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text2)', marginTop: 8 }}>현장 과대 출고 및 수율 악화 기록</p>
-        </div>
-
-        <div style={{ margin: '0 16px', fontSize: '1.5rem', color: 'var(--text3)' }}>⬅️</div>
-
-        {/* Step 1 (에러 수정: style 평탄화) */}
-        <div className="glass-card pop-in" style={{ flex: 1, padding: '24px', textAlign: 'center', borderTop: '4px solid var(--gold)', animationDelay: '0.2s' }}>
-          <p style={{ fontSize: '2rem', marginBottom: 12 }}>🧬</p>
-          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 4 }}>해답 (Master Data)</p>
-          <p style={{ fontSize: '1.125rem', fontWeight: 800, wordBreak: 'keep-all' }}>BOM / 라우팅 오입력</p>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text)', fontWeight: 700, marginTop: 8 }}>"건더기 2g → 2kg 오타 한 줄"</p>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, flex: 1 }}>
+        {DEPTS.map((d, i) => (
+          <div key={i} className="glass-card pop-in" style={{ padding: '16px', borderTop: `3px solid ${d.color}`, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: '1.5rem' }}>{d.icon}</span>
+              <p style={{ fontWeight: 800, fontSize: '1rem', color: d.color }}>{d.dept}</p>
+            </div>
+            <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text)', wordBreak: 'keep-all' }}>{d.owns}</p>
+            <div style={{ padding: '8px 12px', background: 'rgba(248,113,113,0.06)', borderRadius: 8, borderLeft: `3px solid var(--red)`, marginTop: 'auto' }}>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text2)', lineHeight: 1.5, wordBreak: 'keep-all' }}>⚠ {d.risk}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-// 2. 기준정보 관리의 원칙 — 누가, 언제, 어떻게
-function PrincipleSection() {
-  return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      
-      <div className="glass-card" style={{ padding: '24px', borderLeft: '4px solid var(--blue)' }}>
-        <p style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: 8 }}>기준정보는 '살아있는 데이터'입니다</p>
-        <p style={{ color: 'var(--text2)', fontSize: '0.9375rem', wordBreak: 'keep-all' }}>
-          시스템 오픈할 때 한 번 입력하고 끝나는 정적 데이터가 아닙니다. 현장의 레시피가 바뀌고 포장 규격이 변할 때마다 <strong>유기적으로 호흡하며 업데이트</strong>되어야 합니다.
-        </p>
-      </div>
-
-      <div className="glass-card" style={{ padding: '32px', background: 'var(--glass-light)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', height: '2px', background: 'var(--glass-border)', zIndex: 0 }}></div>
-          
-          <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--blue)', width: '28%', textAlign: 'center' }}>
-            <span style={{ fontSize: '2rem', display: 'block', marginBottom: 8 }}>📝</span>
-            <p className="caption" style={{ color: 'var(--blue)', marginBottom: 4 }}>현장 변화 발생</p>
-            <p style={{ fontSize: '0.9375rem', fontWeight: 700 }}>레시피, 공정, 규격의 변경</p>
-          </div>
-
-          <span style={{ position: 'relative', zIndex: 1, background: 'var(--bg)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.875rem', color: 'var(--text2)', border: '1px solid var(--glass-border)' }}>요청 & 승인</span>
-
-          <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--gold)', width: '28%', textAlign: 'center' }}>
-            <span style={{ fontSize: '2rem', display: 'block', marginBottom: 8 }}>💻</span>
-            <p className="caption" style={{ color: 'var(--gold)', marginBottom: 4 }}>기준정보 변경</p>
-            <p style={{ fontSize: '0.9375rem', fontWeight: 700 }}>권한자의 시스템 즉시 업데이트</p>
-          </div>
-
-          <span style={{ position: 'relative', zIndex: 1, background: 'var(--bg)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.875rem', color: 'var(--text2)', border: '1px solid var(--glass-border)' }}>동기화</span>
-
-          <div style={{ position: 'relative', zIndex: 1, background: 'var(--bg)', padding: '16px', borderRadius: '12px', border: '1px solid var(--teal)', width: '28%', textAlign: 'center' }}>
-            <span style={{ fontSize: '2rem', display: 'block', marginBottom: 8 }}>🔄</span>
-            <p className="caption" style={{ color: 'var(--teal)', marginBottom: 4 }}>전사 프로세스 반영</p>
-            <p style={{ fontSize: '0.9375rem', fontWeight: 700 }}>정확한 발주, 생산, 원가 집계</p>
-          </div>
-        </div>
-        <div style={{ marginTop: 24, textAlign: 'center', color: 'var(--text3)', fontSize: '0.875rem' }}>
-          * 임의 변경은 사고의 원인이 됩니다. 반드시 부서 간 합의된 <strong>표준 승인 프로세스</strong>를 준수해야 합니다.
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// 3. 하림의 실행습관: 일일관리
-function HabitSection() {
-  const HABITS = [
-    {
-      icon: '🧐',
-      title: '입력 전 1초의 사전 대비',
-      desc: '단위(g, kg, BOX)와 소수점 위치를 한 번 더 확인하세요. 이 1초의 선제적 관리가 월말 10억 원의 재무 사고를 막는 가장 강력한 일일관리입니다.',
-      color: 'var(--blue)'
-    },
-    {
-      icon: '⚡',
-      title: '미루지 않는 당일 반영',
-      desc: '"나중에 몰아서 입력해야지"는 일일관리의 적입니다. 현장의 변화와 실적은 사후 수습이 아닌, 발생 즉시 그날그날 시스템에 반영되어야 합니다.',
-      color: 'var(--warning)'
-    },
-    {
-      icon: '🤝',
-      title: '의심될 땐 선제적 공유',
-      desc: '데이터가 이상하거나 기준이 모호하다면 다음 날로 미루지 마세요. 즉시 유관부서와 공유하여 문제를 초기에 차단하는 것이 우리의 방식입니다.',
-      color: 'var(--teal)'
-    }
+/* ── 2. 일일관리의 힘 ── */
+function DailySection() {
+  const PILLARS = [
+    { icon: '🎯', title: '선제적 검증', subtitle: 'Prevention',           desc: '전달 전 수치·단위·조건을 한 번 더 확인합니다.', color: 'var(--blue)' },
+    { icon: '⚡', title: '당일 완결',   subtitle: 'Same-day Closure',      desc: '변화와 실적은 발생 당일, 그날 안에 기록합니다.', color: 'var(--warning)' },
+    { icon: '🤝', title: '즉시 소통',   subtitle: 'Immediate Escalation',  desc: '이상하면 혼자 판단하지 않고 즉시 확인합니다.',   color: 'var(--teal)' },
   ];
 
   return (
     <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div className="glass-card" style={{ padding: '20px', borderLeft: '4px solid var(--teal)' }}>
-         <p style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: 8 }}>"하림의 실행습관: 일일관리(Daily Management)"</p>
-         <p style={{ color: 'var(--text2)', fontSize: '0.9375rem', wordBreak: 'keep-all' }}>
-           거창한 시스템 혁신보다 중요한 것은, 미리미리 세부적으로 문제를 관리하고 사전에 대비하는 우리의 일일관리 습관입니다. 내가 꼼꼼하게 입력한 오늘의 데이터가 내일의 정확한 경영 지표가 됩니다.
-         </p>
+      <div className="glass-card" style={{ padding: '20px 24px', borderLeft: '4px solid var(--gold)' }}>
+        <p style={{ fontSize: '1.25rem', fontWeight: 800, wordBreak: 'keep-all' }}>
+          오늘의 정확한 데이터가 <span className="text-gold">내일의 올바른 의사결정</span>이 됩니다.
+        </p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-        {HABITS.map((habit, idx) => (
-          <div key={idx} className="glass-card pop-in" style={{ padding: '24px', background: 'var(--glass-light)', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <span style={{ fontSize: '2.5rem' }}>{habit.icon}</span>
-            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: habit.color, wordBreak: 'keep-all' }}>{habit.title}</p>
-            <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-              {habit.desc}
-            </p>
+        {PILLARS.map((p, idx) => (
+          <div key={idx} className="glass-card pop-in" style={{ padding: '28px 24px', background: 'var(--glass-light)', textAlign: 'center' }}>
+            <span style={{ fontSize: '2.5rem', display: 'block', marginBottom: 12 }}>{p.icon}</span>
+            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: p.color }}>{p.title}</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text3)', fontWeight: 600, marginTop: 2, marginBottom: 12 }}>{p.subtitle}</p>
+            <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>{p.desc}</p>
           </div>
         ))}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="glass-card" style={{ padding: '16px 20px', borderLeft: '3px solid var(--red)' }}>
+          <p style={{ fontWeight: 800, fontSize: '0.9375rem', color: 'var(--red)', marginBottom: 8 }}>일일관리 부재 시</p>
+          {['월말에 오류 발견 → 원인 추적 불가', '부서 간 수치 불일치 → 불신과 재작업', '소규모 오류 누적 → 수억 원 결산 차이'].map((t, i) => (
+            <p key={i} style={{ fontSize: '0.8125rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>✕ {t}</p>
+          ))}
+        </div>
+        <div className="glass-card" style={{ padding: '16px 20px', borderLeft: '3px solid var(--teal)' }}>
+          <p style={{ fontWeight: 800, fontSize: '0.9375rem', color: 'var(--teal)', marginBottom: 8 }}>일일관리 실행 시</p>
+          {['당일 이상 포착 → 즉시 원인 제거', '동일 수치로 의사결정 → 신뢰 기반 협업', '일 단위 정합성 → 결산이 확인 절차로'].map((t, i) => (
+            <p key={i} style={{ fontSize: '0.8125rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>✓ {t}</p>
+          ))}
+        </div>
+      </div>
+
+      <div className="glass-card" style={{ padding: '16px 24px', textAlign: 'center', background: 'rgba(201,168,76,0.05)', borderBottom: '3px solid var(--gold)' }}>
+        <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text)', wordBreak: 'keep-all' }}>
+          <span style={{ color: 'var(--blue)' }}>선제적 검증</span> + <span style={{ color: 'var(--warning)' }}>당일 완결</span> + <span style={{ color: 'var(--teal)' }}>즉시 소통</span> = <span className="text-gold" style={{ fontSize: '1.25rem', fontWeight: 900 }}>일일관리</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ── 3. 하나의 가치사슬 ── */
+function ChainSection() {
+  const CHAIN = [
+    { dept: '마케팅', color: 'var(--blue)',   icon: '🎯', does: '제품 컨셉·규격·목표가 확정',          gives: '영업에게 스펙을, 생산에게 목표 원가를',       ifWrong: '영업·생산·물류가 각각 다른 기준으로 진행' },
+    { dept: '영업',   color: 'var(--teal)',    icon: '💼', does: '수주 확보, 납기·단가·결제조건 협의',    gives: '생산에게 확정 수주를, 물류에게 출하 일정을',   ifWrong: '과잉 생산 또는 긴급 생산 반복, 비용 증가' },
+    { dept: '생산',   color: 'var(--warning)', icon: '🏭', does: '원료 투입부터 완제품까지 전 공정 실적 기록', gives: '구매에게 소요량을, 원가에게 투입·수율 데이터를', ifWrong: '원가 왜곡, 다음 생산의 자재 발주량 오류' },
+    { dept: '구매',   color: '#A78BFA',        icon: '🛒', does: '협력사 발주, 단가 협상, 입고 검수',     gives: '생산에게 입고 일정을, 재무에게 매입 채무를',    ifWrong: '예산 실적 왜곡, 리드타임 오류로 라인 정지' },
+    { dept: '품질',   color: 'var(--red)',      icon: '🔬', does: '입고·공정·출하 검사, 판정 기준 관리',   gives: '생산에게 합격 판정을, 물류에게 보관 조건을',    ifWrong: '부적합 온도 보관 → 전량 폐기, 소비기한 오류 → 리콜' },
+    { dept: '재무·원가', color: 'var(--gold)', icon: '💰', does: '전 부서 데이터 집계, 제품별 원가 산출',  gives: '경영진에게 손익 리포트를, 부서에게 실적 피드백을', ifWrong: '데이터 하나라도 틀리면 손익이 자동 왜곡' },
+  ];
+
+  return (
+    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+      <div className="glass-card" style={{ padding: '20px 24px', borderLeft: '4px solid var(--gold)' }}>
+        <p style={{ fontSize: '1.25rem', fontWeight: 800, wordBreak: 'keep-all' }}>
+          <span className="text-gold">내 데이터의 끝</span>이 동료 업무의 시작입니다.
+        </p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, flex: 1 }}>
+        {CHAIN.map((c, i) => (
+          <div key={i} className="glass-card pop-in" style={{ padding: '16px', borderTop: `3px solid ${c.color}`, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: '1.25rem' }}>{c.icon}</span>
+              <p style={{ fontWeight: 800, fontSize: '1rem', color: c.color }}>{c.dept}</p>
+            </div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text)', lineHeight: 1.5, wordBreak: 'keep-all', flex: 1 }}>{c.does}</p>
+            <div style={{ padding: '6px 10px', background: `${c.color}11`, borderRadius: 6 }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text2)', wordBreak: 'keep-all' }}><span style={{ fontWeight: 700, color: c.color }}>→</span> {c.gives}</p>
+            </div>
+            <div style={{ padding: '6px 10px', background: 'rgba(248,113,113,0.05)', borderRadius: 6 }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text2)', wordBreak: 'keep-all' }}><span style={{ fontWeight: 700, color: 'var(--red)' }}>⚠</span> {c.ifWrong}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="glass-card" style={{ padding: '16px 24px', textAlign: 'center', background: 'rgba(201,168,76,0.05)', borderBottom: '3px solid var(--gold)' }}>
+        <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+          경영 숫자의 정확도 = <span className="text-gold">가장 부정확한 부서의 수준</span>
+        </p>
       </div>
     </div>
   );

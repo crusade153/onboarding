@@ -48,7 +48,7 @@ export default function ProloguePage() {
     <div style={{ minHeight:'100vh', position:'relative' }}>
       <NavBar current="Prologue" step="00/04" />
 
-      {/* Canvas fills below nav - 뒤에 인원 이름이 예쁘게 보이도록 유지 */}
+      {/* Canvas fills below nav */}
       <div style={{ position:'absolute', inset:0, top:56 }}>
         <DotCanvas participants={participants} connected={connected} />
       </div>
@@ -70,17 +70,18 @@ export default function ProloguePage() {
                   
                   <div style={{ margin:'20px 0', borderLeft:'2px solid rgba(201,168,76,0.4)', paddingLeft:20 }}>
                     {[
-                      '마케팅에서 기획한 신제품이 영업의 수주로 이어지고,',
-                      '구매가 자재를 발주하면, 생산 현장이 기계를 돌립니다.',
-                      '물류가 트럭에 제품을 싣고 출발하면,',
-                      '재무가 최종적으로 우리가 번 돈을 계산하며 결승선을 통과합니다.'
+                      '마케팅이 기획한 신제품이 영업의 수주로 이어지고,',
+                      '구매가 자재를 확보하면, 생산 현장이 라인을 가동합니다.',
+                      '물류가 제품을 싣고 출발하면,',
+                      '재무가 수익을 정산하고 — 그 데이터가 다시 마케팅의 다음 기획으로 돌아옵니다.'
                     ].map((line, i) => (
                       <p key={i} style={{ fontSize:'1.0625rem', color:'var(--text2)', lineHeight:1.8 }}>{line}</p>
                     ))}
                   </div>
 
                   <p style={{ fontSize:'1.125rem', color:'var(--text)', fontWeight:600, lineHeight:1.7, marginTop:16 }}>
-                    우리는 각자의 부서에서 서로의 데이터를 믿고 이어달리는<br/>거대한 가치사슬(Value Chain)의 릴레이 경주를 하고 있습니다.
+                    우리는 각자의 자리에서 데이터라는 바통을 넘기며<br/>
+                    하나의 거대한 가치사슬(Value Chain)을 함께 돌리고 있습니다.
                   </p>
                 </div>
 
@@ -129,41 +130,37 @@ export default function ProloguePage() {
                 <div className="glass-card-lg" style={{ padding:'56px 64px', maxWidth: 820, margin: '0 auto' }}>
                   {/* 헤더 타이틀 영역 */}
                   <h1 className="display text-gold" style={{ marginBottom:12 }}>SYSTEM</h1>
-                  <p style={{ fontSize:'1.25rem', fontWeight:600, color:'var(--text)', marginBottom:8 }}>데이터라는 바통을 주고받는 릴레이 경주</p>
+                  <p style={{ fontSize:'1.25rem', fontWeight:600, color:'var(--text)', marginBottom:8 }}>지금, 우리의 가치사슬이 연결되었습니다</p>
                   <p style={{ fontSize:'1rem', color:'rgba(201,168,76,0.9)', fontWeight:700 }}>
-                    현재 {participants.length}명이 하나로 연결되었습니다
+                    현재 {participants.length}명이 하나의 흐름 위에 서 있습니다
                   </p>
                   
                   <hr className="divider" style={{ margin:'28px 0' }} />
                   
-                  {/* 실제 사례 텍스트 (글래스 테마를 유지하면서 가독성만 개선) */}
+                  {/* 기준정보 중요성 암시 */}
                   <div style={{ 
                     textAlign: 'left', 
-                    background: 'rgba(248,113,113,0.05)', 
                     padding: '24px 32px', 
                     borderRadius: '12px', 
-                    borderLeft: '3px solid var(--red)' 
                   }}>
-                    <p style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--red)', marginBottom: 12 }}>
-                      🚨 끊어진 사슬 하나가 불러온 6,000만 원의 나비효과
+                    <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.8, marginBottom: 16 }}>
+                      이 연결 안에서 여러분 한 사람 한 사람이 입력하는 기준정보 —<br/>
+                      품목코드, 단가, 납기일, BOM 한 줄 —<br/>
+                      그것이 다음 사람의 업무를 움직이는 <strong style={{ color: 'var(--gold)' }}>시작 버튼</strong>입니다.
                     </p>
-                    <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.7, marginBottom: 12 }}>
-                      영업의 성공적인 수출 수주, 그리고 단 하루 만에 완벽하게 생산된 <strong>라면 20만 식</strong>.<br/>
-                      하지만 시스템에 <strong>'수출용 날짜 표기(일부인) 기준정보'</strong>가 누락되어 모두 내수용으로 잘못 생산되었습니다.
-                    </p>
-                    <p style={{ fontSize: '1.0625rem', color: 'var(--text2)', lineHeight: 1.7 }}>
-                      이 데이터 빈칸 하나로 인해 현장은 20만 개의 포장지를 일일이 뜯어야 했고,<br/>
-                      <strong style={{ color: 'var(--red)' }}>결국 하루 가공비 약 6,000만 원이 허공으로 사라졌습니다.</strong>
+                    <p style={{ fontSize: '1.0625rem', color: 'var(--text2)', lineHeight: 1.8 }}>
+                      만약 그 데이터가 비어 있다면?<br/>
+                      다음 사람의 업무는 멈춥니다.<br/>
+                      그리고 그 멈춤은 생각보다 <strong style={{ color: 'var(--red)' }}>훨씬 큰 파장</strong>을 만들어냅니다.
                     </p>
                   </div>
 
                   <hr className="divider" style={{ margin:'28px 0' }} />
 
-                  {/* 결론 명언 영역 */}
-                  <p style={{ fontSize:'1.125rem', color:'var(--text)', fontWeight:600, lineHeight:1.7, fontStyle: 'italic' }}>
-                    &ldquo;나의 꼼꼼한 업무로 확정되는 <span style={{ color: 'var(--gold)' }}>기준정보 하나</span>는 단순한 데이터가 아닙니다.<br/>
-                    다음 부서가 안심하고 일할 수 있는 <span style={{ color: 'var(--gold)' }}>신뢰의 바통</span>이며,<br/>
-                    막대한 손실을 막아내는 가장 강력한 <span style={{ color: 'var(--red)' }}>첫 번째 방어선</span>입니다.&rdquo;
+                  {/* 다음 단계 유도 */}
+                  <p style={{ fontSize:'1.125rem', color:'var(--text2)', fontWeight:500, lineHeight:1.7, fontStyle: 'italic' }}>
+                    다음 단계에서, 데이터 한 칸이 비었을 때<br/>
+                    실제로 무슨 일이 벌어졌는지 함께 보겠습니다.
                   </p>
                 </div>
               )}
