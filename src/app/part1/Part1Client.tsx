@@ -11,9 +11,9 @@ const TABS: { key: Tab; label: string; sub: string }[] = [
   { key: 'intro',      label: '기준정보란?',     sub: '회사의 DNA' },
   { key: 'realcase',   label: '실제 사고',       sub: '6,000만 원 이상의 교훈' },
   { key: 'mistake',    label: '사소한 오입력',   sub: '발단: 무심코 한 타이핑' },
-  { key: 'butterfly',  label: '시스템 나비효과', sub: '위기: 현장 마비와 적자' }, // 물리+재무 통합
+  { key: 'butterfly',  label: '시스템 나비효과', sub: '위기: 현장 마비와 적자' }, 
   { key: 'shadow',     label: '그림자 노동',     sub: '반전: 우리의 진짜 현실' },
-  { key: 'lesson',     label: '공감 & 교훈',     sub: '결론: 우리의 약속' },
+  { key: 'lesson',     label: '공감 & 교훈',     sub: '결론: 시스템의 필요성' }, // 서브 텍스트 변경
 ];
 
 export default function Part1Client() {
@@ -201,7 +201,7 @@ function MistakeSection() {
   );
 }
 
-/* ── 4. 시스템 나비효과 (위기: 물리적 마비 + 재무적 손실 통합) ── */
+/* ── 4. 시스템 나비효과 (위기) ── */
 function ButterflySection() {
   const EFFECT_CARDS = [
     { icon: '🏭', title: '1,000배 발주 폭탄', cause: '건더기 2g → 2kg 오입력', physical: '시스템이 건더기스프를 무한 발주하여 현장 창고가 터져나가고 라인이 마비됩니다.', financial: '결국 소진하지 못한 자재 전량 폐기로 수억 원의 영업외비용이 발생합니다.' },
@@ -248,7 +248,7 @@ function ButterflySection() {
   );
 }
 
-/* ── 5. 그림자 노동 (반전: 시스템 대신 사람이 갈려 나가는 현실) ── */
+/* ── 5. 그림자 노동 (반전) ── */
 function ShadowWorkSection() {
   const SHADOW_CASES = [
     { dept: '품질팀 (QA)', title: '시한부 재고와 의미 없는 특근', error: "검사 합격 후 '품질 대기' 상태 해제 깜빡함", desc: '전산상 재고 부족으로 불필요한 특근을 돌려 새 제품을 만듭니다. 몇 달 뒤 잊혀진 실물 재고가 창고 구석에서 발견되지만, 소비기한이 임박해 전량 폐기됩니다.', color: '#4F8EF7' },
@@ -286,7 +286,7 @@ function ShadowWorkSection() {
   );
 }
 
-/* ── 6. 공감 & 교훈 (결론) ── */
+/* ── 6. 공감 & 교훈 (결론 및 시스템 예고) ── */
 function LessonSection() {
   const [qrUrl, setQrUrl] = useState('');
   const [totalUsers, setTotalUsers] = useState(0);
@@ -317,65 +317,80 @@ function LessonSection() {
 
   return (
     <div className="anim-up" style={{ display: 'flex', gap: 24, height: '100%' }}>
-      {/* 왼쪽: 통계 및 QR */}
-      <div style={{ width: '380px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="glass-card-lg" style={{ padding: '28px 24px', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>우리의 공감대</p>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: 20, wordBreak: 'keep-all', lineHeight: 1.4 }}>
-            업무 기준이 모호해서<br/>헷갈렸던 적이 있나요?
-          </h2>
-          
-          <div style={{ background: 'var(--bg)', padding: '16px', borderRadius: '16px', display: 'inline-block', margin: '0 auto 20px' }}>
-            <QRCode value={qrUrl} size={140} style={{ height: "auto", maxWidth: "100%", width: "100%" }} />
-          </div>
-          
-          <div style={{ background: 'var(--glass-hover)', borderRadius: '12px', padding: '16px' }}>
-            <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginBottom: 4 }}>
-              접속자 {totalUsers}명 중 응답자 {stats.total_responses}명
-            </p>
-            <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text)', wordBreak: 'keep-all' }}>
-              <span style={{ color: 'var(--gold)', fontSize: '1.5rem', fontWeight: 900 }}>{stats.yes_count}명</span>이 '예'라고 답했습니다 ({yesRatio}%)
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 오른쪽: 라이브 피드 및 결론 */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, overflow: 'hidden' }}>
-        
-        {/* 결론 메시지 */}
-        <div className="glass-card" style={{ padding: '20px 24px', borderLeft: '4px solid var(--gold)' }}>
-          <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-            우리를 괴롭힌 이 지긋지긋한 그림자 노동을 끝내기 위해, <br/>
-            <span className="text-gold">우리는 '정확한 기준정보'라는 약속을 다 같이 지켜야 합니다.</span>
-          </p>
-        </div>
-
-        {/* 댓글 피드 */}
-        <div className="glass-card-lg" style={{ flex: 1, padding: '24px', overflowY: 'auto', background: 'var(--glass-light)' }}>
-          <p className="caption" style={{ marginBottom: 16 }}>동료들의 실제 경험담 (실시간)</p>
-          
-          {stats.comments.length === 0 ? (
-            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text3)' }}>
-              스마트폰으로 사연을 남겨주세요...
+      
+      {/* 왼쪽: 실시간 공감 피드 (문제 인식) */}
+      <div style={{ width: '420px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="glass-card" style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+            <div>
+              <p className="caption" style={{ color: 'var(--gold)', marginBottom: 4 }}>우리의 공감대</p>
+              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)' }}>기준정보가 헷갈렸던 경험들</p>
             </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {stats.comments.map((c: any) => (
-                <div key={c.id} className="pop-in" style={{ background: 'var(--glass)', padding: '16px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <div style={{ background: '#fff', padding: '8px', borderRadius: '8px' }}>
+              <QRCode value={qrUrl} size={64} style={{ height: "auto", maxWidth: "100%", width: "100%" }} />
+            </div>
+          </div>
+
+          {/* 댓글 피드 영역 */}
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12, paddingRight: 4 }}>
+            {stats.comments.length === 0 ? (
+              <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text3)', textAlign: 'center', fontSize: '0.9375rem', lineHeight: 1.5 }}>
+                QR코드를 스캔하여<br/>업무 중 헷갈렸던 경험을 남겨주세요
+              </div>
+            ) : (
+              stats.comments.map((c: any) => (
+                <div key={c.id} className="pop-in" style={{ background: 'var(--glass-light)', padding: '16px', borderRadius: '12px', borderLeft: '3px solid var(--gold)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--gold)' }}>{c.department}</span>
-                    <span style={{ fontSize: '0.8125rem', color: 'var(--text3)' }}>{new Date(c.created_at).toLocaleTimeString('ko-KR')}</span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--gold)' }}>{c.department}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text3)' }}>{new Date(c.created_at).toLocaleTimeString('ko-KR', {hour: '2-digit', minute:'2-digit'})}</span>
                   </div>
-                  <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.5, wordBreak: 'keep-all' }}>
-                    "{c.comment}"
-                  </p>
+                  <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.5, wordBreak: 'keep-all' }}>"{c.comment}"</p>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
+          
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--glass-border)', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text2)' }}>
+              참석자 중 <strong style={{ color: 'var(--gold)', fontSize: '1.0625rem' }}>{yesRatio}%</strong>가 기준정보로 혼란을 겪었습니다.
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* 오른쪽: 시스템 솔루션으로의 브릿지 (예고편) */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, overflow: 'hidden' }}>
+        <div className="glass-card" style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', borderLeft: '4px solid var(--blue)' }}>
+          <p className="caption" style={{ color: 'var(--blue)', marginBottom: 12 }}>결론: 개인의 잘못이 아닙니다</p>
+          <p style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text)', marginBottom: 24, wordBreak: 'keep-all', lineHeight: 1.4 }}>
+            "조심하겠습니다" 라는 다짐으로는<br/>
+            결코 나비효과를 막을 수 없습니다.
+          </p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div className="pop-in" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', animationDelay: '0.1s' }}>
+              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--warning)', marginBottom: 8 }}>❌ 의지와 엑셀의 한계</p>
+              <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
+                화면에 올라온 수많은 고민들처럼, 파편화된 환경에서 담당자 개인이 수만 개의 기준정보를 완벽하게 외우고 입력하는 것은 물리적으로 불가능합니다.
+              </p>
+            </div>
+            
+            <div className="pop-in" style={{ padding: '20px', background: 'var(--blue-dim)', border: '1px solid var(--blue)', borderRadius: '12px', animationDelay: '0.3s' }}>
+              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>✅ 원천 차단하는 통합 시스템</p>
+              <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
+                지긋지긋한 그림자 노동을 끝내기 위해, 회사는 개인의 의지가 아닌 <strong>'시스템'</strong>으로 에러를 차단하는 <strong>SSOT(단일 진실 공급원) 환경</strong>을 구축했습니다.
+              </p>
+            </div>
+          </div>
+
+          <div className="pop-in" style={{ marginTop: 32, textAlign: 'center', animationDelay: '0.6s' }}>
+            <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--gold)', letterSpacing: '-0.5px' }}>
+              자, 이제 다음 장(Part 2)에서 우리의 일하는 방식을 바꿀<br/>새로운 무기들을 직접 확인해 보시죠.
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
