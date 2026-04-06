@@ -3,38 +3,47 @@
 
 import { useState, useEffect } from 'react';
 
-const DEPARTMENTS = [
-  '마케팅', '영업', '생산', '구매', '품질',
-  '물류', '원가기획', '경영기획', '연구개발', '기타',
-];
+interface Participant {
+  id: number;
+  name: string;
+  department: string;
+}
 
 export default function AutomationPage() {
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [selectedPid, setSelectedPid] = useState<number | ''>('');
   const [wishText, setWishText] = useState('');
-  const [participantId, setParticipantId] = useState<number | null>(null);
-  const [department, setDepartment] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // 전체 참여자 목록 불러오기
+    fetch('/api/participants')
+      .then((r) => r.json())
+      .then((data) => setParticipants(data));
+
+    // join에서 등록한 이력이 있으면 자동 선택
     const saved = localStorage.getItem('systema-participant');
     if (saved) {
       const p = JSON.parse(saved);
-      setParticipantId(p.id);
-      setDepartment(p.department ?? '');
+      setSelectedPid(p.id);
     }
   }, []);
 
+  // 선택된 참여자 정보
+  const selectedParticipant = participants.find((p) => p.id === Number(selectedPid));
+
   const handleSubmit = async () => {
-    if (!wishText.trim()) return;
+    if (!selectedPid || !wishText.trim()) return;
     setLoading(true);
     try {
       await fetch('/api/automation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          participant_id: participantId,
+          participant_id: Number(selectedPid),
           wish_text: wishText,
-          department,
+          department: selectedParticipant?.department ?? '',
         }),
       });
       setSubmitted(true);
@@ -45,6 +54,7 @@ export default function AutomationPage() {
     }
   };
 
+  // ── 제출 완료 화면 ──
   if (submitted) {
     return (
       <div style={{
@@ -57,27 +67,48 @@ export default function AutomationPage() {
         padding: 24,
         textAlign: 'center',
       }}>
-        <div style={{ fontSize: '3.5rem', marginBottom: 20 }}>🚀</div>
-        <h1 style={{
-          fontSize: '1.5rem',
-          fontWeight: 800,
-          color: 'var(--text)',
-          marginBottom: 12,
+        <div style={{
+          width: '100%',
+          maxWidth: 420,
+          background: 'var(--glass)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: 24,
+          padding: '36px 28px',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
         }}>
-          소중한 의견 감사합니다!
-        </h1>
-        <p style={{
-          color: 'var(--text2)',
-          fontSize: '1rem',
-          lineHeight: 1.7,
-          wordBreak: 'keep-all',
-        }}>
-          앞쪽 강연 화면에서<br />여러분의 고민이 실시간으로 공유됩니다.
-        </p>
+          <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>🚀</div>
+          <p style={{
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            color: 'var(--gold)',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            marginBottom: 8,
+          }}>
+            Part 3 · 작성 완료
+          </p>
+          <h1 style={{
+            fontSize: '1.5rem',
+            fontWeight: 800,
+            color: 'var(--text)',
+            marginBottom: 12,
+          }}>
+            소중한 의견 감사합니다!
+          </h1>
+          <p style={{
+            color: 'var(--text2)',
+            fontSize: '1rem',
+            lineHeight: 1.7,
+            wordBreak: 'keep-all',
+          }}>
+            앞쪽 강연 화면에서<br />여러분의 고민이 실시간으로 공유됩니다.
+          </p>
+        </div>
       </div>
     );
   }
 
+  // ── 입력 화면 ──
   return (
     <div style={{
       minHeight: '100vh',
@@ -115,7 +146,7 @@ export default function AutomationPage() {
           wordBreak: 'keep-all',
           lineHeight: 1.4,
         }}>
-          어떤 업무를 자동화하고 싶으신가요?
+          어떤 업무를<br />자동화하고 싶으신가요?
         </h1>
         <p style={{
           color: 'var(--text2)',
@@ -127,59 +158,7 @@ export default function AutomationPage() {
           반복적이거나 오류가 잦은 업무,<br />엑셀에 묻혀있는 고민을 남겨주세요.
         </p>
 
-        {/* 부서 선택 — join에서 이미 등록했으면 자동 채워짐, 없으면 선택 */}
-        {!participantId && (
-          <div style={{ marginBottom: 16 }}>
-            <label style={{
-              display: 'block',
-              fontSize: '0.8125rem',
-              fontWeight: 700,
-              color: 'var(--text2)',
-              marginBottom: 6,
-            }}>
-              부서 (선택)
-            </label>
-            <select
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                borderRadius: 12,
-                padding: '11px 14px',
-                color: 'var(--text)',
-                fontSize: '0.9375rem',
-                outline: 'none',
-              }}
-            >
-              <option value="">선택 안함</option>
-              {DEPARTMENTS.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {/* 부서 뱃지 (join 등록자는 부서 표시) */}
-        {participantId && department && (
-          <div style={{ marginBottom: 16 }}>
-            <span style={{
-              display: 'inline-block',
-              fontSize: '0.8125rem',
-              fontWeight: 700,
-              color: 'var(--gold)',
-              background: 'rgba(201,168,76,0.12)',
-              border: '1px solid rgba(201,168,76,0.3)',
-              borderRadius: 999,
-              padding: '4px 14px',
-            }}>
-              {department}
-            </span>
-          </div>
-        )}
-
-        {/* 텍스트 입력 */}
+        {/* Q1. 본인 선택 */}
         <div style={{ marginBottom: 20 }}>
           <label style={{
             display: 'block',
@@ -188,7 +167,65 @@ export default function AutomationPage() {
             color: 'var(--text2)',
             marginBottom: 6,
           }}>
-            자동화하고 싶은 업무 *
+            1. 본인을 선택해주세요
+          </label>
+          <select
+            value={selectedPid}
+            onChange={(e) => setSelectedPid(Number(e.target.value))}
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.05)',
+              border: `1px solid ${selectedPid ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.12)'}`,
+              borderRadius: 12,
+              padding: '12px 14px',
+              color: selectedPid ? 'var(--text)' : 'var(--text3)',
+              fontSize: '0.9375rem',
+              outline: 'none',
+              transition: 'border-color 0.2s',
+              appearance: 'none',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394A3B8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right 14px center',
+              paddingRight: 36,
+            }}
+          >
+            <option value="">소속과 이름을 선택하세요</option>
+            {participants.map((p) => (
+              <option key={p.id} value={p.id}>
+                [{p.department}] {p.name}
+              </option>
+            ))}
+          </select>
+
+          {/* 선택된 참여자 부서 뱃지 */}
+          {selectedParticipant && (
+            <div style={{ marginTop: 8 }}>
+              <span style={{
+                display: 'inline-block',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: 'var(--gold)',
+                background: 'rgba(201,168,76,0.12)',
+                border: '1px solid rgba(201,168,76,0.25)',
+                borderRadius: 999,
+                padding: '3px 12px',
+              }}>
+                {selectedParticipant.department}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Q2. 자동화 희망 업무 */}
+        <div style={{ marginBottom: 20 }}>
+          <label style={{
+            display: 'block',
+            fontSize: '0.8125rem',
+            fontWeight: 700,
+            color: 'var(--text2)',
+            marginBottom: 6,
+          }}>
+            2. 자동화하고 싶은 업무 *
           </label>
           <textarea
             value={wishText}
@@ -222,19 +259,19 @@ export default function AutomationPage() {
         {/* 제출 버튼 */}
         <button
           onClick={handleSubmit}
-          disabled={loading || !wishText.trim()}
+          disabled={loading || !selectedPid || !wishText.trim()}
           style={{
             width: '100%',
             padding: '14px',
             borderRadius: 12,
             border: 'none',
-            background: wishText.trim()
+            background: (selectedPid && wishText.trim())
               ? 'linear-gradient(135deg, var(--gold), var(--gold-light))'
               : 'rgba(255,255,255,0.08)',
-            color: wishText.trim() ? '#0B0E1A' : 'var(--text3)',
+            color: (selectedPid && wishText.trim()) ? '#0B0E1A' : 'var(--text3)',
             fontWeight: 700,
             fontSize: '1rem',
-            cursor: wishText.trim() ? 'pointer' : 'not-allowed',
+            cursor: (selectedPid && wishText.trim()) ? 'pointer' : 'not-allowed',
             transition: 'all 0.2s',
           }}
         >
