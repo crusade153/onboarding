@@ -17,13 +17,14 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <ThemeProvider>
-          {/* 🌟 보안 접속 래퍼 추가: 인증되지 않으면 이 안의 내용은 랜더링되지 않음 */}
+          {/* 보안 접속 래퍼 */}
           <PinAuth>
+            {/* 🌟 핵심 수정: 너무 좁았던 1080px을 가장 쾌적한 1360px로 변경, 좌우 패딩을 주어 유연하게 대응 */}
             <div style={{ 
-              maxWidth: '1080px', 
+              maxWidth: '1360px', 
               width: '100%', 
               margin: '0 auto', 
-              padding: '0 24px', 
+              padding: '0 40px', /* 브라우저 창을 줄였을 때의 최소 여백 확보 */
               minHeight: '100vh',
               display: 'flex',
               flexDirection: 'column'

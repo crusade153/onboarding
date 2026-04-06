@@ -68,17 +68,17 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative', zIndex: 1 }}>
-      {/* Container 너비 축소 (1200 -> 1080) 및 위아래 여백 다이어트 */}
-      <div className="anim-up" style={{ maxWidth: 1080, margin: '0 auto', padding: '40px 32px 60px' }}>
+      <div className="anim-up" style={{ width: '100%', padding: '32px 0 80px' }}>
         
         {/* Theme Toggle Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
+          {/* globals.css에서 border:none 처리됨 */}
           <button 
             onClick={toggleTheme} 
             className="glass-card" 
             style={{ 
               display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              width: '40px', height: '40px', borderRadius: '50%', fontSize: '1.125rem',
+              width: '44px', height: '44px', borderRadius: '50%', fontSize: '1.25rem',
               cursor: 'pointer'
             }}
             aria-label="테마 전환"
@@ -87,20 +87,20 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Header (여백 대폭 축소) */}
-        <div style={{ marginBottom: 40 }}>
+        {/* Header */}
+        <div style={{ marginBottom: 56 }}>
           <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>하림산업 원가TFT 교육 플랫폼</p>
-          <h1 className="display text-gold" style={{ marginBottom: 12, fontSize: 'clamp(2.5rem, 4vw, 3.5rem)' }}>시스템으로 일하는 조직</h1>
-          <p style={{ fontSize: '1.125rem', color: 'var(--text2)', maxWidth: 650, lineHeight: 1.5, letterSpacing: '-0.01em', fontWeight: 500 }}>
+          <h1 className="display text-gold" style={{ marginBottom: 16 }}>시스템으로 일하는 조직</h1>
+          <p style={{ fontSize: '1.25rem', color: 'var(--text2)', maxWidth: 700, lineHeight: 1.6, letterSpacing: '-0.01em', fontWeight: 500 }}>
             데이터로 연결되는 우리의 업무: 신규 입사자 온보딩 교육
           </p>
         </div>
 
-        {/* 우측 패널 너비 축소 및 간격 조절 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 40, alignItems: 'start' }}>
+        {/* 그리드 폭 확장 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 56, alignItems: 'start' }}>
 
           {/* Interactive Accordion Slides */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <p className="caption" style={{ marginBottom: 4, paddingLeft: 8 }}>교육 커리큘럼</p>
             
             {SLIDES.map((s, idx) => {
@@ -110,52 +110,60 @@ export default function Home() {
               return (
                 <div key={s.href} className="glass-card" style={{ 
                   overflow: 'hidden', 
-                  borderColor: isActive ? `${s.color}50` : 'var(--glass-border)',
+                  /* 🌟 핵심 수정: 활성화 시 테두리색 변경 로직 제거 (Borderless 유지) */
+                  /* border: none 처리는 globals.css의 .glass-card에서 전역 적용됨 */
+                  
+                  /* 활성화 시 배경색만 미묘하게 다르게 하여 구분 */
                   background: isActive ? 'var(--glass-hover)' : 'var(--glass)'
                 }}>
-                  {/* Accordion Header (컴팩트하게) */}
+                  {/* Accordion Header */}
                   <div 
                     onClick={() => toggleAccordion(idx)}
                     style={{ 
-                      padding: '16px 24px', 
-                      display: 'flex', alignItems: 'center', gap: 20, cursor: 'pointer' 
+                      padding: '20px 28px', 
+                      display: 'flex', alignItems: 'center', gap: 24, cursor: 'pointer' 
                     }}
                   >
-                    <span style={{ fontFamily: 'monospace', fontSize: '1.5rem', fontWeight: 900, color: s.color, width: 40, flexShrink: 0, opacity: isActive ? 1 : 0.6, transition: 'opacity 0.3s' }}>
+                    <span style={{ fontFamily: 'monospace', fontSize: '1.625rem', fontWeight: 900, color: s.color, width: 44, flexShrink: 0, opacity: isActive ? 1 : 0.6, transition: 'opacity 0.3s' }}>
                       {s.step}
                     </span>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--text)', letterSpacing: '-0.01em', marginBottom: 2 }}>{s.label}</p>
-                      <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', fontWeight: 500 }}>{s.desc}</p>
+                      <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', letterSpacing: '-0.01em', marginBottom: 4 }}>{s.label}</p>
+                      <p style={{ fontSize: '1rem', color: 'var(--text2)', fontWeight: 500 }}>{s.desc}</p>
                     </div>
+                    {/* 화살표 아이콘 배경도 선 제거 */}
                     <div style={{ 
-                      width: 32, height: 32, borderRadius: '50%', background: 'var(--glass-light)', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)',
+                      width: 36, height: 36, borderRadius: '50%', background: 'var(--glass-light)', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      /* border 제거 */
+                      border: 'none',
                       transform: isActive ? 'rotate(180deg)' : 'rotate(0deg)',
                       transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)', color: 'var(--text)',
-                      fontSize: '1rem'
+                      fontSize: '1.1rem'
                     }}>
                       ↓
                     </div>
                   </div>
 
-                  {/* Accordion Body (컴팩트하게) */}
+                  {/* Accordion Body */}
                   <div style={{ 
-                    maxHeight: isActive ? '400px' : '0px', 
+                    maxHeight: isActive ? '450px' : '0px', 
                     opacity: isActive ? 1 : 0,
                     transition: 'max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease',
-                    borderTop: isActive ? '1px solid var(--glass-light)' : 'none'
+                    /* 구분선 제거 */
+                    borderTop: 'none'
                   }}>
-                    <div style={{ padding: '20px 24px', display: 'flex', gap: '24px', alignItems: 'stretch' }}>
+                    <div style={{ padding: '28px', display: 'flex', gap: '32px', alignItems: 'stretch' }}>
                       
-                      {/* 이미지 영역 크기 축소 (180x120) */}
+                      {/* 이미지 영역 재조정 (선 제거) */}
                       <div style={{ 
                         flexShrink: 0,
-                        width: '180px', 
-                        height: '120px', 
-                        borderRadius: '10px', 
+                        width: '220px', 
+                        height: '140px', 
+                        borderRadius: '12px', 
                         background: 'var(--glass-light)', 
-                        border: '1px solid var(--glass-border)', 
+                        /* border 제거 */
+                        border: 'none', 
                         overflow: 'hidden', position: 'relative',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)'
@@ -166,35 +174,35 @@ export default function Home() {
                             alt={`${s.label} 커버 이미지`} 
                             fill 
                             style={{ objectFit: 'cover' }}
-                            sizes="180px"
+                            sizes="220px"
                             onError={() => handleImageError(idx)}
                           />
                         ) : (
-                          <span style={{ color: 'var(--text3)', fontSize: '0.75rem', fontWeight: 600 }}>
+                          <span style={{ color: 'var(--text3)', fontSize: '0.875rem', fontWeight: 600 }}>
                             이미지 에셋 필요
                           </span>
                         )}
                       </div>
 
-                      {/* 텍스트 및 버튼 영역 다이어트 */}
+                      {/* 텍스트 및 버튼 영역 */}
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                        <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all', marginBottom: 16 }}>
+                        <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.65, wordBreak: 'keep-all', marginBottom: 20 }}>
                           {s.message}
                         </p>
                         
                         <div>
                           <Link href={s.href} style={{ textDecoration: 'none' }}>
                             <button className="btn" style={{
-                              padding: '10px 24px',
-                              fontSize: '0.875rem',
+                              padding: '12px 28px',
+                              fontSize: '0.9375rem',
                               background: `linear-gradient(135deg, ${s.color}, ${s.color}dd)`,
                               color: '#fff',
-                              boxShadow: `0 4px 12px ${s.color}40`,
+                              boxShadow: `0 4px 14px ${s.color}40`,
                             }}
-                            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 6px 20px ${s.color}60`; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 4px 12px ${s.color}40`; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 8px 24px ${s.color}60`; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 4px 14px ${s.color}40`; }}
                             >
-                              강연 입장하기 <span style={{ fontSize: '1.1rem', marginLeft: 4 }}>→</span>
+                              강연 입장하기 <span style={{ fontSize: '1.2rem', marginLeft: 4 }}>→</span>
                             </button>
                           </Link>
                         </div>
@@ -206,20 +214,20 @@ export default function Home() {
               );
             })}
             
-            {/* 하단 메시지 영역 축소 */}
-            <div style={{ textAlign: 'center', marginTop: '32px', paddingBottom: '16px' }}>
-              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginBottom: '8px' }}>
+            {/* 하단 메시지 영역 */}
+            <div style={{ textAlign: 'center', marginTop: '48px', paddingBottom: '24px' }}>
+              <p style={{ fontSize: '1rem', color: 'var(--text2)', marginBottom: '8px' }}>
                 기준이 무너지면 시스템이 무너집니다.
               </p>
-              <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text)' }}>
+              <p style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>
                 시스템은 단순히 주어지는 것이 아닙니다. 우리가 <span style={{ color: 'var(--gold)' }}>함께 세운 약속</span>입니다.
               </p>
             </div>
 
           </div>
 
-          {/* 우측 메뉴 패널 (여백 축소) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* 우측 메뉴 패널 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <p className="caption" style={{ marginBottom: 4, paddingLeft: 8 }}>운영 및 도구</p>
 
             {[
@@ -228,29 +236,30 @@ export default function Home() {
               { href: '/admin', label: 'Admin 패널', desc: 'DB·현황 관리', color: 'var(--gold)' },
             ].map((u) => (
               <Link key={u.href} href={u.href} style={{ textDecoration: 'none' }}>
-                <div className="glass-card" style={{ padding: '20px', cursor: 'pointer' }}>
+                <div className="glass-card" style={{ padding: '24px', cursor: 'pointer' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)' }}>{u.label}</p>
-                    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--glass-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: u.color, fontSize: '1rem' }}>
+                    <p style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--text)' }}>{u.label}</p>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--glass-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: u.color, fontSize: '1.1rem', border: 'none' }}>
                       ↗
                     </div>
                   </div>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text2)', marginTop: 6 }}>{u.desc}</p>
+                  <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginTop: 8 }}>{u.desc}</p>
                 </div>
               </Link>
             ))}
 
-            <div className="glass-card" style={{ padding: '20px', marginTop: 12 }}>
-              <p className="caption" style={{ marginBottom: 12 }}>교육 개요</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="glass-card" style={{ padding: '28px', marginTop: 16 }}>
+              <p className="caption" style={{ marginBottom: 16 }}>교육 개요</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                   { k: '주관', v: '원가TFT' },
                   { k: '대상', v: '전 부서 임직원' },
                   { k: '구성', v: 'Prologue + 3 Parts' },
                 ].map(({ k, v }) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--glass-border)', paddingBottom: 8 }}>
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text3)', fontWeight: 700 }}>{k}</span>
-                    <span style={{ fontSize: '0.875rem', color: 'var(--text)', fontWeight: 600, textAlign: 'right' }}>{v}</span>
+                  /* 구분선 제거 및 배경색 미묘한 차이로 항목 구분 */
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', background: 'var(--glass-light)', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '0.9375rem', color: 'var(--text3)', fontWeight: 700 }}>{k}</span>
+                    <span style={{ fontSize: '0.9375rem', color: 'var(--text)', fontWeight: 600, textAlign: 'right' }}>{v}</span>
                   </div>
                 ))}
               </div>

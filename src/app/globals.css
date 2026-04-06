@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════
-   SYSTEMA — Enterprise Glass Design System
+   SYSTEMA — Enterprise Glass Design System (Borderless Mode)
    ═══════════════════════════════════════════════ */
 
 :root {
@@ -10,11 +10,13 @@
   --bg2:         #0C1022;
   --bg3:         #111528;
 
-  /* Glass surfaces - 투명도와 블러 최적화 */
-  --glass:       rgba(255, 255, 255, 0.04);
-  --glass-hover: rgba(255, 255, 255, 0.08);
-  --glass-border:rgba(255, 255, 255, 0.12);
-  --glass-light: rgba(255, 255, 255, 0.03);
+  /* Glass surfaces - 투명도 조정 */
+  --glass:       rgba(255, 255, 255, 0.03); /* 선이 없으므로 배경을 약간 더 투명하게 */
+  --glass-hover: rgba(255, 255, 255, 0.07);
+  
+  /* 🌟 테두리 선 제거를 위해 투명하게 처리 */
+  --glass-border: transparent; 
+  --glass-light: rgba(255, 255, 255, 0.02);
 
   /* Brand */
   --gold:        #C9A84C;
@@ -35,7 +37,7 @@
   /* Semantic */
   --success:     #2DD4BF;
   --warning:     #F59E0B;
-  --danger:      #F87171;
+  --danger:     #F87171;
 }
 
 /* ── Light Mode Overrides ── */
@@ -48,24 +50,23 @@
   /* Glass surfaces adapted for light mode */
   --glass:       rgba(255, 255, 255, 0.5);
   --glass-hover: rgba(255, 255, 255, 0.8);
-  --glass-border:rgba(0, 0, 0, 0.06);
+  
+  /* 🌟 라이트모드도 선 제거 */
+  --glass-border: transparent;
   --glass-light: rgba(0, 0, 0, 0.02);
 
-  /* Adjusted brand colors for readability */
+  /* Adjusted brand colors */
   --gold:        #A18030;
   --gold-light:  #C9A84C;
   --gold-dim:    rgba(161, 128, 48, 0.15);
-  
   --blue:        #2563EB;
   --blue-dim:    rgba(37, 99, 235, 0.12);
-  
   --teal:        #0D9488;
   --teal-dim:    rgba(13, 148, 136, 0.12);
-  
   --red:         #DC2626;
   --red-dim:     rgba(220, 38, 38, 0.12);
 
-  /* Dark text for light mode */
+  /* Dark text */
   --text:        #0F172A;
   --text2:       #475569;
   --text3:       #94A3B8;
@@ -85,7 +86,7 @@ html, body {
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
 
 /* ── Background mesh ── */
@@ -103,55 +104,35 @@ body::before {
   transition: background 0.5s ease;
 }
 
-/* ── Glass cards (고도화된 효과) ── */
+/* ── Glass cards (테두리 제거 및 그림자 강화) ── */
 .glass-card {
   background: var(--glass);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--glass-border);
+  
+  /* 🌟 테두리 선 제거 */
+  border: none; 
+  
   border-radius: 20px;
   position: relative;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  
+  /* 🌟 선이 없는 대신 입체감을 위해 그림자를 조금 더 선명하게 조정 */
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.25);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .light .glass-card {
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  box-shadow: 0 10px 40px 0 rgba(31, 38, 135, 0.06);
 }
 
 .glass-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.35);
+  /* hover 시에도 border 관련 스타일 제거 */
 }
 
 .light .glass-card:hover {
-  box-shadow: 0 16px 48px 0 rgba(31, 38, 135, 0.1);
-  border-color: rgba(0, 0, 0, 0.15);
-}
-
-.glass-card-lg {
-  background: var(--glass);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid var(--glass-border);
-  border-radius: 28px;
-  position: relative;
-  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
-  transition: all 0.4s ease;
-}
-
-/* Top shimmer line */
-.glass-card::before, .glass-card-lg::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 20px; right: 20px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  border-radius: 1px;
-}
-.light .glass-card::before, .light .glass-card-lg::before {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  box-shadow: 0 20px 60px 0 rgba(31, 38, 135, 0.12);
 }
 
 /* ── Typography ── */
@@ -176,8 +157,8 @@ body::before {
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 
-/* ── Badge ── */
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid; backdrop-filter: blur(8px); }
+/* ── Badge (선 유지, 뱃지는 포인트이므로) ── */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); }
 
 /* ── Buttons ── */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 32px; border-radius: 12px; font-size: 0.9375rem; font-weight: 700; letter-spacing: -0.01em; border: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1); }
@@ -191,8 +172,9 @@ body::before {
 .light .btn-gold { color: #FFFFFF; }
 .btn-gold:hover { box-shadow: 0 8px 24px var(--gold-dim); transform: translateY(-2px); }
 
-.btn-ghost { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text2); backdrop-filter: blur(12px); }
-.btn-ghost:hover { background: var(--glass-hover); color: var(--text); border-color: rgba(255,255,255,0.2); }
+/* Ghost 버튼도 테두리 제거 */
+.btn-ghost { background: var(--glass); color: var(--text2); backdrop-filter: blur(12px); border: none; }
+.btn-ghost:hover { background: var(--glass-hover); color: var(--text); }
 
 /* ── Animations ── */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
