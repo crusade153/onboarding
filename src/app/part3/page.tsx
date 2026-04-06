@@ -1,9 +1,10 @@
 // src/app/part3/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavBar from '@/components/NavBar';
 import Link from 'next/link';
+import QRCode from 'react-qr-code';
 
 const ALL_DASHBOARDS = [
   {
@@ -88,6 +89,181 @@ const ALL_DASHBOARDS = [
   }
 ];
 
+// ── 자동화 위시리스트 실시간 피드 컴포넌트 ──
+function AutomationWishFeed() {
+  const [wishes, setWishes] = useState<any[]>([]);
+  const [qrUrl, setQrUrl] = useState('');
+
+  useEffect(() => {
+    setQrUrl(`${window.location.origin}/automation`);
+
+    const load = () =>
+      fetch('/api/automation')
+        .then((r) => r.json())
+        .then((d) => Array.isArray(d) && setWishes(d))
+        .catch(() => {});
+
+    load();
+    const t = setInterval(load, 3000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div
+      className="anim-up"
+      style={{
+        margin: '20px 0',
+        padding: '24px 28px',
+        background: 'var(--glass)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: 20,
+        border: '1px solid rgba(201,168,76,0.25)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+      }}
+    >
+      <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start' }}>
+
+        {/* QR 영역 */}
+        <div style={{ flexShrink: 0, textAlign: 'center' }}>
+          <p style={{
+            fontSize: '0.7rem',
+            fontWeight: 700,
+            color: 'var(--gold)',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            marginBottom: 10,
+          }}>
+            지금 참여
+          </p>
+          {qrUrl && (
+            <div style={{
+              background: '#fff',
+              padding: 10,
+              borderRadius: 12,
+              display: 'inline-block',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+            }}>
+              <QRCode value={qrUrl} size={96} />
+            </div>
+          )}
+          <p style={{
+            fontSize: '0.7rem',
+            color: 'var(--text3)',
+            marginTop: 8,
+            lineHeight: 1.5,
+          }}>
+            스캔 후<br />고민을 남겨주세요
+          </p>
+        </div>
+
+        {/* 피드 영역 */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* 헤더 */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 14,
+          }}>
+            <div>
+              <p style={{
+                fontWeight: 800,
+                fontSize: '1.0625rem',
+                color: 'var(--text)',
+                marginBottom: 3,
+              }}>
+                여러분의 업무 자동화 위시리스트
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text2)' }}>
+                어떤 업무를 함께 자동화할 수 있을지, 고민을 나눠주세요.
+              </p>
+            </div>
+            {wishes.length > 0 && (
+              <span style={{
+                fontSize: '0.8125rem',
+                fontWeight: 700,
+                color: 'var(--gold)',
+                background: 'rgba(201,168,76,0.1)',
+                border: '1px solid rgba(201,168,76,0.2)',
+                padding: '4px 14px',
+                borderRadius: 999,
+                flexShrink: 0,
+              }}>
+                {wishes.length}건
+              </span>
+            )}
+          </div>
+
+          {/* 카드 목록 */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            maxHeight: 180,
+            overflowY: 'auto',
+            paddingRight: 4,
+          }}>
+            {wishes.length === 0 ? (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 80,
+                color: 'var(--text3)',
+                fontSize: '0.9375rem',
+                textAlign: 'center',
+                lineHeight: 1.6,
+              }}>
+                QR을 스캔해 첫 번째 의견을 남겨보세요! 🙌
+              </div>
+            ) : (
+              wishes.map((w) => (
+                <div
+                  key={w.id}
+                  style={{
+                    display: 'flex',
+                    gap: 10,
+                    alignItems: 'flex-start',
+                    padding: '10px 14px',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: 10,
+                    borderLeft: '3px solid var(--gold)',
+                    animation: 'fadeUp 0.4s ease both',
+                  }}
+                >
+                  {w.department && (
+                    <span style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      color: 'var(--gold)',
+                      background: 'rgba(201,168,76,0.12)',
+                      padding: '2px 8px',
+                      borderRadius: 999,
+                      flexShrink: 0,
+                      marginTop: 1,
+                    }}>
+                      {w.department}
+                    </span>
+                  )}
+                  <p style={{
+                    fontSize: '0.9375rem',
+                    color: 'var(--text)',
+                    lineHeight: 1.5,
+                    wordBreak: 'keep-all',
+                  }}>
+                    {w.wish_text}
+                  </p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── 메인 페이지 ──
 export default function Part3Page() {
   const [selectedDashboard, setSelectedDashboard] = useState<any | null>(null);
 
@@ -108,7 +284,7 @@ export default function Part3Page() {
         </div>
       </div>
 
-      {/* 10개 리스트 */}
+      {/* 10개 리스트 + 위시리스트 + 에필로그 브릿지 */}
       <div style={{ flex: 1, overflowY: 'auto' }}>
         <div className="slide-container" style={{ paddingTop: 16, paddingBottom: 24 }}>
           <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -117,13 +293,19 @@ export default function Part3Page() {
                 key={idx}
                 onClick={() => setSelectedDashboard(item)}
                 className="glass-card pop-in hover-scale"
-                style={{ padding: '14px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16, transition: 'transform 0.15s, box-shadow 0.15s', borderLeft: `4px solid ${item.color}` }}
+                style={{
+                  padding: '14px 20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                  borderLeft: `4px solid ${item.color}`,
+                }}
               >
                 <span style={{ fontSize: '1.5rem', flexShrink: 0, width: 36, textAlign: 'center' }}>{item.icon}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <p style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', wordBreak: 'keep-all' }}>{item.title}</p>
-                  </div>
+                  <p style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', wordBreak: 'keep-all' }}>{item.title}</p>
                   <p style={{ fontSize: '0.8125rem', color: 'var(--text2)', marginTop: 2, wordBreak: 'keep-all' }}>{item.subtitle}</p>
                 </div>
                 <span className="badge" style={{ color: item.color, borderColor: item.color, flexShrink: 0, fontSize: '0.75rem' }}>{item.step}</span>
@@ -132,8 +314,23 @@ export default function Part3Page() {
             ))}
           </div>
 
+          {/* ── 자동화 위시리스트 QR 피드 ── */}
+          <AutomationWishFeed />
+
           {/* 에필로그 브릿지 */}
-          <div className="anim-up" style={{ marginTop: 20, padding: '18px 24px', background: 'rgba(59, 130, 246, 0.05)', border: '1px solid var(--blue)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div
+            className="anim-up"
+            style={{
+              marginTop: 4,
+              padding: '18px 24px',
+              background: 'rgba(59, 130, 246, 0.05)',
+              border: '1px solid var(--blue)',
+              borderRadius: '16px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <div>
               <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--blue)', marginBottom: 4 }}>시스템의 진정한 완성</p>
               <p style={{ fontSize: '0.875rem', color: 'var(--text2)', wordBreak: 'keep-all' }}>
@@ -141,7 +338,16 @@ export default function Part3Page() {
               </p>
             </div>
             <Link href="/epilogue">
-              <button style={{ background: 'var(--blue)', color: '#FFF', border: 'none', padding: '12px 24px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              <button style={{
+                background: 'var(--blue)',
+                color: '#FFF',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}>
                 Epilogue. 우리의 결론 ➡️
               </button>
             </Link>
@@ -151,39 +357,109 @@ export default function Part3Page() {
 
       {/* 상세 정보 모달 */}
       {selectedDashboard && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setSelectedDashboard(null)}>
-          <div style={{ background: 'var(--bg)', width: '100%', maxWidth: '800px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)' }} onClick={e => e.stopPropagation()}>
+        <div
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 999,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+          onClick={() => setSelectedDashboard(null)}
+        >
+          <div
+            style={{
+              background: 'var(--bg)',
+              width: '100%',
+              maxWidth: '800px',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+              border: '1px solid var(--glass-border)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <div style={{ height: '6px', background: selectedDashboard.color }} />
-            
             <div style={{ padding: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: '2.5rem' }}>{selectedDashboard.icon}</span>
                   <div>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 800, color: selectedDashboard.color, padding: '4px 8px', background: 'var(--glass-light)', borderRadius: '8px' }}>{selectedDashboard.step}</span>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', marginTop: 4 }}>{selectedDashboard.title}</h2>
+                    <span style={{
+                      fontSize: '0.875rem', fontWeight: 800,
+                      color: selectedDashboard.color,
+                      padding: '4px 8px',
+                      background: 'var(--glass-light)',
+                      borderRadius: '8px',
+                    }}>
+                      {selectedDashboard.step}
+                    </span>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', marginTop: 4 }}>
+                      {selectedDashboard.title}
+                    </h2>
                   </div>
                 </div>
-                <button onClick={() => setSelectedDashboard(null)} style={{ background: 'transparent', border: 'none', fontSize: '2rem', cursor: 'pointer', color: 'var(--text3)' }}>×</button>
+                <button
+                  onClick={() => setSelectedDashboard(null)}
+                  style={{ background: 'transparent', border: 'none', fontSize: '2rem', cursor: 'pointer', color: 'var(--text3)' }}
+                >
+                  ×
+                </button>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
-                <div style={{ background: 'rgba(248,113,113,0.05)', border: '1px solid rgba(248,113,113,0.2)', padding: '20px', borderRadius: '16px' }}>
+                <div style={{
+                  background: 'rgba(248,113,113,0.05)',
+                  border: '1px solid rgba(248,113,113,0.2)',
+                  padding: '20px',
+                  borderRadius: '16px',
+                }}>
                   <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--red)', marginBottom: 8 }}>AS-WAS (과거의 한계)</p>
-                  <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>{selectedDashboard.before}</p>
+                  <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
+                    {selectedDashboard.before}
+                  </p>
                 </div>
-                <div style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)', padding: '20px', borderRadius: '16px' }}>
+                <div style={{
+                  background: 'rgba(16,185,129,0.05)',
+                  border: '1px solid rgba(16,185,129,0.2)',
+                  padding: '20px',
+                  borderRadius: '16px',
+                }}>
                   <p style={{ fontSize: '0.875rem', fontWeight: 800, color: '#10B981', marginBottom: 8 }}>AS-IS (자동화의 결과)</p>
-                  <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>{selectedDashboard.after}</p>
+                  <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
+                    {selectedDashboard.after}
+                  </p>
                 </div>
               </div>
 
-              <div style={{ padding: '20px', background: 'var(--glass-light)', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{
+                padding: '20px',
+                background: 'var(--glass-light)',
+                borderRadius: '16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
                 <div>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text2)', marginBottom: 4 }}>비즈니스 임팩트</p>
                   <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)' }}>✨ {selectedDashboard.impact}</p>
                 </div>
-                <button onClick={() => window.open(selectedDashboard.link, '_blank')} style={{ background: 'var(--text)', color: 'var(--bg)', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                <button
+                  onClick={() => window.open(selectedDashboard.link, '_blank')}
+                  style={{
+                    background: 'var(--text)',
+                    color: 'var(--bg)',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   실제 대시보드 접속 ↗
                 </button>
               </div>

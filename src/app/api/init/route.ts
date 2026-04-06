@@ -1,3 +1,4 @@
+// src/app/api/init/route.ts
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 
@@ -38,11 +39,6 @@ export async function POST() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
-  return NextResponse.json({ ok: true });
-}
-
-// src/app/api/init/route.ts 파일의 return NextResponse.json({ ok: true }); 바로 윗줄에 추가!
-
   await sql`
     CREATE TABLE IF NOT EXISTS survey_responses (
       id SERIAL PRIMARY KEY,
@@ -52,3 +48,15 @@ export async function POST() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
+  await sql`
+    CREATE TABLE IF NOT EXISTS automation_wishes (
+      id SERIAL PRIMARY KEY,
+      participant_id INTEGER REFERENCES participants(id),
+      wish_text TEXT NOT NULL,
+      department VARCHAR(100),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+
+  return NextResponse.json({ ok: true });
+}
