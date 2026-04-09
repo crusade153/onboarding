@@ -287,6 +287,17 @@ export default function Part3Page() {
       {/* 10개 리스트 + 위시리스트 + 에필로그 브릿지 */}
       <div style={{ flex: 1, overflowY: 'auto' }}>
         <div className="slide-container" style={{ paddingTop: 16, paddingBottom: 24 }}>
+
+          {/* 브릿지: Part1·2 → Part3 정렬 */}
+          <div className="anim-up glass-card" style={{ marginBottom: 16, padding: '18px 26px', borderLeft: '4px solid var(--gold)', background: 'rgba(201,168,76,0.06)' }}>
+            <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+              지금부터 보실 10개 대시보드는 우리 회사에서 <strong>이미 작동 중인 시스템</strong>입니다. 그런데 한 가지 잊지 마십시오 —
+              <strong style={{ color: 'var(--gold)' }}> 이 모든 자동화는 여러분이 입력한 데이터가 정확할 때만 작동합니다.</strong><br/>
+              Part 1의 사고는 시스템이 없어서가 아니라, <strong>잘못된 데이터 위에서 시스템이 돌아갔기 때문</strong>에 일어났습니다.
+              Part 2의 일일관리 습관은 <strong>이 10개 시스템을 살아있게 만드는 산소</strong>입니다. 다시 말해 — 여러분의 한 칸이 이 모든 화면의 시작점입니다.
+            </p>
+          </div>
+
           <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {ALL_DASHBOARDS.map((item, idx) => (
               <div
@@ -334,7 +345,8 @@ export default function Part3Page() {
             <div>
               <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--blue)', marginBottom: 4 }}>시스템의 진정한 완성</p>
               <p style={{ fontSize: '0.875rem', color: 'var(--text2)', wordBreak: 'keep-all' }}>
-                이 모든 도구는 우리의 정확한 데이터 위에서만 작동합니다. 진짜 변화는 <strong>우리의 습관</strong>에서 시작됩니다.
+                이 모든 도구는 우리의 정확한 데이터 위에서만 작동합니다. 진짜 변화는 <strong>우리의 습관</strong>에서 시작됩니다.<br/>
+                <strong style={{ color: 'var(--gold)' }}>그리고 그 데이터는, 오늘 이 자리에 계신 10명의 손끝에서 시작됩니다.</strong>
               </p>
             </div>
             <Link href="/epilogue">

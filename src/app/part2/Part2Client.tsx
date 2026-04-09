@@ -26,8 +26,10 @@ export default function Part2Client() {
           <h1 className="headline" style={{ color: 'var(--text)', marginBottom: 8, fontSize: '2rem' }}>
             문제를 앞서가는 매일의 습관
           </h1>
-          <p className="body-md" style={{ color: 'var(--text2)', maxWidth: 800, wordBreak: 'keep-all', lineHeight: 1.5 }}>
-            나비효과를 막는 방법은 멀리 있지 않습니다. 내가 매일 만들고 전달하는 정보의 정확성, 그것이 시작입니다.
+          <p className="body-md" style={{ color: 'var(--text2)', maxWidth: 880, wordBreak: 'keep-all', lineHeight: 1.6 }}>
+            Part 1에서 우리는 두 가지를 보았습니다 — <strong style={{ color: 'var(--warning)' }}>한 칸의 오타가 6,000만 원이 된다는 것</strong>, 그리고 그 사고를 <strong style={{ color: 'var(--gold)' }}>지금까지는 누군가의 그림자 노동이 막아왔다는 것</strong>.
+            그렇다면 질문은 하나로 좁혀집니다 — <strong>"누군가의 희생 없이도, 사고를 미리 막을 방법은 없을까?"</strong> 그 답이 바로 지금부터 보실 <span className="text-gold" style={{ fontWeight: 800 }}>'매일의 습관'</span>입니다.
+            거창한 시스템도, 새로운 도구도 아닙니다. <strong>오늘 내가 한 칸을 정확히 채우는 일</strong> — 그것 하나면 충분합니다.
           </p>
 
           <div style={{ display: 'flex', gap: 4, marginTop: 16, background: 'var(--glass-light)', padding: 4, borderRadius: 12, border: '1px solid var(--glass-border)', width: 'fit-content' }}>

@@ -77,6 +77,13 @@ function IntroSection() {
 
   return (
     <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 24, height: '100%' }}>
+      <div className="glass-card" style={{ padding: '20px 28px', borderLeft: '4px solid var(--gold)', background: 'rgba(201,168,76,0.06)' }}>
+        <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>🪃 프롤로그에서 본 그 '바통'에는 이름이 있습니다</p>
+        <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+          마케팅이 적은 규격, 영업이 입력한 단가, 생산이 등록한 BOM, 자재가 기록한 환산 단위 — 이 모든 것을 우리는 <strong style={{ color: 'var(--gold)' }}>'기준정보(Master Data)'</strong>라고 부릅니다.
+          그리고 이 바통은, <strong style={{ color: 'var(--warning)' }}>딱 한 글자만 잘못 적혀도</strong> 다음 주자가 넘어집니다. 얼마나 크게 넘어지는지, 잠시 후 실제 사건 하나로 시작하겠습니다.
+        </p>
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div className="glass-card" style={{ padding: '24px', borderLeft: '3px solid var(--gold)' }}>
           <p style={{ fontWeight: 800, fontSize: '1.0625rem', color: 'var(--gold)', marginBottom: 8 }}>📌 기준정보 (Master Data)</p>
@@ -160,6 +167,14 @@ function RealCaseSection() {
           제품에 아무 문제가 없었습니다. 품질도 완벽했습니다.<br/>
           <span style={{ color: 'var(--warning)' }}>오직 기준정보 한 칸이 비어 있었을 뿐인데,</span><br/>
           <span style={{ color: 'var(--red)', fontSize: '1.25rem', fontWeight: 800 }}>6,000만 원 이상이 허공으로 사라졌습니다.</span>
+        </p>
+      </div>
+
+      <div className="glass-card pop-in" style={{ padding: '20px 28px', borderLeft: '4px solid var(--warning)', background: 'rgba(255,165,0,0.06)', animationDelay: '0.5s' }}>
+        <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--warning)', marginBottom: 6 }}>여기서 무서운 사실 하나</p>
+        <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+          이 사고를 일으킨 사람은 게으르지도, 무능하지도 않았습니다. 그저 평소처럼 <strong>한 칸을 비워뒀을 뿐</strong>입니다.
+          그렇다면 우리가 매일 무심코 하는 <strong style={{ color: 'var(--warning)' }}>'한 칸짜리 실수'</strong>는 과연 안전할까요? 다음 장면에서 그 실수들의 정체를 보겠습니다.
         </p>
       </div>
     </div>
@@ -260,10 +275,11 @@ function ShadowWorkSection() {
   return (
     <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div className="glass-card" style={{ padding: '20px 24px', borderLeft: '4px solid var(--purple)' }}>
-        <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--purple)', marginBottom: 8, wordBreak: 'keep-all' }}>반전: 회사가 쉽게 망하지 않는 진짜 이유</p>
-        <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-          방금 본 무시무시한 적자 사태가 매일 일어나진 않죠. 왜냐고요? <span style={{ color: 'var(--gold)', fontWeight: 700 }}>누군가 피땀 흘려 막고 있으니까요.</span><br/>
-          시스템의 빵꾸를 수습하느라 우리의 소중한 근무 시간이 <strong>엑셀 수기 작성, 책임 공방, 주말 특근</strong> 같은 "그림자 노동"에 버려지고 있습니다.
+        <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--purple)', marginBottom: 8, wordBreak: 'keep-all' }}>반전: 그런데 왜 우리 회사는 안 망했을까요?</p>
+        <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+          방금 본 나비효과를 보고 이런 생각이 드셨을 겁니다 — "이 정도면 회사 진작 망했어야 하는 거 아닌가?"<br/>
+          답은 단순합니다. <span style={{ color: 'var(--gold)', fontWeight: 700 }}>누군가가 매일 막고 있었기 때문입니다.</span> 아무도 시키지 않았는데, 누군가의 야근으로, 누군가의 주말 특근으로, 누군가의 엑셀 노가다로.
+          우리는 이걸 <strong>"그림자 노동"</strong>이라고 부릅니다.
         </p>
       </div>
 
@@ -316,8 +332,17 @@ function LessonSection() {
   const yesRatio = stats.total_responses === 0 ? 0 : Math.round((stats.yes_count / stats.total_responses) * 100);
 
   return (
-    <div className="anim-up" style={{ display: 'flex', gap: 24, height: '100%' }}>
-      
+    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+
+      <div className="glass-card" style={{ padding: '18px 26px', borderLeft: '4px solid var(--gold)', background: 'rgba(201,168,76,0.06)' }}>
+        <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+          지금까지 본 모든 사고는 <strong style={{ color: 'var(--gold)' }}>'남의 회사' 이야기가 아닙니다.</strong> 여러분이 곧 일하게 될 자리에서, 선배들이 지금도 겪고 있는 일입니다.
+          잠시 QR로 <strong>"기준정보 때문에 헷갈렸거나 답답했던 순간"</strong>을 한 줄만 남겨주세요. 여러분의 한마디가 화면에 바로 뜹니다.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: 24, flex: 1, minHeight: 0 }}>
+
       {/* 왼쪽: 실시간 공감 피드 (문제 인식) */}
       <div style={{ width: '420px', display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div className="glass-card" style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -359,10 +384,10 @@ function LessonSection() {
       </div>
 
       {/* 오른쪽: 시스템 솔루션으로의 브릿지 (예고편) */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, overflow: 'hidden' }}>
-        <div className="glass-card" style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', borderLeft: '4px solid var(--blue)' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, minHeight: 0 }}>
+        <div className="glass-card" style={{ padding: '20px 28px', display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '4px solid var(--blue)', overflowY: 'auto' }}>
           <p className="caption" style={{ color: 'var(--blue)', marginBottom: 12 }}>결론: 개인의 잘못이 아닙니다</p>
-          <p style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text)', marginBottom: 24, wordBreak: 'keep-all', lineHeight: 1.4 }}>
+          <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text)', marginBottom: 18, wordBreak: 'keep-all', lineHeight: 1.4 }}>
             "조심하겠습니다" 라는 다짐으로는<br/>
             결코 나비효과를 막을 수 없습니다.
           </p>
@@ -383,14 +408,16 @@ function LessonSection() {
             </div>
           </div>
 
-          <div className="pop-in" style={{ marginTop: 32, textAlign: 'center', animationDelay: '0.6s' }}>
-            <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--gold)', letterSpacing: '-0.5px' }}>
-              자, 이제 다음 장(Part 2)에서 우리의 일하는 방식을 바꿀<br/>새로운 무기들을 직접 확인해 보시죠.
+          <div className="pop-in" style={{ marginTop: 18, textAlign: 'center', animationDelay: '0.6s' }}>
+            <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--gold)', letterSpacing: '-0.5px', lineHeight: 1.6 }}>
+              "조심하자"는 다짐 대신, <strong>매일 반복할 수 있는 작은 습관</strong>이 필요합니다.<br/>
+              Part 2에서는 그 습관 — <strong>누군가의 야근 없이도 사고를 막는 단 3가지 행동</strong>을 보겠습니다.
             </p>
           </div>
         </div>
       </div>
 
+      </div>
     </div>
   );
 }

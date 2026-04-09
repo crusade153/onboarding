@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/User/Desktop/sap_link/onboarding/**)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
