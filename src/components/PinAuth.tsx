@@ -9,7 +9,7 @@ export default function PinAuth({ children }: { children: ReactNode }) {
   const [error, setError] = useState(false);
 
   // 설정하신 핀 번호
-  const CORRECT_PIN = '391511';
+  const CORRECT_PIN = '041911';
 
   useEffect(() => {
     // 브라우저 스토리지에서 인증 여부 확인
