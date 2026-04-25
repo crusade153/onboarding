@@ -37,9 +37,11 @@ export async function POST() {
       participant_id INTEGER REFERENCES participants(id),
       perception_choice VARCHAR(50),
       custom_text TEXT,
+      session_code VARCHAR(20),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
+  await sql`ALTER TABLE company_perception ADD COLUMN IF NOT EXISTS session_code VARCHAR(20)`;
 
   // Part 2 — HBH 가장 어려운 습관
   await sql`
@@ -47,9 +49,11 @@ export async function POST() {
       id SERIAL PRIMARY KEY,
       participant_id INTEGER REFERENCES participants(id),
       hardest_habit VARCHAR(20),
+      session_code VARCHAR(20),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
+  await sql`ALTER TABLE hbh_self_assessment ADD COLUMN IF NOT EXISTS session_code VARCHAR(20)`;
 
   // Part 3 — 감사 리스트
   await sql`
@@ -57,8 +61,30 @@ export async function POST() {
       id SERIAL PRIMARY KEY,
       participant_id INTEGER REFERENCES participants(id),
       saved_from VARCHAR(50),
+      session_code VARCHAR(20),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
+  `;
+  await sql`ALTER TABLE gratitude_list ADD COLUMN IF NOT EXISTS session_code VARCHAR(20)`;
+
+  // 기존 응답 행 backfill: 참여자의 session_code 로 채워넣기
+  await sql`
+    UPDATE company_perception cp
+    SET session_code = p.session_code
+    FROM participants p
+    WHERE cp.participant_id = p.id AND cp.session_code IS NULL
+  `;
+  await sql`
+    UPDATE hbh_self_assessment h
+    SET session_code = p.session_code
+    FROM participants p
+    WHERE h.participant_id = p.id AND h.session_code IS NULL
+  `;
+  await sql`
+    UPDATE gratitude_list g
+    SET session_code = p.session_code
+    FROM participants p
+    WHERE g.participant_id = p.id AND g.session_code IS NULL
   `;
 
   return NextResponse.json({ ok: true });

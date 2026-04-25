@@ -31,10 +31,11 @@ export async function POST() {
   return NextResponse.json(rows[0], { status: 201 });
 }
 
-// 활성 세션 조회 + 코드 검증
+// 활성 세션 조회 + 코드 검증 + 전체 세션 아카이브
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');
+  const all = searchParams.get('all');
 
   if (code) {
     const rows = await sql`
@@ -42,6 +43,25 @@ export async function GET(req: NextRequest) {
       FROM sessions WHERE session_code = ${code} AND is_active = TRUE
     `;
     return NextResponse.json({ valid: rows.length > 0, session: rows[0] ?? null });
+  }
+
+  if (all) {
+    // 전체 세션 + 응답 카운트
+    const rows = await sql`
+      SELECT
+        s.id,
+        s.session_code,
+        s.started_at,
+        s.ended_at,
+        s.is_active,
+        (SELECT COUNT(*)::int FROM participants p WHERE p.session_code = s.session_code) AS participants,
+        (SELECT COUNT(*)::int FROM company_perception cp WHERE cp.session_code = s.session_code) AS perception,
+        (SELECT COUNT(*)::int FROM hbh_self_assessment h WHERE h.session_code = s.session_code) AS hbh,
+        (SELECT COUNT(*)::int FROM gratitude_list g WHERE g.session_code = s.session_code) AS gratitude
+      FROM sessions s
+      ORDER BY s.id DESC
+    `;
+    return NextResponse.json({ sessions: rows });
   }
 
   const rows = await sql`

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 
 interface Participant {
@@ -15,6 +15,18 @@ interface ActiveSession {
   id: number;
   session_code: string;
   started_at: string;
+}
+
+interface ArchiveSession {
+  id: number;
+  session_code: string;
+  started_at: string;
+  ended_at: string | null;
+  is_active: boolean;
+  participants: number;
+  perception: number;
+  hbh: number;
+  gratitude: number;
 }
 
 interface PerceptionData {
@@ -50,44 +62,65 @@ const AUDIENCE = [
 export default function AdminPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [session, setSession] = useState<ActiveSession | null>(null);
+  const [archive, setArchive] = useState<ArchiveSession[]>([]);
+  const [viewCode, setViewCode] = useState<string | null>(null); // null = live (현재 활성 세션)
   const [perception, setPerception] = useState<PerceptionData>({ counts: [], customs: [] });
   const [hbh, setHbh] = useState<HbhData>({ counts: [] });
   const [gratitude, setGratitude] = useState<GratitudeData>({ counts: [] });
   const [dbReady, setDbReady] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async () => {
+  // 활성 세션·아카이브 (자주 폴링)
+  const loadMeta = useCallback(async () => {
     try {
-      const [p, s, per, h, g] = await Promise.all([
-        fetch('/api/participants').then((r) => r.json()),
+      const [s, a] = await Promise.all([
         fetch('/api/sessions').then((r) => r.json()),
-        fetch('/api/perception').then((r) => r.json()),
-        fetch('/api/hbh').then((r) => r.json()),
-        fetch('/api/gratitude').then((r) => r.json()),
+        fetch('/api/sessions?all=1').then((r) => r.json()),
       ]);
-      setParticipants(Array.isArray(p) ? p : []);
       setSession(s?.active ?? null);
-      setPerception(per);
-      setHbh(h);
-      setGratitude(g);
+      setArchive(Array.isArray(a?.sessions) ? a.sessions : []);
       setDbReady(true);
     } catch {
       setDbReady(false);
     }
   }, []);
 
+  // 선택된 세션 데이터 (활성 또는 과거)
+  const loadData = useCallback(async () => {
+    const q = viewCode ? `?session_code=${encodeURIComponent(viewCode)}` : '';
+    try {
+      const [p, per, h, g] = await Promise.all([
+        fetch(`/api/participants${q}`).then((r) => r.json()),
+        fetch(`/api/perception${q}`).then((r) => r.json()),
+        fetch(`/api/hbh${q}`).then((r) => r.json()),
+        fetch(`/api/gratitude${q}`).then((r) => r.json()),
+      ]);
+      setParticipants(Array.isArray(p) ? p : []);
+      setPerception(per ?? { counts: [], customs: [] });
+      setHbh(h ?? { counts: [] });
+      setGratitude(g ?? { counts: [] });
+    } catch {
+      // ignore
+    }
+  }, [viewCode]);
+
   useEffect(() => {
-    load();
-    const t = setInterval(load, 5000);
+    loadMeta();
+    loadData();
+    const t = setInterval(() => {
+      loadMeta();
+      loadData();
+    }, 5000);
     return () => clearInterval(t);
-  }, [load]);
+  }, [loadMeta, loadData]);
 
   async function initDb() {
     setBusy(true);
     try {
       await fetch('/api/init', { method: 'POST' });
       alert('DB 초기화 완료');
-      load();
+      loadMeta();
+      loadData();
     } catch {
       alert('DB 초기화 실패. DATABASE_URL 환경변수를 확인하세요.');
     } finally {
@@ -99,7 +132,9 @@ export default function AdminPage() {
     setBusy(true);
     try {
       await fetch('/api/sessions', { method: 'POST' });
-      load();
+      setViewCode(null);
+      loadMeta();
+      loadData();
     } finally {
       setBusy(false);
     }
@@ -111,7 +146,8 @@ export default function AdminPage() {
     setBusy(true);
     try {
       await fetch(`/api/sessions?code=${encodeURIComponent(session.session_code)}`, { method: 'DELETE' });
-      load();
+      loadMeta();
+      loadData();
     } finally {
       setBusy(false);
     }
@@ -130,6 +166,14 @@ export default function AdminPage() {
   const perceptionTotal = perception.counts.reduce((s, c) => s + c.count, 0);
   const hbhTotal = hbh.counts.reduce((s, c) => s + c.count, 0);
   const gratitudeTotal = gratitude.counts.reduce((s, c) => s + c.count, 0);
+
+  const viewing = useMemo(() => {
+    if (!viewCode) return null;
+    return archive.find((s) => s.session_code === viewCode) ?? null;
+  }, [viewCode, archive]);
+
+  const isLive = viewCode === null;
+  const liveCode = session?.session_code ?? null;
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
@@ -173,7 +217,7 @@ export default function AdminPage() {
               </div>
               <div style={{ flex: 1, minWidth: 200 }}>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.6 }}>
-                  Prologue 화면의 QR이 이 코드로 발급됩니다. 종료 시 이 세션의 모든 입력이 잠깁니다.
+                  Prologue / Part1 / Part2 / Part3 화면의 QR이 이 코드로 발급됩니다. 종료 시 이 세션의 입력이 잠기고 다음 강연부터는 새 세션이 필요합니다.
                 </p>
               </div>
               <button onClick={endSession} disabled={busy} className="btn" style={{ ...btnGhost, color: '#FF6B6B', borderColor: 'rgba(255,107,107,0.3)' }}>
@@ -183,7 +227,7 @@ export default function AdminPage() {
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
               <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', flex: 1, minWidth: 200, lineHeight: 1.6 }}>
-                활성 세션이 없습니다. 강연 시작 전에 새 세션을 시작하세요.
+                활성 세션이 없습니다. 강연 시작 전에 새 세션을 시작하세요. 이전 회차 결과는 아래 아카이브에서 확인 가능합니다.
               </p>
               <button onClick={startSession} disabled={busy} className="btn btn-gold">
                 + 새 세션 시작
@@ -218,6 +262,72 @@ export default function AdminPage() {
               </Link>
             ))}
           </div>
+        </section>
+
+        {/* Session Archive Selector */}
+        <section className="glass-card" style={{ padding: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>
+            <p className="caption" style={{ margin: 0 }}>④ 세션 아카이브 (차수별 비교)</p>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--text3)' }}>
+              현재 보고 있는 회차: <strong style={{ color: isLive ? DEPT_COLOR : '#A78BFA', fontFamily: 'monospace' }}>
+                {isLive ? (liveCode ? `${liveCode} (LIVE)` : '활성 세션 없음') : viewCode}
+              </strong>
+            </p>
+          </div>
+          {archive.length === 0 ? (
+            <p style={{ color: 'var(--text3)', fontSize: '0.875rem' }}>저장된 세션이 없습니다.</p>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <button
+                onClick={() => setViewCode(null)}
+                className="btn"
+                style={{
+                  ...btnGhost,
+                  borderColor: isLive ? DEPT_COLOR : 'var(--glass-border)',
+                  color: isLive ? DEPT_COLOR : 'var(--text2)',
+                  fontWeight: isLive ? 800 : 600,
+                }}
+              >
+                LIVE {liveCode ? `· ${liveCode}` : '(없음)'}
+              </button>
+              {archive.map((s) => {
+                const selected = viewCode === s.session_code;
+                const isActiveRow = s.is_active;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => setViewCode(s.session_code)}
+                    className="btn"
+                    style={{
+                      ...btnGhost,
+                      borderColor: selected ? '#A78BFA' : 'var(--glass-border)',
+                      color: selected ? '#A78BFA' : 'var(--text2)',
+                      fontWeight: selected ? 800 : 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                    }}
+                    title={`${s.participants}명 · P1 ${s.perception} · P2 ${s.hbh} · P3 ${s.gratitude}`}
+                  >
+                    <span style={{ fontFamily: 'monospace' }}>{s.session_code}</span>
+                    <span style={{ fontSize: '0.6875rem', color: 'var(--text3)' }}>
+                      {new Date(s.started_at).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })}
+                    </span>
+                    <span style={{ fontSize: '0.6875rem', color: isActiveRow ? '#2DD4BF' : 'var(--text3)' }}>
+                      {isActiveRow ? '● LIVE' : `${s.participants}명`}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {viewing && !isLive && (
+            <p style={{ marginTop: 14, fontSize: '0.8125rem', color: 'var(--text3)' }}>
+              {viewing.session_code} · 시작 {new Date(viewing.started_at).toLocaleString('ko-KR')}
+              {viewing.ended_at && ` · 종료 ${new Date(viewing.ended_at).toLocaleString('ko-KR')}`}
+              {' · '}참여 {viewing.participants}명 · P1 {viewing.perception} · P2 {viewing.hbh} · P3 {viewing.gratitude}
+            </p>
+          )}
         </section>
 
         {/* Stats */}
