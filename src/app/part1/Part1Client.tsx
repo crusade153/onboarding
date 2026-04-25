@@ -1,423 +1,389 @@
-// src/app/part1/Part1Client.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
-import QRCode from 'react-qr-code';
+import PlantCard from '@/components/v2/PlantCard';
+import SurveyQR from '@/components/v2/SurveyQR';
 
-type Tab = 'intro' | 'realcase' | 'mistake' | 'butterfly' | 'shadow' | 'lesson';
+type Section = 'plants' | 'chain' | 'data' | 'survey';
 
-const TABS: { key: Tab; label: string; sub: string }[] = [
-  { key: 'intro',      label: '기준정보란?',     sub: '회사의 DNA' },
-  { key: 'realcase',   label: '실제 사고',       sub: '6,000만 원 이상의 교훈' },
-  { key: 'mistake',    label: '사소한 오입력',   sub: '발단: 무심코 한 타이핑' },
-  { key: 'butterfly',  label: '시스템 나비효과', sub: '위기: 현장 마비와 적자' }, 
-  { key: 'shadow',     label: '그림자 노동',     sub: '반전: 우리의 진짜 현실' },
-  { key: 'lesson',     label: '공감 & 교훈',     sub: '결론: 시스템의 필요성' }, // 서브 텍스트 변경
+interface PerceptionData {
+  counts: { perception_choice: string; count: number }[];
+  customs: { custom_text: string; name: string; department: string }[];
+}
+
+const PERCEPTION_OPTIONS = [
+  { key: 'big_company', emoji: '🏭', label: '생각보다 훨씬 큰 회사' },
+  { key: 'real_food', emoji: '🍚', label: '진짜 식품을 만드는 회사' },
+  { key: 'data_driven', emoji: '📊', label: '데이터로 일하는 회사' },
+  { key: 'collaborative', emoji: '🤝', label: '부서 협업이 중요한 회사' },
+];
+
+// 가치사슬 릴레이: 한 데이터가 어떻게 흐르는가
+const RELAY_STAGES = [
+  { dept: '마케팅', emoji: '📣', action: '신제품 컨셉을 정의하고', hands: 'BOM 초안과 목표 단가를' },
+  { dept: '영업', emoji: '🤝', action: '거래처 수주를 받아', hands: '주차별 발주 수량을' },
+  { dept: '구매', emoji: '🛒', action: '자재 발주를 걸고', hands: '입고 예정일과 단가를' },
+  { dept: '생산', emoji: '🏭', action: '라인을 돌리고', hands: '실제 투입량과 수율을' },
+  { dept: '품질', emoji: '🧪', action: '검사를 통과시키고', hands: '합격률과 클레임 데이터를' },
+  { dept: '물류', emoji: '🚚', action: '트럭에 싣고', hands: '출고 시간과 차량 번호를' },
+  { dept: '재무', emoji: '💰', action: '결산하며 결승선을 통과합니다', hands: '매출과 원가를' },
 ];
 
 export default function Part1Client() {
-  const [tab, setTab] = useState<Tab>('intro');
-
-  return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
-      <NavBar current="Part 1" step="01/04" />
-
-      {/* 헤더 영역 */}
-      <div style={{ borderBottom: '1px solid var(--glass-border)', padding: '24px 0 0px' }}>
-        <div className="slide-container" style={{ paddingBottom: 0 }}>
-          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 6 }}>PART 1</p>
-          <h1 className="headline" style={{ color: 'var(--text)', marginBottom: 12, fontSize: '2.25rem', wordBreak: 'keep-all' }}>
-            기준이 무너지면 시스템이 무너진다
-          </h1>
-          <p className="body-md" style={{ color: 'var(--text2)', maxWidth: 800, wordBreak: 'keep-all', lineHeight: 1.6, marginBottom: 24 }}>
-            나의 사소한 '0' 하나가 현장의 트럭을 멈추고, 10억 원의 결산 오류를 만듭니다. 각 부서의 
-            데이터가 어떻게 연결되고, 한 줄의 오타가 어떤 나비효과를 부르는지 확인합니다.
-          </p>
-
-          <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,0.02)', padding: '6px', borderRadius: '12px 12px 0 0', width: 'fit-content' }}>
-            {TABS.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)} style={{
-                padding: '12px 24px', borderRadius: 8, cursor: 'pointer', border: 'none', background: 'transparent',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                borderBottom: tab === t.key ? '2px solid var(--gold)' : '2px solid transparent',
-                opacity: tab === t.key ? 1 : 0.6,
-                transition: 'all 0.2s',
-              }}>
-                <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: tab === t.key ? 'var(--gold)' : 'var(--text)' }}>{t.label}</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text3)' }}>{t.sub}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 컨텐츠 영역 */}
-      <div className="slide-container" style={{ flex: 1, paddingTop: 32, paddingBottom: 32, overflowY: 'auto' }}>
-        {tab === 'intro' && <IntroSection />}
-        {tab === 'realcase' && <RealCaseSection />}
-        {tab === 'mistake' && <MistakeSection />}
-        {tab === 'butterfly' && <ButterflySection />}
-        {tab === 'shadow' && <ShadowWorkSection />}
-        {tab === 'lesson' && <LessonSection />}
-      </div>
-    </div>
-  );
-}
-
-/* ── 1. 기준정보란? ── */
-function IntroSection() {
-  const DEPTS = [
-    { name: '영업·마케팅', icon: '🎯', color: 'var(--blue)', items: ['제품명 및 규격', '판매 단위 및 할인율', '거래처 마스터 정보'] },
-    { name: '생산', icon: '🏭', color: 'var(--warning)', items: ['BOM 및 목표 수율', '공정 순서 (Routing)', '작업장 및 설비 마스터'] },
-    { name: '물류', icon: '🚚', color: 'var(--teal)', items: ['제품 바코드 및 식별자', '보관 조건 (상온/냉장)', '부피(CBM) 및 총 중량'] },
-    { name: '구매/자재', icon: '🛒', color: '#A78BFA', items: ['협력사 마스터', '발주 및 납품 단위', '자재 표준 단가'] },
-    { name: '재무·원가', icon: '💰', color: 'var(--gold)', items: ['코스트센터 (귀속 부서)', '고정비/변동비 배부 기준', '세무 신고용 품목 분류'] },
-  ];
-
-  return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 24, height: '100%' }}>
-      <div className="glass-card" style={{ padding: '20px 28px', borderLeft: '4px solid var(--gold)', background: 'rgba(201,168,76,0.06)' }}>
-        <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>🪃 프롤로그에서 본 그 '바통'에는 이름이 있습니다</p>
-        <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-          마케팅이 적은 규격, 영업이 입력한 단가, 생산이 등록한 BOM, 자재가 기록한 환산 단위 — 이 모든 것을 우리는 <strong style={{ color: 'var(--gold)' }}>'기준정보(Master Data)'</strong>라고 부릅니다.
-          그리고 이 바통은, <strong style={{ color: 'var(--warning)' }}>딱 한 글자만 잘못 적혀도</strong> 다음 주자가 넘어집니다. 얼마나 크게 넘어지는지, 잠시 후 실제 사건 하나로 시작하겠습니다.
-        </p>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <div className="glass-card" style={{ padding: '24px', borderLeft: '3px solid var(--gold)' }}>
-          <p style={{ fontWeight: 800, fontSize: '1.0625rem', color: 'var(--gold)', marginBottom: 8 }}>📌 기준정보 (Master Data)</p>
-          <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-            한 번 등록하면 수백, 수천 건의 거래에 반복 적용되는 데이터입니다. 품목코드, BOM, 단가, 거래처 정보 등이 해당합니다.
-          </p>
-        </div>
-        <div className="glass-card" style={{ padding: '24px', borderLeft: '3px solid var(--blue)' }}>
-          <p style={{ fontWeight: 800, fontSize: '1.0625rem', color: 'var(--blue)', marginBottom: 8 }}>📋 트랜잭션 (Transaction Data)</p>
-          <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-            수주, 발주, 생산오더, 출고 등 매일 발생하는 전표입니다. 이 전표들은 기준정보를 자동으로 참조하여 생성됩니다.
-          </p>
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, flex: 1 }}>
-        {DEPTS.map(dept => (
-          <div key={dept.name} className="glass-card pop-in" style={{ padding: '20px', borderTop: `3px solid ${dept.color}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-              <span style={{ fontSize: '1.5rem' }}>{dept.icon}</span>
-              <p style={{ fontWeight: 800, fontSize: '1.0625rem', color: dept.color, wordBreak: 'keep-all' }}>{dept.name}</p>
-            </div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {dept.items.map((item, idx) => (
-                <li key={idx} style={{ fontSize: '0.875rem', color: 'var(--text2)', display: 'flex', alignItems: 'flex-start', gap: 8, wordBreak: 'keep-all', lineHeight: 1.4 }}>
-                  <span style={{ color: dept.color, opacity: 0.5 }}>▪</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── 2. 실제 사고 ── */
-function RealCaseSection() {
-  return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 24, height: '100%' }}>
-      <div className="glass-card" style={{ padding: '20px 24px', borderLeft: '3px solid var(--red)' }}>
-        <p style={{ fontWeight: 700, fontSize: '1.125rem', color: 'var(--red)', wordBreak: 'keep-all' }}>
-          프롤로그에서 예고한 그 이야기 — 데이터 한 칸이 비었을 때 실제로 무슨 일이 벌어졌는지 함께 보겠습니다.
-        </p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, flex: 1 }}>
-        <div className="glass-card pop-in" style={{ padding: '32px 24px', borderTop: '4px solid var(--blue)', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--blue)' }}>01</span>
-            <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', wordBreak: 'keep-all' }}>성공적인 수출 수주</p>
-          </div>
-          <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-            영업팀이 <strong>라면 20만 식</strong> 수출 오더를 따냈습니다. 생산 라인은 완벽하게 가동되어 전량 생산을 완료했습니다.
-          </p>
-        </div>
-
-        <div className="glass-card pop-in" style={{ padding: '32px 24px', borderTop: '4px solid var(--warning)', display: 'flex', flexDirection: 'column', gap: 16, animationDelay: '0.1s' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--warning)' }}>02</span>
-            <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', wordBreak: 'keep-all' }}>기준정보 한 칸의 공백</p>
-          </div>
-          <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-            하지만 시스템에 <strong>'수출용 일부인 기준정보'</strong>가 미등록 상태였습니다. 포장 라인은 내수용 표기로 20만 식을 인쇄했습니다.
-          </p>
-        </div>
-
-        <div className="glass-card pop-in" style={{ padding: '32px 24px', borderTop: '4px solid var(--red)', display: 'flex', flexDirection: 'column', gap: 16, animationDelay: '0.2s' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--red)' }}>03</span>
-            <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text)', wordBreak: 'keep-all' }}>돌이킬 수 없는 결과</p>
-          </div>
-          <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-            현장은 <strong>20만 개의 포장지를 수작업으로 뜯어내고 재포장</strong>해야 했습니다. 재작업 비용 약 6,000만 원 이상 확정 손실이 발생했습니다.
-          </p>
-        </div>
-      </div>
-
-      <div className="glass-card pop-in" style={{ padding: '24px', textAlign: 'center', background: 'rgba(0,0,0,0.2)', animationDelay: '0.4s' }}>
-        <p style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1.6 }}>
-          제품에 아무 문제가 없었습니다. 품질도 완벽했습니다.<br/>
-          <span style={{ color: 'var(--warning)' }}>오직 기준정보 한 칸이 비어 있었을 뿐인데,</span><br/>
-          <span style={{ color: 'var(--red)', fontSize: '1.25rem', fontWeight: 800 }}>6,000만 원 이상이 허공으로 사라졌습니다.</span>
-        </p>
-      </div>
-
-      <div className="glass-card pop-in" style={{ padding: '20px 28px', borderLeft: '4px solid var(--warning)', background: 'rgba(255,165,0,0.06)', animationDelay: '0.5s' }}>
-        <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--warning)', marginBottom: 6 }}>여기서 무서운 사실 하나</p>
-        <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-          이 사고를 일으킨 사람은 게으르지도, 무능하지도 않았습니다. 그저 평소처럼 <strong>한 칸을 비워뒀을 뿐</strong>입니다.
-          그렇다면 우리가 매일 무심코 하는 <strong style={{ color: 'var(--warning)' }}>'한 칸짜리 실수'</strong>는 과연 안전할까요? 다음 장면에서 그 실수들의 정체를 보겠습니다.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ── 3. 사소한 오입력 (발단) ── */
-function MistakeSection() {
-  const MISTAKES = [
-    { type: '단위 오류', dept: '생산/구매', desc: '건더기스프 소요량 2g을 2kg으로 입력' },
-    { type: '중량 오류', dept: '물류/생산', desc: '완제품 중량 500g을 500kg으로 입력' },
-    { type: '환산 오류', dept: '영업/물류', desc: '라면 1박스(12개입)를 1개로 입력' },
-    { type: '수량 오류', dept: '생산', desc: 'BOM 포장박스 소요량 1개를 10개로 입력' },
-    { type: '보관 오류', dept: '물류/마케팅', desc: '냉동식품의 보관조건을 냉장으로 선택' },
-    { type: '기한 오류', dept: '품질/영업', desc: '소비기한 300일을 180일로 축소 입력' },
-  ];
-
-  return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div className="glass-card" style={{ padding: '16px 24px', borderLeft: '4px solid var(--warning)' }}>
-        <p style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--warning)', wordBreak: 'keep-all' }}>발단: "아차, 단위 하나 잘못 골랐네?"</p>
-        <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginTop: 8 }}>사고는 언제나 무심코 한 타이핑 한 번에서 시작됩니다.</p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-        {MISTAKES.map((m, i) => (
-          <div key={i} className="glass-card pop-in" style={{ padding: '24px', background: 'var(--glass-light)', animationDelay: `${i * 0.05}s` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <span style={{ padding: '4px 12px', border: '1px solid var(--warning)', color: 'var(--warning)', borderRadius: '20px', fontSize: '0.8125rem', fontWeight: 700 }}>
-                {m.type}
-              </span>
-              <span style={{ fontSize: '0.8125rem', color: 'var(--text3)', fontWeight: 600 }}>{m.dept}</span>
-            </div>
-            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)', lineHeight: 1.4, wordBreak: 'keep-all' }}>{m.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── 4. 시스템 나비효과 (위기) ── */
-function ButterflySection() {
-  const EFFECT_CARDS = [
-    { icon: '🏭', title: '1,000배 발주 폭탄', cause: '건더기 2g → 2kg 오입력', physical: '시스템이 건더기스프를 무한 발주하여 현장 창고가 터져나가고 라인이 마비됩니다.', financial: '결국 소진하지 못한 자재 전량 폐기로 수억 원의 영업외비용이 발생합니다.' },
-    { icon: '💣', title: '배부의 붕괴와 허위 적자', cause: '완제품 500g → 500kg 오입력', physical: '비정상적인 가동률 인식으로 제품 하나에 전체 공장의 원가가 1,000배 쏠립니다.', financial: '잘 팔리던 효자 상품이 심각한 적자 품목으로 둔갑하여 단종 위기를 맞습니다.' },
-    { icon: '📉', title: '증발해버린 유령 재고', cause: '1박스(12개) → 1개 환산 오류', physical: '100박스(1,200개)를 출고했는데 전산엔 100개만 차감되어 재고가 맞지 않습니다.', financial: '전산 재고와 실물 갭(Gap)이 결산 시 회사의 쌩돈(재고자산감모손실)으로 처리됩니다.' },
-    { icon: '🔥', title: '다 녹아내린 제품들', cause: '냉동 → 냉장 보관조건 오류', physical: 'WMS(창고관리)가 냉동식품을 상온 구역으로 입고 지시하여 제품이 녹아내립니다.', financial: '수억 원어치의 완제품이 전량 폐기 손실로 확정됩니다.' }
-  ];
-
-  return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div className="glass-card" style={{ padding: '16px 24px', borderLeft: '4px solid var(--red)' }}>
-        <p style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--red)', wordBreak: 'keep-all' }}>위기: 물리적 대혼돈과 숨겨진 적자</p>
-        <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginTop: 8 }}>사소한 불씨는 현장을 마비시키고(물리), 결국 회사의 이익을 깎아 먹습니다(재무).</p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-        {EFFECT_CARDS.map((card, idx) => (
-          <div key={idx} className="glass-card pop-in" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: 16, animationDelay: `${idx * 0.1}s` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: '2rem' }}>{card.icon}</span>
-              <div>
-                <p style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', wordBreak: 'keep-all' }}>{card.title}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                  <span style={{ padding: '2px 8px', background: 'rgba(255, 59, 107, 0.1)', color: 'var(--red)', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 800 }}>원인</span>
-                  <span style={{ fontSize: '0.875rem', color: 'var(--text2)' }}>{card.cause}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 4 }}>
-              <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', borderLeft: '3px solid var(--warning)' }}>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--warning)', fontWeight: 700, marginBottom: 4 }}>현장 마비 (물리)</p>
-                <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.5, wordBreak: 'keep-all' }}>{card.physical}</p>
-              </div>
-              <div style={{ padding: '12px 16px', background: 'rgba(248,113,113,0.05)', borderRadius: '8px', borderLeft: '3px solid var(--red)' }}>
-                <p style={{ fontSize: '0.8125rem', color: 'var(--red)', fontWeight: 700, marginBottom: 4 }}>재무 손실 (적자)</p>
-                <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.5, wordBreak: 'keep-all' }}>{card.financial}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── 5. 그림자 노동 (반전) ── */
-function ShadowWorkSection() {
-  const SHADOW_CASES = [
-    { dept: '품질팀 (QA)', title: '시한부 재고와 의미 없는 특근', error: "검사 합격 후 '품질 대기' 상태 해제 깜빡함", desc: '전산상 재고 부족으로 불필요한 특근을 돌려 새 제품을 만듭니다. 몇 달 뒤 잊혀진 실물 재고가 창고 구석에서 발견되지만, 소비기한이 임박해 전량 폐기됩니다.', color: '#4F8EF7' },
-    { dept: 'BM / 마케팅팀', title: '장기 적치 48만 식의 재앙', error: '판매 계획 단위 입력 시 환산 기준(식/번들) 착각', desc: '시스템이 48만 식을 초과 생산해버립니다. 영업은 못 판다, 마케팅은 난 그렇게 안 넣었다 싸우고, 결국 마진을 포기한 눈물의 땡처리 행사를 기획해야 합니다.', color: '#FF3B6B' },
-    { dept: '생산팀', title: '먼지 구덩이 속 지옥의 실사', error: '자재를 넉넉히 타내려 수율(Yield)을 85%로 임의 조작', desc: '조작된 수율 탓에 시스템이 원부자재를 끝없이 초과 발주합니다. 결산 때 실물과 장부가 안 맞아 전 직원이 밤새 창고 먼지를 마시며 수기 재고 실사를 뜁니다.', color: '#D4A800' },
-    { dept: '자재팀', title: '멈춰버린 라인과 야간 연장근무', error: '포장지 발주 시 단위(롤/천장) 착각', desc: '자재 고갈로 공장 라인이 올스톱되며 오늘의 생산성이 박살 납니다. 며칠 뒤 자재가 들어오면, 밀린 납기를 맞추기 위해 현장 작업자들은 야간 연장근무에 투입됩니다.', color: '#F97316' }
-  ];
-
-  return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div className="glass-card" style={{ padding: '20px 24px', borderLeft: '4px solid var(--purple)' }}>
-        <p style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--purple)', marginBottom: 8, wordBreak: 'keep-all' }}>반전: 그런데 왜 우리 회사는 안 망했을까요?</p>
-        <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-          방금 본 나비효과를 보고 이런 생각이 드셨을 겁니다 — "이 정도면 회사 진작 망했어야 하는 거 아닌가?"<br/>
-          답은 단순합니다. <span style={{ color: 'var(--gold)', fontWeight: 700 }}>누군가가 매일 막고 있었기 때문입니다.</span> 아무도 시키지 않았는데, 누군가의 야근으로, 누군가의 주말 특근으로, 누군가의 엑셀 노가다로.
-          우리는 이걸 <strong>"그림자 노동"</strong>이라고 부릅니다.
-        </p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        {SHADOW_CASES.map((item, idx) => (
-          <div key={idx} className="glass-card pop-in" style={{ padding: '24px', borderTop: `3px solid ${item.color}`, animationDelay: `${idx * 0.1}s` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <span style={{ fontSize: '0.8125rem', fontWeight: 800, color: item.color, padding: '4px 10px', background: `${item.color}20`, borderRadius: 12 }}>{item.dept}</span>
-            </div>
-            <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12, wordBreak: 'keep-all' }}>{item.title}</p>
-            <div style={{ background: 'var(--glass-light)', padding: '10px 12px', borderRadius: '8px', marginBottom: 12 }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--red)', fontWeight: 700, marginRight: 8 }}>우리의 실수</span>
-              <span style={{ fontSize: '0.875rem', color: 'var(--text)', fontWeight: 500 }}>{item.error}</span>
-            </div>
-            <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.5, wordBreak: 'keep-all' }}>{item.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ── 6. 공감 & 교훈 (결론 및 시스템 예고) ── */
-function LessonSection() {
-  const [qrUrl, setQrUrl] = useState('');
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [stats, setStats] = useState({ total_responses: 0, yes_count: 0, comments: [] as any[] });
+  const [section, setSection] = useState<Section>('plants');
+  const [perception, setPerception] = useState<PerceptionData>({ counts: [], customs: [] });
 
   useEffect(() => {
-    setQrUrl(`${window.location.origin}/survey`);
-
-    const fetchData = async () => {
-      try {
-        const [pRes, sRes] = await Promise.all([
-          fetch('/api/participants'),
-          fetch('/api/survey')
-        ]);
-        const pData = await pRes.json();
-        const sData = await sRes.json();
-        setTotalUsers(pData.length);
-        setStats(sData);
-      } catch (e) { /* ignore */ }
-    };
-
-    fetchData();
-    const t = setInterval(fetchData, 3000);
+    if (section !== 'survey') return;
+    const load = () => fetch('/api/perception').then((r) => r.json()).then(setPerception);
+    load();
+    const t = setInterval(load, 2500);
     return () => clearInterval(t);
-  }, []);
+  }, [section]);
 
-  const yesRatio = stats.total_responses === 0 ? 0 : Math.round((stats.yes_count / stats.total_responses) * 100);
+  const totalVotes = perception.counts.reduce((s, c) => s + c.count, 0);
 
   return (
-    <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+    <div style={{ minHeight: '100vh' }}>
+      <NavBar current="Part 1" step="01/04" />
 
-      <div className="glass-card" style={{ padding: '18px 26px', borderLeft: '4px solid var(--gold)', background: 'rgba(201,168,76,0.06)' }}>
-        <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-          지금까지 본 모든 사고는 <strong style={{ color: 'var(--gold)' }}>'남의 회사' 이야기가 아닙니다.</strong> 여러분이 곧 일하게 될 자리에서, 선배들이 지금도 겪고 있는 일입니다.
-          잠시 QR로 <strong>"기준정보 때문에 헷갈렸거나 답답했던 순간"</strong>을 한 줄만 남겨주세요. 여러분의 한마디가 화면에 바로 뜹니다.
-        </p>
-      </div>
+      <div className="anim-up" style={{ padding: '24px 0 80px' }}>
 
-      <div style={{ display: 'flex', gap: 24, flex: 1, minHeight: 0 }}>
-
-      {/* 왼쪽: 실시간 공감 피드 (문제 인식) */}
-      <div style={{ width: '420px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div className="glass-card" style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-            <div>
-              <p className="caption" style={{ color: 'var(--gold)', marginBottom: 4 }}>우리의 공감대</p>
-              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)' }}>기준정보가 헷갈렸던 경험들</p>
-            </div>
-            <div style={{ background: '#fff', padding: '8px', borderRadius: '8px' }}>
-              <QRCode value={qrUrl} size={64} style={{ height: "auto", maxWidth: "100%", width: "100%" }} />
-            </div>
-          </div>
-
-          {/* 댓글 피드 영역 */}
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12, paddingRight: 4 }}>
-            {stats.comments.length === 0 ? (
-              <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text3)', textAlign: 'center', fontSize: '0.9375rem', lineHeight: 1.5 }}>
-                QR코드를 스캔하여<br/>업무 중 헷갈렸던 경험을 남겨주세요
-              </div>
-            ) : (
-              stats.comments.map((c: any) => (
-                <div key={c.id} className="pop-in" style={{ background: 'var(--glass-light)', padding: '16px', borderRadius: '12px', borderLeft: '3px solid var(--gold)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--gold)' }}>{c.department}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text3)' }}>{new Date(c.created_at).toLocaleTimeString('ko-KR', {hour: '2-digit', minute:'2-digit'})}</span>
-                  </div>
-                  <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.5, wordBreak: 'keep-all' }}>"{c.comment}"</p>
-                </div>
-              ))
-            )}
-          </div>
-          
-          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--glass-border)', textAlign: 'center' }}>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text2)' }}>
-              참석자 중 <strong style={{ color: 'var(--gold)', fontSize: '1.0625rem' }}>{yesRatio}%</strong>가 기준정보로 혼란을 겪었습니다.
-            </p>
-          </div>
+        {/* 섹션 탭 */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}>
+          <SectionTab active={section === 'plants'} onClick={() => setSection('plants')} label="① 3개의 공장" />
+          <SectionTab active={section === 'chain'} onClick={() => setSection('chain')} label="② 데이터의 릴레이" />
+          <SectionTab active={section === 'data'} onClick={() => setSection('data')} label="③ 한 칸의 무게" />
+          <SectionTab active={section === 'survey'} onClick={() => setSection('survey')} label="④ 어떤 회사로 느껴지나요" />
         </div>
-      </div>
 
-      {/* 오른쪽: 시스템 솔루션으로의 브릿지 (예고편) */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, minHeight: 0 }}>
-        <div className="glass-card" style={{ padding: '20px 28px', display: 'flex', flexDirection: 'column', height: '100%', borderLeft: '4px solid var(--blue)', overflowY: 'auto' }}>
-          <p className="caption" style={{ color: 'var(--blue)', marginBottom: 12 }}>결론: 개인의 잘못이 아닙니다</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text)', marginBottom: 18, wordBreak: 'keep-all', lineHeight: 1.4 }}>
-            "조심하겠습니다" 라는 다짐으로는<br/>
-            결코 나비효과를 막을 수 없습니다.
+        {/* 헤더 */}
+        <div style={{ marginBottom: 40 }}>
+          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>Part 1 · 20분</p>
+          <h1 className="display text-gold" style={{ marginBottom: 12 }}>
+            우리 회사는 무엇을 만드는가
+          </h1>
+          <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
+            대시보드 자랑이 아니라, 하림산업의 정체성에서 시작합니다.<br />
+            <strong style={{ color: 'var(--text)' }}>세 개의 공장</strong> · <strong style={{ color: 'var(--text)' }}>한국인의 식탁</strong> ·
+            그 사이를 이어달리는 <strong style={{ color: 'var(--text)' }}>데이터의 릴레이</strong>.
           </p>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div className="pop-in" style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', animationDelay: '0.1s' }}>
-              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--warning)', marginBottom: 8 }}>❌ 의지와 엑셀의 한계</p>
-              <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-                화면에 올라온 수많은 고민들처럼, 파편화된 환경에서 담당자 개인이 수만 개의 기준정보를 완벽하게 외우고 입력하는 것은 물리적으로 불가능합니다.
-              </p>
-            </div>
-            
-            <div className="pop-in" style={{ padding: '20px', background: 'var(--blue-dim)', border: '1px solid var(--blue)', borderRadius: '12px', animationDelay: '0.3s' }}>
-              <p style={{ fontSize: '1.125rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>✅ 원천 차단하는 통합 시스템</p>
-              <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.8)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-                지긋지긋한 그림자 노동을 끝내기 위해, 회사는 개인의 의지가 아닌 <strong>'시스템'</strong>으로 에러를 차단하는 <strong>SSOT(단일 진실 공급원) 환경</strong>을 구축했습니다.
-              </p>
-            </div>
-          </div>
-
-          <div className="pop-in" style={{ marginTop: 18, textAlign: 'center', animationDelay: '0.6s' }}>
-            <p style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--gold)', letterSpacing: '-0.5px', lineHeight: 1.6 }}>
-              "조심하자"는 다짐 대신, <strong>매일 반복할 수 있는 작은 습관</strong>이 필요합니다.<br/>
-              Part 2에서는 그 습관 — <strong>누군가의 야근 없이도 사고를 막는 단 3가지 행동</strong>을 보겠습니다.
-            </p>
-          </div>
         </div>
-      </div>
 
+        {/* 섹션 1: 공장 (5분) */}
+        {section === 'plants' && (
+          <>
+            <p className="caption" style={{ marginBottom: 12 }}>5분 · 우리가 매일 만들어내는 양</p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 24 }}>
+              <PlantCard
+                code="K3"
+                name="라면 · FD 공장"
+                products="장인라면, FD(Freeze Dry), 분말 스프류"
+                lines="라면 4개 라인"
+                capacity="하루 100만 식 이상"
+                metaphor="광역시 한 도시의 시민이 하루 한 끼 라면을 먹을 수 있는 양"
+                accent="#F59E0B"
+              />
+              <PlantCard
+                code="K2"
+                name="즉석밥 공장"
+                products="더미식 즉석밥 등 즉석밥 제품군"
+                lines="(작성자 입력 예정)"
+                capacity="(작성자 입력 예정)"
+                metaphor="OO만 명이 한 끼 식사를 해결할 수 있는 양"
+                accent="#2DD4BF"
+              />
+              <PlantCard
+                code="K1"
+                name="냉동 · 국탕 · HMR 공장"
+                products="냉동만두, 즉석국, 냉동 가정식"
+                lines="(작성자 입력 예정)"
+                capacity="(작성자 입력 예정)"
+                metaphor="(작성자 확정 예정)"
+                accent="#A78BFA"
+              />
+            </div>
+
+            {/* 거래처 카드 */}
+            <div className="glass-card" style={{ padding: 28, marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+                <span style={{ fontSize: '2.5rem', flexShrink: 0 }}>🛒</span>
+                <div style={{ flex: 1 }}>
+                  <p className="caption" style={{ color: 'var(--gold)', marginBottom: 6 }}>어디로 흘러가는가</p>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', marginBottom: 10 }}>
+                    거래처 · 납품처
+                  </h3>
+                  <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginBottom: 12, lineHeight: 1.7 }}>
+                    대형마트 · 편의점 · 온라인 커머스 · B2B (작성자 추후 입력)
+                  </p>
+                  <p style={{
+                    fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text)',
+                    fontStyle: 'italic', lineHeight: 1.7,
+                    borderLeft: '2px solid var(--gold)', paddingLeft: 14,
+                  }}>
+                    &ldquo;우리가 만든 식품은 OO곳을 거쳐 매일 한국인의 식탁에 오릅니다&rdquo;
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 규모감 한 줄 요약 */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+              <ScaleStat n="3" unit="개 공장" caption="K1 · K2 · K3" accent="#F59E0B" />
+              <ScaleStat n="100만+" unit="식 / 일" caption="K3 라면 일일 생산 능력" accent="#2DD4BF" />
+              <ScaleStat n="365" unit="일 멈춤 없이" caption="식탁은 하루도 쉬지 않습니다" accent="#A78BFA" />
+              <ScaleStat n="?" unit="명의 약속" caption="오늘 등록된 참여자만큼" accent="#C9A84C" />
+            </div>
+
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <button onClick={() => setSection('chain')} className="btn btn-gold">
+                다음 → 데이터는 이렇게 흘러갑니다
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* 섹션 2: 가치사슬 릴레이 (7분) */}
+        {section === 'chain' && (
+          <>
+            <p className="caption" style={{ marginBottom: 12 }}>7분 · 부서는 다르지만, 데이터는 하나의 흐름</p>
+
+            <h2 style={{ fontSize: '1.625rem', fontWeight: 800, color: 'var(--text)', marginBottom: 16, lineHeight: 1.4 }}>
+              우리는 매일, <span style={{ color: 'var(--gold)' }}>가치 사슬의 릴레이</span>를 뛰고 있습니다.
+            </h2>
+            <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.7, marginBottom: 28, maxWidth: 820 }}>
+              내 업무의 결과는 다음 사람의 시작점입니다.
+              한 명이 손에서 놓친 데이터 한 칸은 — 다음 주자에게는 거짓말이 됩니다.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 28 }}>
+              {RELAY_STAGES.map((s, i) => (
+                <div key={s.dept} className="glass-card" style={{ padding: '18px 24px', display: 'flex', alignItems: 'center', gap: 20 }}>
+                  <span style={{
+                    fontFamily: 'monospace', fontWeight: 900, fontSize: '1.5rem',
+                    color: 'var(--gold)', minWidth: 40,
+                  }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span style={{ fontSize: '2rem', flexShrink: 0 }}>{s.emoji}</span>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>
+                      <span style={{ color: 'var(--gold)' }}>{s.dept}</span>이 {s.action},
+                    </p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.6 }}>
+                      <strong style={{ color: 'var(--text)' }}>{s.hands}</strong> 다음 주자에게 넘깁니다.
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="glass-card" style={{
+              padding: 32, background: 'rgba(248,113,113,0.06)',
+              borderLeft: '3px solid #F87171',
+            }}>
+              <p className="caption" style={{ color: '#F87171', marginBottom: 10 }}>그래서 — 멈추는 순간은</p>
+              <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, fontWeight: 500, wordBreak: 'keep-all' }}>
+                7명 중 한 명이 한 줄을 잘못 넘기면, 뒤따르는 6명은 <strong style={{ color: '#F87171' }}>모두 거짓말로 일합니다.</strong><br />
+                그리고 그 거짓말이 어디서 시작됐는지 — 결산 시점에는 아무도 모릅니다.
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <button onClick={() => setSection('data')} className="btn btn-gold">
+                다음 → 한 칸의 무게
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* 섹션 3: 데이터 한 칸 (5분) */}
+        {section === 'data' && (
+          <>
+            <p className="caption" style={{ marginBottom: 12 }}>5분 · 실제 사례, 그리고 우리가 매일 마주칠 위험</p>
+
+            <div className="glass-card" style={{ padding: 36, marginBottom: 24 }}>
+              <p className="caption" style={{ color: 'var(--red)', marginBottom: 16 }}>실제 사례 · 단 하나의 오타가</p>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', marginBottom: 20, lineHeight: 1.4 }}>
+                6,000만원 수출 사고
+              </h2>
+              <p style={{ fontSize: '1.0625rem', color: 'var(--text2)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
+                BOM 한 줄에서 단가 단위가 잘못 기입됐습니다.
+                결재는 정상적으로 흘러갔고, 시스템은 멈추지 않았습니다.
+                선적이 끝난 뒤에야 차이를 발견했고, 그 시점엔 이미 <strong style={{ color: '#F87171' }}>6,000만원을 회수할 방법이 없었습니다.</strong>
+              </p>
+              <div style={{
+                background: 'rgba(248,113,113,0.08)', borderRadius: 10,
+                padding: '14px 18px', fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.7,
+              }}>
+                <strong style={{ color: '#F87171' }}>핵심:</strong> 시스템은 &ldquo;0&rdquo; 하나의 진위를 검증하지 않습니다.
+                그것을 검증하는 건 <strong style={{ color: 'var(--text)' }}>입력하는 사람의 습관</strong>뿐입니다.
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, marginBottom: 24 }}>
+              <ErrorCard
+                title="단위 오류"
+                desc='"개" 단위와 "박스" 단위를 혼동해 입력 → 출고 수량 12배 차이'
+                color="#F87171"
+              />
+              <ErrorCard
+                title="환산 오류"
+                desc="원/kg과 원/g을 잘못 매핑 → 단가 1,000배 왜곡, 손익 보고서가 거꾸로 찍힘"
+                color="#F59E0B"
+              />
+              <ErrorCard
+                title="기준정보 누락"
+                desc="신제품 BOM에 부자재 1종이 빠짐 → 6개월간 원가가 과소 계상, 흑자처럼 보였던 SKU가 사실 적자"
+                color="#A78BFA"
+              />
+              <ErrorCard
+                title="시점 불일치"
+                desc="발주 입력일과 입고 실제일을 같은 날로 처리 → 재고가 실제와 1주 어긋남, 결품 발생"
+                color="#2DD4BF"
+              />
+            </div>
+
+            {/* v2 캐치프레이즈 */}
+            <div className="glass-card" style={{ padding: 40, marginBottom: 24, background: 'rgba(201,168,76,0.06)' }}>
+              <p style={{
+                fontSize: '1.375rem', color: 'var(--text)', lineHeight: 1.85,
+                fontWeight: 500, fontStyle: 'italic', wordBreak: 'keep-all', textAlign: 'center',
+              }}>
+                여러분이 어젯밤 끓여 드셨던 라면 한 봉지 —<br />
+                그 뒤에는 누군가 정확하게 입력한 <span style={{ color: 'var(--gold)', fontWeight: 800 }}>데이터 한 칸</span>이 있었습니다.<br />
+                <span style={{ fontWeight: 700, color: 'var(--gold)', fontStyle: 'normal' }}>
+                  오늘부터, 그 한 칸을 지키는 사람이 여러분입니다.
+                </span>
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <button onClick={() => setSection('survey')} className="btn btn-gold">
+                다음 → 청중에게 묻습니다
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* 섹션 4: 회사 인상 + QR (3분) */}
+        {section === 'survey' && (
+          <>
+            <p className="caption" style={{ marginBottom: 12 }}>3분 · 휴대폰을 꺼내주세요</p>
+
+            <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 32 }}>
+              <div style={{ flex: '1 1 480px', minWidth: 320 }}>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12 }}>
+                  오늘 본 하림산업,<br />
+                  어떤 회사처럼 느껴지나요?
+                </h2>
+                <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.6, marginBottom: 20 }}>
+                  오른쪽 QR을 스캔하면 응답 화면이 열립니다. 응답이 실시간으로 집계됩니다.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+                  {PERCEPTION_OPTIONS.map((opt) => {
+                    const c = perception.counts.find((c) => c.perception_choice === opt.key)?.count ?? 0;
+                    const pct = totalVotes ? Math.round((c / totalVotes) * 100) : 0;
+                    return (
+                      <div key={opt.key} className="glass-card" style={{ padding: 20, position: 'relative', overflow: 'hidden' }}>
+                        <div style={{
+                          position: 'absolute', inset: 0, width: `${pct}%`,
+                          background: 'rgba(201,168,76,0.10)', transition: 'width 0.6s ease',
+                        }} />
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 14 }}>
+                          <span style={{ fontSize: '1.75rem' }}>{opt.emoji}</span>
+                          <div style={{ flex: 1 }}>
+                            <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text)' }}>{opt.label}</p>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--text3)', marginTop: 2 }}>
+                              {c}명 ({pct}%)
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <SurveyQR
+                path="/perception"
+                label="Part 1 응답"
+                hint="1분이면 됩니다"
+              />
+            </div>
+
+            {perception.customs.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <p className="caption" style={{ marginBottom: 12 }}>자유 응답</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {perception.customs.slice(0, 8).map((c, i) => (
+                    <div key={i} className="glass-card" style={{ padding: '14px 18px' }}>
+                      <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.6, marginBottom: 6 }}>
+                        &ldquo;{c.custom_text}&rdquo;
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text3)', fontWeight: 600 }}>
+                        — {c.department} {c.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{ marginTop: 24, textAlign: 'center' }}>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text3)' }}>
+                응답: <strong style={{ color: 'var(--gold)' }}>{totalVotes}</strong>건
+              </p>
+            </div>
+          </>
+        )}
       </div>
+    </div>
+  );
+}
+
+function SectionTab({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button onClick={onClick} style={{
+      padding: '10px 18px', borderRadius: 999,
+      background: active ? 'var(--gold)' : 'var(--glass)',
+      color: active ? '#0B0E1A' : 'var(--text2)',
+      border: 'none', fontWeight: 700, fontSize: '0.875rem',
+      cursor: 'pointer', transition: 'all 0.2s',
+    }}>
+      {label}
+    </button>
+  );
+}
+
+function ErrorCard({ title, desc, color }: { title: string; desc: string; color: string }) {
+  return (
+    <div className="glass-card" style={{ padding: 24, borderLeft: `3px solid ${color}` }}>
+      <p style={{ fontSize: '0.75rem', fontWeight: 800, color, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>
+        {title}
+      </p>
+      <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+        {desc}
+      </p>
+    </div>
+  );
+}
+
+function ScaleStat({ n, unit, caption, accent }: { n: string; unit: string; caption: string; accent: string }) {
+  return (
+    <div className="glass-card" style={{ padding: '16px 18px', borderTop: `2px solid ${accent}` }}>
+      <p style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '1.625rem', color: accent, lineHeight: 1, marginBottom: 4 }}>
+        {n}
+      </p>
+      <p style={{ fontSize: '0.75rem', color: 'var(--text2)', fontWeight: 700, marginBottom: 6 }}>
+        {unit}
+      </p>
+      <p style={{ fontSize: '0.75rem', color: 'var(--text3)', lineHeight: 1.5 }}>
+        {caption}
+      </p>
     </div>
   );
 }

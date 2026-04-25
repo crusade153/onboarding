@@ -1,484 +1,293 @@
-// src/app/part3/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
-import Link from 'next/link';
-import QRCode from 'react-qr-code';
+import SurveyQR from '@/components/v2/SurveyQR';
 
-const ALL_DASHBOARDS = [
+// 메인 대시보드 3개 — 회사의 정체성을 가장 잘 보여주는 라이브 데모
+const LIVE_DEMOS = [
   {
-    step: "Phase 1", tagline: "기준 수립", title: "자재 기준정보 표준화", icon: "🧬", color: "var(--blue)",
-    subtitle: "자재명과 환산 단위를 전사 단일 기준으로 통일",
-    before: "자재 이름과 단위에 일관된 규칙이 없어 데이터가 틀어졌고, 문제가 생기면 부서 간 책임 공방과 교차 검증에 귀중한 시간을 허비했습니다.",
-    after: "시스템이 정해진 규칙대로만 자재를 생성하도록 강제하여, 누가 등록해도 똑같은 기준이 적용되고 단위 오류가 완전히 사라졌습니다.",
-    impact: "재고 불일치의 가장 큰 원인이었던 단위 오류 0% 달성",
-    link: "https://smart-mdm.vercel.app/"
+    code: 'S&OP',
+    title: '판매·운영 계획 통합 뷰',
+    why: '부서 협업의 실체 — 같은 회사, 같은 숫자',
+    impact: '영업 ↔ 생산 ↔ 구매 계획을 한 화면에서 정합성 검증',
+    before: '영업이 약속한 수량과 생산 캐파가 어긋나도 월말 결산에 가서야 발견.',
+    after: '계획 입력 단계에서 자동 충돌 알림 → 사전 조율로 사고 0.',
+    link: 'https://snop-mgt.vercel.app/login',
+    accent: '#A78BFA',
   },
   {
-    step: "Phase 2", tagline: "계획 동기화", title: "판매·운영 계획 (S&OP) 지원", icon: "🤝", color: "var(--teal)",
-    subtitle: "영업과 생산의 정보 불일치를 해소하는 통합 뷰",
-    before: "부서마다 각자 가공한 데이터를 기준으로 회의를 진행해, 원인 분석보다는 데이터 자체를 검증하는 데 시간을 허비했습니다.",
-    after: "영업·물류·생산 데이터를 통합하여 납품·미납 현황과 미래 수요 대비 재고 가용성을 전사가 한 화면에서 파악합니다.",
-    impact: "부서 간 소통 비용 절감 및 신속한 전략 수립",
-    link: "https://snop-mgt.vercel.app/login"
+    code: 'DAILYCOST',
+    title: '제조원가 일일결산',
+    why: '일일관리 HBH의 정수 — 매일 결정의 근거',
+    impact: 'D+1 원가가 자동 산출, 월말 결산 폭주가 매일 5분의 점검으로',
+    before: '월말 결산 후에야 적자 발견. 한 달치 의사결정이 이미 굳어 있음.',
+    after: '매일 자정 기준 원가 자동 집계 → 다음날 아침 회의에서 즉시 액션.',
+    link: 'https://dailycost.zettai.co.kr/',
+    accent: '#F59E0B',
   },
   {
-    step: "Phase 3", tagline: "수급 관리", title: "생산계획 연동 MRP 도입", icon: "⚙️", color: "var(--blue)",
-    subtitle: "생산계획과 연동하여 자재 소요량을 자동 산출",
-    before: "계획이 바뀔 때마다 담당자가 수천 개의 부품을 일일이 다시 계산하느라 시간이 지연되었고, 계산 실수나 누락 리스크가 높았습니다.",
-    after: "생산 계획만 입력하면 시스템이 1초 만에 필요한 자재량을 정확히 역산해 주어, 수작업에 의존하던 관행을 탈피했습니다.",
-    impact: "자재 소요량 산출 수작업 시간을 혁신적으로 단축",
-    link: "https://mrp.zettai.co.kr/"
+    code: 'RAMS',
+    title: '자재 소진율 · 유통기한 가시화',
+    why: '진짜 식품 회사의 정체성 — 안전과 손실의 경계',
+    impact: '부자재가 유통기한 전에 모두 소진되는지 실시간 추적',
+    before: '분기 말 폐기 시점에 데드 재고 발견. 손실은 그대로 흡수.',
+    after: '소진율 사전 알림 → 라인 우선순위 조정으로 폐기 0.',
+    link: 'https://rams.zettai.co.kr/',
+    accent: '#2DD4BF',
   },
-  {
-    step: "Phase 4", tagline: "실적 검증", title: "재료비 일일 실적 관리", icon: "📊", color: "var(--warning)",
-    subtitle: "현장 투입량과 수율을 매일 추적하여 낭비 방어",
-    before: "투입 내역이 늦게 보고되어, 며칠이 지난 후에야 손실이나 수율 저하를 인지하는 등 대응의 골든타임을 놓치곤 했습니다.",
-    after: "계획 대비 실제 투입량을 실시간 추적하며, 허용 범위를 초과하는 자재가 투입되면 즉시 현장에 경고 알림을 발송합니다.",
-    impact: "자재 낭비를 당일 발견하고 조치하는 정밀 수율 관리 시작",
-    link: "https://mims.zettai.co.kr/"
-  },
-  {
-    step: "Phase 5", tagline: "일일 마감", title: "제조원가 일일결산 모니터링", icon: "💰", color: "var(--warning)",
-    subtitle: "매일 실적을 정산하는 일일결산 체계 구축",
-    before: "월말에 마감이 몰려, 한 달 전의 생산성 하락이나 비용 초과 원인을 적시에 찾아내기 어려웠습니다.",
-    after: "팀별 마감 진척도(%)를 수치화하고 알림을 발송하여, 매일 손익과 실적을 정산하는 일일관리를 루틴으로 정착시킵니다.",
-    impact: "신속한 손익 확인 및 문제 발생 시 당일 원인 규명",
-    link: "https://dailycost.zettai.co.kr/"
-  },
-  {
-    step: "Phase 6", tagline: "재고 가시화", title: "자재관리 효율증대 및 가시화", icon: "🧊", color: "var(--gold)",
-    subtitle: "자재 소진율과 유통기한을 실시간 모니터링",
-    before: "재고의 체류 기간이 제대로 추적되지 않아, 제품 가치가 완전히 상실된 이후에야 뒤늦게 폐기 처분하는 등 관리에 허점이 컸습니다.",
-    after: "소진율이 70% 이하로 떨어지면 사전 알림을 발송하고, 70% 이하 재고는 '죽은재고'로 분류하여 즉시 처분을 유도합니다.",
-    impact: "폐기 직전 방치되던 자산을 골든타임 내 찾아내어 손실 방어",
-    link: "https://rams.zettai.co.kr/"
-  },
-  {
-    step: "Phase 7", tagline: "의사결정", title: "정체 재고 처분 의사결정 지원", icon: "🗑️", color: "var(--red)",
-    subtitle: "악성 재고 처분 타이밍을 데이터로 도출",
-    before: "기말 재고가 쌓이면 영업과 생산이 서로 원인 제공자 탓을 하며 실질적인 처분 및 해결책 마련이 지연되었습니다.",
-    after: "객관적인 데이터를 근거로 '누구의 잘못인가'가 아닌 '어떻게 신속히 처분할 것인가'로 회의 안건을 전환했습니다.",
-    impact: "재고 처분 의사결정 가속화 및 악성 보관 비용 방어",
-    link: "https://obsolete.zettai.co.kr/"
-  },
-  {
-    step: "Phase 8", tagline: "자율 통제", title: "부서별 예산 실시간 통제", icon: "💳", color: "var(--teal)",
-    subtitle: "비용 집행 현황을 각 부서가 매일 자율 점검",
-    before: "회계 부서에서 사후 정산해 주기 전까지는 현업에서 자신들의 예산 잔액을 정확히 파악하기 어려웠습니다.",
-    after: "부서장들이 매일 아침 전표 데이터를 기반으로 실시간 예산 잔액을 투명하게 확인하고 초과 전 집행을 조율합니다.",
-    impact: "비용 초과 집행 선제적 예방 및 자율 예산 통제 정착",
-    link: "https://effortless-manatee-2144cb.netlify.app/"
-  },
-  {
-    step: "Phase 9", tagline: "통합 관제", title: "일일 출고·이슈 통합 관제", icon: "🚛", color: "var(--gold)",
-    subtitle: "당일 출고 물량 및 물류 이슈 가시화",
-    before: "배송 지연 등 현장 이슈가 물류팀 내에만 머물러, 타 부서에서는 고객 클레임에 뒤늦게 대응할 수밖에 없었습니다.",
-    after: "지역별 배송 현황과 병목 구간을 전사 대시보드를 통해 직관적으로 가시화하여 누구나 모니터링할 수 있습니다.",
-    impact: "배송 병목 발생 시 영업/CS 부서의 즉각적 고객 응대 지원",
-    link: "https://odd.zettai.co.kr/"
-  },
-  {
-    step: "Phase 10", tagline: "리스크 관리", title: "주 52시간 컴플라이언스", icon: "⏰", color: "var(--blue)",
-    subtitle: "초과 근무 위험을 부서장에게 사전 경고",
-    before: "월말 근태 내역을 종합한 후에야 근무 시간 초과 사실을 알게 되는 구조적 리스크가 존재했습니다.",
-    after: "주 50시간 초과가 예상되는 인원이 감지되면 시스템이 즉시 해당 부서장에게 사전 경고 알림을 발송합니다.",
-    impact: "근로 시간 관련 법적 리스크 원천 차단",
-    link: "https://52hr.vercel.app/"
-  }
 ];
 
-// ── 자동화 위시리스트 실시간 피드 컴포넌트 ──
-function AutomationWishFeed() {
-  const [wishes, setWishes] = useState<any[]>([]);
-  const [qrUrl, setQrUrl] = useState('');
+// 나머지 7개 — 카탈로그
+const COMPACT = [
+  {
+    code: 'MIMS',
+    title: '재료비 일일실적 관리',
+    story: '계획 대비 실제 투입을 실시간 추적, 허용 초과 시 현장 즉시 알림.',
+    link: 'https://mims.zettai.co.kr/',
+  },
+  {
+    code: 'MRP',
+    title: '생산계획 연동 자재소요량 자동화',
+    story: '엑셀로 BOM 펼치는 2~3시간을 1초로. 사람은 검토만.',
+    link: 'https://mrp.zettai.co.kr/',
+  },
+  {
+    code: '52HR',
+    title: '주 52시간 컴플라이언스',
+    story: '임계 도달 전 본인·부서장 모두 알림. 법적 리스크 사전 차단.',
+    link: 'https://52hr.vercel.app/',
+  },
+  {
+    code: 'MDM',
+    title: '자재 기준정보 표준화',
+    story: '같은 자재를 부서마다 다르게 부르던 시절 종료. 단일 기준정보가 출발점.',
+    link: 'https://smart-mdm.vercel.app/',
+  },
+  {
+    code: 'OBSOLETE',
+    title: '정체 재고 처분 의사결정',
+    story: '6개월 무이동 재고 자동 표시. 폐기·재가공·할인 의사결정 지원.',
+    link: 'https://obsolete.zettai.co.kr/',
+  },
+  {
+    code: 'BUDGET',
+    title: '부서별 예산 실시간 통제',
+    story: '예산 소진율을 매일 갱신. 분기 말에 발견하던 초과를 미리 차단.',
+    link: 'https://effortless-manatee-2144cb.netlify.app/',
+  },
+  {
+    code: 'ODD',
+    title: '일일 출고 · 이슈 통합 관제',
+    story: '오늘 나갈 트럭과 오늘 풀어야 할 이슈를 한 화면에서.',
+    link: 'https://odd.zettai.co.kr/',
+  },
+];
+
+const GRATITUDE_OPTIONS = [
+  { key: 'excel_calc', emoji: '🧮', label: '엑셀로 수율 계산' },
+  { key: 'phone_sync', emoji: '📞', label: '부서 간 숫자 맞추는 전화' },
+  { key: 'manual_log', emoji: '📋', label: '수기 일보 작성' },
+  { key: 'overtime', emoji: '🌙', label: '월말 야근' },
+];
+
+interface GratitudeData {
+  counts: { saved_from: string; count: number }[];
+}
+
+export default function Part3Page() {
+  const [activeDemo, setActiveDemo] = useState<number | null>(0);
+  const [gratitude, setGratitude] = useState<GratitudeData>({ counts: [] });
 
   useEffect(() => {
-    setQrUrl(`${window.location.origin}/automation`);
-
-    const load = () =>
-      fetch('/api/automation')
-        .then((r) => r.json())
-        .then((d) => Array.isArray(d) && setWishes(d))
-        .catch(() => {});
-
+    const load = () => fetch('/api/gratitude').then((r) => r.json()).then(setGratitude);
     load();
     const t = setInterval(load, 3000);
     return () => clearInterval(t);
   }, []);
 
-  return (
-    <div
-      className="anim-up"
-      style={{
-        margin: '20px 0',
-        padding: '24px 28px',
-        background: 'var(--glass)',
-        backdropFilter: 'blur(20px)',
-        borderRadius: 20,
-        border: '1px solid rgba(201,168,76,0.25)',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-      }}
-    >
-      <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start' }}>
-
-        {/* QR 영역 */}
-        <div style={{ flexShrink: 0, textAlign: 'center' }}>
-          <p style={{
-            fontSize: '0.7rem',
-            fontWeight: 700,
-            color: 'var(--gold)',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: 10,
-          }}>
-            지금 참여
-          </p>
-          {qrUrl && (
-            <div style={{
-              background: '#fff',
-              padding: 10,
-              borderRadius: 12,
-              display: 'inline-block',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
-            }}>
-              <QRCode value={qrUrl} size={96} />
-            </div>
-          )}
-          <p style={{
-            fontSize: '0.7rem',
-            color: 'var(--text3)',
-            marginTop: 8,
-            lineHeight: 1.5,
-          }}>
-            스캔 후<br />고민을 남겨주세요
-          </p>
-        </div>
-
-        {/* 피드 영역 */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {/* 헤더 */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 14,
-          }}>
-            <div>
-              <p style={{
-                fontWeight: 800,
-                fontSize: '1.0625rem',
-                color: 'var(--text)',
-                marginBottom: 3,
-              }}>
-                여러분의 업무 자동화 위시리스트
-              </p>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text2)' }}>
-                어떤 업무를 함께 자동화할 수 있을지, 고민을 나눠주세요.
-              </p>
-            </div>
-            {wishes.length > 0 && (
-              <span style={{
-                fontSize: '0.8125rem',
-                fontWeight: 700,
-                color: 'var(--gold)',
-                background: 'rgba(201,168,76,0.1)',
-                border: '1px solid rgba(201,168,76,0.2)',
-                padding: '4px 14px',
-                borderRadius: 999,
-                flexShrink: 0,
-              }}>
-                {wishes.length}건
-              </span>
-            )}
-          </div>
-
-          {/* 카드 목록 */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            maxHeight: 180,
-            overflowY: 'auto',
-            paddingRight: 4,
-          }}>
-            {wishes.length === 0 ? (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 80,
-                color: 'var(--text3)',
-                fontSize: '0.9375rem',
-                textAlign: 'center',
-                lineHeight: 1.6,
-              }}>
-                QR을 스캔해 첫 번째 의견을 남겨보세요! 🙌
-              </div>
-            ) : (
-              wishes.map((w) => (
-                <div
-                  key={w.id}
-                  style={{
-                    display: 'flex',
-                    gap: 10,
-                    alignItems: 'flex-start',
-                    padding: '10px 14px',
-                    background: 'rgba(255,255,255,0.03)',
-                    borderRadius: 10,
-                    borderLeft: '3px solid var(--gold)',
-                    animation: 'fadeUp 0.4s ease both',
-                  }}
-                >
-                  {w.department && (
-                    <span style={{
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      color: 'var(--gold)',
-                      background: 'rgba(201,168,76,0.12)',
-                      padding: '2px 8px',
-                      borderRadius: 999,
-                      flexShrink: 0,
-                      marginTop: 1,
-                    }}>
-                      {w.department}
-                    </span>
-                  )}
-                  <p style={{
-                    fontSize: '0.9375rem',
-                    color: 'var(--text)',
-                    lineHeight: 1.5,
-                    wordBreak: 'keep-all',
-                  }}>
-                    {w.wish_text}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── 메인 페이지 ──
-export default function Part3Page() {
-  const [selectedDashboard, setSelectedDashboard] = useState<any | null>(null);
+  const total = gratitude.counts.reduce((s, c) => s + c.count, 0);
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
+    <div style={{ minHeight: '100vh' }}>
       <NavBar current="Part 3" step="03/04" />
 
-      {/* 헤더 영역 */}
-      <div style={{ borderBottom: '1px solid var(--glass-border)', padding: '20px 0 14px' }}>
-        <div className="slide-container" style={{ paddingBottom: 0 }}>
-          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 6 }}>Part 3</p>
-          <h1 className="headline" style={{ color: 'var(--text)', marginBottom: 6, fontSize: '2rem', wordBreak: 'keep-all' }}>
-            모두가 같은 숫자를 보는 조직
+      <div className="anim-up" style={{ padding: '24px 0 80px' }}>
+
+        <div style={{ marginBottom: 32 }}>
+          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>Part 3 · 12분</p>
+          <h1 className="display text-gold" style={{ marginBottom: 12 }}>
+            그 결과 무엇이 만들어졌는가
           </h1>
-          <p className="body-md" style={{ color: 'var(--text2)', maxWidth: 800, wordBreak: 'keep-all', lineHeight: 1.5 }}>
-            각자의 자리에서 기준정보를 정확히 지키고 일일관리를 실천할 때, 부서 간 데이터는 하나로 연결됩니다. 현재 시범 운영 중인 10개의 업무 자동화 사례를 소개합니다.
+          <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
+            <em>자랑이 아니라 증거입니다.</em><br />
+            앞에서 말한 일하는 방식의 결과로 이런 게 만들어졌습니다 — <strong style={{ color: 'var(--gold)' }}>3개만 직접 열어보고, 7개는 카탈로그로.</strong>
+          </p>
+        </div>
+
+        {/* 3개 메인 대시보드 (5분) */}
+        <p className="caption" style={{ marginBottom: 12 }}>① 메인 대시보드 3개 · 5분</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
+          {LIVE_DEMOS.map((d, i) => {
+            const open = activeDemo === i;
+            return (
+              <div key={d.code} className="glass-card" style={{ overflow: 'hidden' }}>
+                <div
+                  onClick={() => setActiveDemo(open ? null : i)}
+                  style={{ padding: '20px 28px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 20 }}
+                >
+                  <span style={{
+                    fontFamily: 'monospace', fontWeight: 900, fontSize: '1.5rem',
+                    color: d.accent, minWidth: 90, letterSpacing: '0.02em',
+                  }}>
+                    {d.code}
+                  </span>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>
+                      {d.title}
+                    </p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text3)', fontStyle: 'italic' }}>
+                      {d.why}
+                    </p>
+                  </div>
+                  <span style={{
+                    width: 36, height: 36, borderRadius: '50%', background: 'var(--glass-light)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.4s', color: 'var(--text)',
+                  }}>↓</span>
+                </div>
+
+                <div style={{
+                  maxHeight: open ? 800 : 0, opacity: open ? 1 : 0,
+                  transition: 'max-height 0.5s, opacity 0.3s', overflow: 'hidden',
+                }}>
+                  <div style={{ padding: '0 28px 24px' }}>
+                    <div style={{
+                      padding: '16px 20px', background: `${d.accent}10`,
+                      borderRadius: 12, borderLeft: `3px solid ${d.accent}`, marginBottom: 14,
+                    }}>
+                      <p className="caption" style={{ color: d.accent, marginBottom: 6 }}>임팩트</p>
+                      <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, fontWeight: 500 }}>
+                        {d.impact}
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                      <div style={{ padding: '12px 16px', background: 'rgba(248,113,113,0.06)', borderRadius: 10 }}>
+                        <p style={{ fontSize: '0.75rem', fontWeight: 800, color: '#F87171', marginBottom: 4 }}>
+                          BEFORE
+                        </p>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.6, fontStyle: 'italic' }}>
+                          {d.before}
+                        </p>
+                      </div>
+                      <div style={{ padding: '12px 16px', background: `${d.accent}10`, borderRadius: 10 }}>
+                        <p style={{ fontSize: '0.75rem', fontWeight: 800, color: d.accent, marginBottom: 4 }}>
+                          AFTER
+                        </p>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text)', lineHeight: 1.6, fontWeight: 500 }}>
+                          {d.after}
+                        </p>
+                      </div>
+                    </div>
+
+                    <a href={d.link} target="_blank" rel="noopener noreferrer" style={{
+                      display: 'block', padding: '14px 24px', borderRadius: 12,
+                      background: `linear-gradient(135deg, ${d.accent}, ${d.accent}dd)`,
+                      color: '#fff', fontWeight: 700, textDecoration: 'none',
+                      textAlign: 'center',
+                    }}>
+                      라이브 화면 열기 ↗
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 나머지 7개 카탈로그 (3분) */}
+        <p className="caption" style={{ marginBottom: 12 }}>② 나머지 7개 카탈로그 · 3분</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 40 }}>
+          {COMPACT.map((c) => (
+            <a key={c.code} href={c.link} target="_blank" rel="noopener noreferrer" style={{
+              textDecoration: 'none', padding: '16px 18px',
+              background: 'var(--glass)', borderRadius: 12,
+              transition: 'background 0.2s',
+              display: 'flex', flexDirection: 'column', gap: 6,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <p style={{
+                  fontFamily: 'monospace', fontWeight: 900, fontSize: '0.875rem',
+                  color: 'var(--gold)', letterSpacing: '0.04em',
+                }}>
+                  {c.code}
+                </p>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text3)' }}>↗</span>
+              </div>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text)', fontWeight: 700, lineHeight: 1.4 }}>
+                {c.title}
+              </p>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text3)', lineHeight: 1.6 }}>
+                {c.story}
+              </p>
+            </a>
+          ))}
+        </div>
+
+        {/* 감사 리스트 (4분) */}
+        <p className="caption" style={{ marginBottom: 12 }}>③ 청중에게 묻습니다 · 4분</p>
+        <div className="glass-card" style={{ padding: 36, background: 'rgba(45,212,191,0.04)' }}>
+          <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 24 }}>
+            <div style={{ flex: '1 1 480px', minWidth: 320 }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', marginBottom: 8, lineHeight: 1.4 }}>
+                이 시스템들 덕분에<br />
+                신입인 내가 <span style={{ color: 'var(--teal)' }}>안 해도 되는 일</span>은?
+              </h2>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginBottom: 20, lineHeight: 1.6 }}>
+                <em>위시리스트</em>가 아니라 <strong style={{ color: 'var(--text)' }}>감사 리스트</strong>입니다.<br />
+                중복 선택 가능합니다.
+              </p>
+            </div>
+
+            <SurveyQR
+              path="/gratitude"
+              label="Part 3 응답"
+              hint="중복 선택 OK"
+              accent="var(--teal)"
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+            {GRATITUDE_OPTIONS.map((o) => {
+              const c = gratitude.counts.find((x) => x.saved_from === o.key)?.count ?? 0;
+              const pct = total ? Math.round((c / total) * 100) : 0;
+              return (
+                <div key={o.key} className="glass-card" style={{ padding: 20, position: 'relative', overflow: 'hidden' }}>
+                  <div style={{
+                    position: 'absolute', inset: 0, width: `${pct}%`,
+                    background: 'rgba(45,212,191,0.10)', transition: 'width 0.6s ease',
+                  }} />
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <span style={{ fontSize: '1.875rem' }}>{o.emoji}</span>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text)' }}>{o.label}</p>
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--text3)', marginTop: 2 }}>
+                        {c}명 ({pct}%)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <p style={{ marginTop: 24, fontSize: '0.875rem', color: 'var(--text3)', textAlign: 'center' }}>
+            응답: <strong style={{ color: 'var(--teal)' }}>{total}</strong>건 (중복 선택 가능)
           </p>
         </div>
       </div>
-
-      {/* 10개 리스트 + 위시리스트 + 에필로그 브릿지 */}
-      <div style={{ flex: 1, overflowY: 'auto' }}>
-        <div className="slide-container" style={{ paddingTop: 16, paddingBottom: 24 }}>
-
-          {/* 브릿지: Part1·2 → Part3 정렬 */}
-          <div className="anim-up glass-card" style={{ marginBottom: 16, padding: '18px 26px', borderLeft: '4px solid var(--gold)', background: 'rgba(201,168,76,0.06)' }}>
-            <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-              지금부터 보실 10개 대시보드는 우리 회사에서 <strong>이미 작동 중인 시스템</strong>입니다. 그런데 한 가지 잊지 마십시오 —
-              <strong style={{ color: 'var(--gold)' }}> 이 모든 자동화는 여러분이 입력한 데이터가 정확할 때만 작동합니다.</strong><br/>
-              Part 1의 사고는 시스템이 없어서가 아니라, <strong>잘못된 데이터 위에서 시스템이 돌아갔기 때문</strong>에 일어났습니다.
-              Part 2의 일일관리 습관은 <strong>이 10개 시스템을 살아있게 만드는 산소</strong>입니다. 다시 말해 — 여러분의 한 칸이 이 모든 화면의 시작점입니다.
-            </p>
-          </div>
-
-          <div className="anim-up" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {ALL_DASHBOARDS.map((item, idx) => (
-              <div
-                key={idx}
-                onClick={() => setSelectedDashboard(item)}
-                className="glass-card pop-in hover-scale"
-                style={{
-                  padding: '14px 20px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 16,
-                  transition: 'transform 0.15s, box-shadow 0.15s',
-                  borderLeft: `4px solid ${item.color}`,
-                }}
-              >
-                <span style={{ fontSize: '1.5rem', flexShrink: 0, width: 36, textAlign: 'center' }}>{item.icon}</span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', wordBreak: 'keep-all' }}>{item.title}</p>
-                  <p style={{ fontSize: '0.8125rem', color: 'var(--text2)', marginTop: 2, wordBreak: 'keep-all' }}>{item.subtitle}</p>
-                </div>
-                <span className="badge" style={{ color: item.color, borderColor: item.color, flexShrink: 0, fontSize: '0.75rem' }}>{item.step}</span>
-                <span style={{ color: 'var(--text3)', fontSize: '1rem', flexShrink: 0 }}>→</span>
-              </div>
-            ))}
-          </div>
-
-          {/* ── 자동화 위시리스트 QR 피드 ── */}
-          <AutomationWishFeed />
-
-          {/* 에필로그 브릿지 */}
-          <div
-            className="anim-up"
-            style={{
-              marginTop: 4,
-              padding: '18px 24px',
-              background: 'rgba(59, 130, 246, 0.05)',
-              border: '1px solid var(--blue)',
-              borderRadius: '16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--blue)', marginBottom: 4 }}>시스템의 진정한 완성</p>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text2)', wordBreak: 'keep-all' }}>
-                이 모든 도구는 우리의 정확한 데이터 위에서만 작동합니다. 진짜 변화는 <strong>우리의 습관</strong>에서 시작됩니다.<br/>
-                <strong style={{ color: 'var(--gold)' }}>그리고 그 데이터는, 오늘 이 자리에 계신 10명의 손끝에서 시작됩니다.</strong>
-              </p>
-            </div>
-            <Link href="/epilogue">
-              <button style={{
-                background: 'var(--blue)',
-                color: '#FFF',
-                border: 'none',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}>
-                Epilogue. 우리의 결론 ➡️
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* 상세 정보 모달 */}
-      {selectedDashboard && (
-        <div
-          style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: 999,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-          }}
-          onClick={() => setSelectedDashboard(null)}
-        >
-          <div
-            style={{
-              background: 'var(--bg)',
-              width: '100%',
-              maxWidth: '800px',
-              borderRadius: '24px',
-              overflow: 'hidden',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-              border: '1px solid var(--glass-border)',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ height: '6px', background: selectedDashboard.color }} />
-            <div style={{ padding: '32px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: '2.5rem' }}>{selectedDashboard.icon}</span>
-                  <div>
-                    <span style={{
-                      fontSize: '0.875rem', fontWeight: 800,
-                      color: selectedDashboard.color,
-                      padding: '4px 8px',
-                      background: 'var(--glass-light)',
-                      borderRadius: '8px',
-                    }}>
-                      {selectedDashboard.step}
-                    </span>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', marginTop: 4 }}>
-                      {selectedDashboard.title}
-                    </h2>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedDashboard(null)}
-                  style={{ background: 'transparent', border: 'none', fontSize: '2rem', cursor: 'pointer', color: 'var(--text3)' }}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
-                <div style={{
-                  background: 'rgba(248,113,113,0.05)',
-                  border: '1px solid rgba(248,113,113,0.2)',
-                  padding: '20px',
-                  borderRadius: '16px',
-                }}>
-                  <p style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--red)', marginBottom: 8 }}>AS-WAS (과거의 한계)</p>
-                  <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-                    {selectedDashboard.before}
-                  </p>
-                </div>
-                <div style={{
-                  background: 'rgba(16,185,129,0.05)',
-                  border: '1px solid rgba(16,185,129,0.2)',
-                  padding: '20px',
-                  borderRadius: '16px',
-                }}>
-                  <p style={{ fontSize: '0.875rem', fontWeight: 800, color: '#10B981', marginBottom: 8 }}>AS-IS (자동화의 결과)</p>
-                  <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.6, wordBreak: 'keep-all' }}>
-                    {selectedDashboard.after}
-                  </p>
-                </div>
-              </div>
-
-              <div style={{
-                padding: '20px',
-                background: 'var(--glass-light)',
-                borderRadius: '16px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <div>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text2)', marginBottom: 4 }}>비즈니스 임팩트</p>
-                  <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)' }}>✨ {selectedDashboard.impact}</p>
-                </div>
-                <button
-                  onClick={() => window.open(selectedDashboard.link, '_blank')}
-                  style={{
-                    background: 'var(--text)',
-                    color: 'var(--bg)',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  실제 대시보드 접속 ↗
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

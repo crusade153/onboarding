@@ -1,103 +1,218 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
-interface Participant { id: number; name: string; department: string; joined_at: string; }
-interface VoteCount { option_key: string; count: number; }
-interface ResponseRow { question_type: string; response_text: string; }
+interface Participant {
+  id: number;
+  name: string;
+  department: string;
+  entry_motivation: string | null;
+  joined_at: string;
+}
 
-const DEPT_COLORS: Record<string, string> = {
-  마케팅: '#6C3BF5', 영업: '#00C9A7', 생산: '#FF3B6B', 구매: '#FF7A35',
-  원가기획: '#00C9A7', 경영기획: '#6C3BF5', 물류: '#D4A800', 품질: '#FF3B6B',
-  연구개발: '#6C3BF5', 기타: '#8A8AAF',
-};
+interface ActiveSession {
+  id: number;
+  session_code: string;
+  started_at: string;
+}
+
+interface PerceptionData {
+  counts: { perception_choice: string; count: number }[];
+  customs: { custom_text: string }[];
+}
+
+interface HbhData {
+  counts: { hardest_habit: string; count: number }[];
+}
+
+interface GratitudeData {
+  counts: { saved_from: string; count: number }[];
+}
+
+const DEPT_COLOR = '#C9A84C';
 
 const NAV = [
-  { href: '/prologue', label: 'Prologue', color: '#6C3BF5', bg: '#EDE8FF' },
-  { href: '/part1',   label: 'Part 1',   color: '#00C9A7', bg: '#D0FFF5' },
-  { href: '/part2',   label: 'Part 2',   color: '#FF3B6B', bg: '#FFE0E8' },
-  { href: '/part3',   label: 'Part 3',   color: '#D4A800', bg: '#FFFACC' },
-  { href: '/epilogue',label: 'Epilogue', color: '#FF7A35', bg: '#FFE9D9' },
-  { href: '/join',    label: '청중 Join', color: '#6C3BF5', bg: '#EDE8FF' },
-  { href: '/vote',    label: 'Part2 투표', color: '#FF3B6B', bg: '#FFE0E8' },
+  { href: '/prologue', label: 'Prologue', color: '#4F8EF7' },
+  { href: '/part1', label: 'Part 1', color: '#F59E0B' },
+  { href: '/part2', label: 'Part 2', color: '#2DD4BF' },
+  { href: '/part3', label: 'Part 3', color: '#A78BFA' },
+  { href: '/epilogue', label: 'Epilogue', color: '#C9A84C' },
+];
+
+const AUDIENCE = [
+  { href: '/join', label: '청중 Join' },
+  { href: '/perception', label: 'Part 1 응답' },
+  { href: '/hbh', label: 'Part 2 응답' },
+  { href: '/gratitude', label: 'Part 3 응답' },
 ];
 
 export default function AdminPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [votes, setVotes] = useState<VoteCount[]>([]);
-  const [responses, setResponses] = useState<ResponseRow[]>([]);
+  const [session, setSession] = useState<ActiveSession | null>(null);
+  const [perception, setPerception] = useState<PerceptionData>({ counts: [], customs: [] });
+  const [hbh, setHbh] = useState<HbhData>({ counts: [] });
+  const [gratitude, setGratitude] = useState<GratitudeData>({ counts: [] });
   const [dbReady, setDbReady] = useState(false);
-  const [initLoading, setInitLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  async function initDb() {
-    setInitLoading(true);
+  const load = useCallback(async () => {
     try {
-      await fetch('/api/init', { method: 'POST' });
+      const [p, s, per, h, g] = await Promise.all([
+        fetch('/api/participants').then((r) => r.json()),
+        fetch('/api/sessions').then((r) => r.json()),
+        fetch('/api/perception').then((r) => r.json()),
+        fetch('/api/hbh').then((r) => r.json()),
+        fetch('/api/gratitude').then((r) => r.json()),
+      ]);
+      setParticipants(Array.isArray(p) ? p : []);
+      setSession(s?.active ?? null);
+      setPerception(per);
+      setHbh(h);
+      setGratitude(g);
       setDbReady(true);
-      alert('DB 초기화 완료!');
-    } catch { alert('DB 초기화 실패. DATABASE_URL 환경변수를 확인하세요.'); }
-    finally { setInitLoading(false); }
-  }
+    } catch {
+      setDbReady(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [p, v, r] = await Promise.all([
-          fetch('/api/participants').then(r => r.json()),
-          fetch('/api/votes?part=part2').then(r => r.json()),
-          fetch('/api/responses').then(r => r.json()),
-        ]);
-        setParticipants(p); setVotes(v); setResponses(r); setDbReady(true);
-      } catch { setDbReady(false); }
-    };
     load();
     const t = setInterval(load, 5000);
     return () => clearInterval(t);
-  }, []);
+  }, [load]);
+
+  async function initDb() {
+    setBusy(true);
+    try {
+      await fetch('/api/init', { method: 'POST' });
+      alert('DB 초기화 완료');
+      load();
+    } catch {
+      alert('DB 초기화 실패. DATABASE_URL 환경변수를 확인하세요.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function startSession() {
+    setBusy(true);
+    try {
+      await fetch('/api/sessions', { method: 'POST' });
+      load();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function endSession() {
+    if (!session) return;
+    if (!confirm(`세션 ${session.session_code}을(를) 종료할까요?`)) return;
+    setBusy(true);
+    try {
+      await fetch(`/api/sessions?code=${encodeURIComponent(session.session_code)}`, { method: 'DELETE' });
+      load();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function logout() {
+    await fetch('/api/auth', { method: 'DELETE' });
+    location.href = '/login';
+  }
 
   const deptCounts = participants.reduce<Record<string, number>>((acc, p) => {
-    acc[p.department] = (acc[p.department] ?? 0) + 1; return acc;
+    acc[p.department] = (acc[p.department] ?? 0) + 1;
+    return acc;
   }, {});
 
+  const perceptionTotal = perception.counts.reduce((s, c) => s + c.count, 0);
+  const hbhTotal = hbh.counts.reduce((s, c) => s + c.count, 0);
+  const gratitudeTotal = gratitude.counts.reduce((s, c) => s + c.count, 0);
+
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Header */}
-      <div style={{ background: 'var(--primary)', padding: '32px 40px' }}>
-        <div style={{ maxWidth: 960, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
+      <div style={{ background: 'rgba(0,0,0,0.4)', borderBottom: '1px solid var(--glass-border)', padding: '24px 32px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <h1 className="headline" style={{ color: '#fff', marginBottom: 4 }}>Systema Admin</h1>
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem' }}>강연자 전용 관리 패널</p>
+            <p style={{ fontSize: '0.75rem', color: DEPT_COLOR, letterSpacing: '0.3em', fontWeight: 800, marginBottom: 4 }}>
+              SYSTEM INNOVATION · ADMIN
+            </p>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text)', letterSpacing: '-0.02em' }}>
+              관리 패널
+            </h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: dbReady ? 'rgba(0,201,167,0.25)' : 'rgba(255,59,107,0.25)', borderRadius: 12, padding: '8px 16px', border: `1.5px solid ${dbReady ? '#00C9A7' : '#FF3B6B'}` }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: dbReady ? '#00C9A7' : '#FF3B6B', display: 'inline-block' }} />
-              <span style={{ fontSize: '0.875rem', fontWeight: 700, color: dbReady ? '#00C9A7' : '#FF3B6B' }}>
-                {dbReady ? 'DB 연결됨' : 'DB 오류'}
-              </span>
-            </div>
-            <button onClick={initDb} disabled={initLoading} style={{
-              padding: '10px 20px', borderRadius: 12, fontWeight: 700, fontSize: '0.9375rem', cursor: 'pointer',
-              background: 'rgba(255,255,255,0.15)', border: '1.5px solid rgba(255,255,255,0.3)', color: '#fff',
-              opacity: initLoading ? 0.7 : 1,
-            }}>
-              {initLoading ? '초기화 중...' : 'DB 초기화 (최초 1회)'}
+            <Pill ok={dbReady} label={dbReady ? 'DB 연결됨' : 'DB 오류'} />
+            <button onClick={initDb} disabled={busy} className="btn" style={btnGhost}>
+              DB 초기화
+            </button>
+            <button onClick={logout} className="btn" style={btnGhost}>
+              로그아웃
             </button>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 28 }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 28 }}>
 
-        {/* Nav */}
+        {/* Session Manager */}
+        <section className="glass-card" style={{ padding: 28 }}>
+          <p className="caption" style={{ color: DEPT_COLOR, marginBottom: 12 }}>① 세션 매니저</p>
+          {session ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 24 }}>
+              <div>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text3)', marginBottom: 6 }}>현재 활성 세션</p>
+                <p style={{ fontFamily: 'monospace', fontSize: '2.25rem', fontWeight: 900, color: DEPT_COLOR, letterSpacing: '0.06em' }}>
+                  {session.session_code}
+                </p>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text3)', marginTop: 4 }}>
+                  시작: {new Date(session.started_at).toLocaleString('ko-KR')}
+                </p>
+              </div>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.6 }}>
+                  Prologue 화면의 QR이 이 코드로 발급됩니다. 종료 시 이 세션의 모든 입력이 잠깁니다.
+                </p>
+              </div>
+              <button onClick={endSession} disabled={busy} className="btn" style={{ ...btnGhost, color: '#FF6B6B', borderColor: 'rgba(255,107,107,0.3)' }}>
+                세션 종료
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', flex: 1, minWidth: 200, lineHeight: 1.6 }}>
+                활성 세션이 없습니다. 강연 시작 전에 새 세션을 시작하세요.
+              </p>
+              <button onClick={startSession} disabled={busy} className="btn btn-gold">
+                + 새 세션 시작
+              </button>
+            </div>
+          )}
+        </section>
+
+        {/* Slide Nav */}
         <section>
-          <p style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--muted)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>슬라이드 바로가기</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+          <p className="caption" style={{ marginBottom: 12 }}>② 발표자 화면</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} target="_blank" style={{
-                padding: '10px 20px', borderRadius: 14, fontWeight: 700, fontSize: '0.9375rem',
-                background: n.bg, color: n.color, border: `2px solid ${n.color}`, textDecoration: 'none',
-                transition: 'opacity 0.15s',
+                padding: '10px 18px', borderRadius: 12, fontWeight: 700, fontSize: '0.875rem',
+                background: 'var(--glass)', color: n.color, border: `1px solid ${n.color}40`,
+                textDecoration: 'none',
+              }}>
+                {n.label} ↗
+              </Link>
+            ))}
+          </div>
+          <p className="caption" style={{ marginBottom: 12 }}>③ 청중 응답 페이지 (참고)</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            {AUDIENCE.map((n) => (
+              <Link key={n.href} href={n.href} target="_blank" style={{
+                padding: '8px 14px', borderRadius: 10, fontWeight: 600, fontSize: '0.8125rem',
+                background: 'var(--glass-light)', color: 'var(--text2)',
+                border: '1px solid var(--glass-border)', textDecoration: 'none',
               }}>
                 {n.label} ↗
               </Link>
@@ -106,62 +221,63 @@ export default function AdminPage() {
         </section>
 
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
-          {[
-            { label: '총 참여자', value: participants.length, color: '#6C3BF5', bg: '#EDE8FF' },
-            { label: '투표 수 (Part2)', value: votes.reduce((s, v) => s + v.count, 0), color: '#FF3B6B', bg: '#FFE0E8' },
-            { label: 'Epilogue 응답', value: responses.length, color: '#00C9A7', bg: '#D0FFF5' },
-          ].map((s) => (
-            <div key={s.label} style={{ background: s.bg, border: `2px solid ${s.color}`, borderRadius: 20, padding: '20px 24px' }}>
-              <p style={{ fontSize: '0.875rem', fontWeight: 700, color: s.color, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</p>
-              <p style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '2.5rem', color: s.color, lineHeight: 1 }}>{s.value}</p>
-            </div>
-          ))}
-        </div>
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+          <Stat label="참여자" value={participants.length} accent="#C9A84C" />
+          <Stat label="Part 1 응답" value={perceptionTotal} accent="#F59E0B" />
+          <Stat label="Part 2 응답" value={hbhTotal} accent="#2DD4BF" />
+          <Stat label="Part 3 응답" value={gratitudeTotal} accent="#A78BFA" />
+        </section>
 
         {/* Dept breakdown */}
-        <section style={{ background: 'var(--surface)', border: '2px solid var(--border)', borderRadius: 20, padding: '20px 24px' }}>
-          <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)', marginBottom: 14 }}>부서별 참여 현황</p>
+        <section className="glass-card" style={{ padding: 24 }}>
+          <p className="caption" style={{ marginBottom: 14 }}>부서별 참여 현황</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {Object.entries(deptCounts).length === 0 ? (
-              <p style={{ color: 'var(--muted)' }}>참여자 없음</p>
-            ) : Object.entries(deptCounts).map(([dept, count]) => (
-              <div key={dept} style={{ display: 'flex', alignItems: 'center', gap: 6, background: `${DEPT_COLORS[dept] ?? '#8A8AAF'}15`, border: `2px solid ${DEPT_COLORS[dept] ?? '#8A8AAF'}`, borderRadius: 999, padding: '6px 14px' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text)' }}>{dept}</span>
-                <span style={{ fontWeight: 900, fontSize: '1rem', color: DEPT_COLORS[dept] ?? '#8A8AAF' }}>{count}</span>
-              </div>
-            ))}
+              <p style={{ color: 'var(--text3)' }}>참여자 없음</p>
+            ) : (
+              Object.entries(deptCounts).map(([dept, count]) => (
+                <div key={dept} style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: 'var(--glass-light)', borderRadius: 999, padding: '6px 14px',
+                  border: '1px solid var(--glass-border)',
+                }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text)' }}>{dept}</span>
+                  <span style={{ fontWeight: 900, fontSize: '0.875rem', color: DEPT_COLOR }}>{count}</span>
+                </div>
+              ))
+            )}
           </div>
         </section>
 
         {/* Participant list */}
-        <section style={{ background: 'var(--surface)', border: '2px solid var(--border)', borderRadius: 20, overflow: 'hidden' }}>
-          <div style={{ padding: '16px 24px', borderBottom: '2px solid var(--border)', background: 'var(--surface2)' }}>
-            <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)' }}>참여자 목록</p>
+        <section className="glass-card" style={{ overflow: 'hidden', padding: 0 }}>
+          <div style={{ padding: '14px 24px', borderBottom: '1px solid var(--glass-border)' }}>
+            <p style={{ fontWeight: 800, fontSize: '0.9375rem', color: 'var(--text)' }}>참여자 목록 (입사 동기 포함)</p>
           </div>
-          <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+          <div style={{ maxHeight: 320, overflowY: 'auto' }}>
             {participants.length === 0 ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--muted)', fontSize: '1rem' }}>아직 참여자가 없습니다.</div>
+              <div style={{ padding: 32, textAlign: 'center', color: 'var(--text3)' }}>아직 참여자가 없습니다.</div>
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: 'var(--surface2)' }}>
-                    {['#', '이름', '부서', '참여 시각'].map((h) => (
-                      <th key={h} style={{ padding: '10px 18px', textAlign: 'left', fontSize: '0.8125rem', fontWeight: 700, color: 'var(--muted)', borderBottom: '1px solid var(--border)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
+                  <tr style={{ background: 'var(--glass-light)' }}>
+                    {['#', '이름', '부서', '입사 동기', '시각'].map((h) => (
+                      <th key={h} style={{ padding: '10px 18px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text3)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {[...participants].reverse().map((p) => (
-                    <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ padding: '12px 18px', fontSize: '0.875rem', color: 'var(--muted)', fontFamily: 'monospace' }}>{p.id}</td>
-                      <td style={{ padding: '12px 18px', fontWeight: 700, fontSize: '1rem', color: 'var(--text)' }}>{p.name}</td>
-                      <td style={{ padding: '12px 18px' }}>
-                        <span style={{ background: `${DEPT_COLORS[p.department] ?? '#8A8AAF'}20`, color: DEPT_COLORS[p.department] ?? '#8A8AAF', border: `1.5px solid ${DEPT_COLORS[p.department] ?? '#8A8AAF'}`, borderRadius: 999, padding: '3px 12px', fontSize: '0.8125rem', fontWeight: 700 }}>
-                          {p.department}
-                        </span>
+                    <tr key={p.id} style={{ borderTop: '1px solid var(--glass-border)' }}>
+                      <td style={{ padding: '10px 18px', fontFamily: 'monospace', fontSize: '0.8125rem', color: 'var(--text3)' }}>{p.id}</td>
+                      <td style={{ padding: '10px 18px', fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text)' }}>{p.name}</td>
+                      <td style={{ padding: '10px 18px', fontSize: '0.8125rem', color: 'var(--text2)' }}>{p.department}</td>
+                      <td style={{ padding: '10px 18px', fontSize: '0.8125rem', color: 'var(--text2)', fontStyle: p.entry_motivation ? 'italic' : 'normal', maxWidth: 320 }}>
+                        {p.entry_motivation || <span style={{ color: 'var(--text3)' }}>—</span>}
                       </td>
-                      <td style={{ padding: '12px 18px', fontFamily: 'monospace', fontSize: '0.875rem', color: 'var(--muted)' }}>
+                      <td style={{ padding: '10px 18px', fontFamily: 'monospace', fontSize: '0.8125rem', color: 'var(--text3)' }}>
                         {new Date(p.joined_at).toLocaleTimeString('ko-KR')}
                       </td>
                     </tr>
@@ -172,30 +288,62 @@ export default function AdminPage() {
           </div>
         </section>
 
-        {/* Responses */}
-        <section style={{ background: 'var(--surface)', border: '2px solid var(--border)', borderRadius: 20, overflow: 'hidden' }}>
-          <div style={{ padding: '16px 24px', borderBottom: '2px solid var(--border)', background: 'var(--surface2)' }}>
-            <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text)' }}>Epilogue 응답</p>
-          </div>
-          <div style={{ maxHeight: 320, overflowY: 'auto' }}>
-            {responses.length === 0 ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: 'var(--muted)', fontSize: '1rem' }}>응답 없음</div>
-            ) : responses.map((r, i) => (
-              <div key={i} style={{ padding: '14px 24px', borderBottom: '1px solid var(--border)', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                <span style={{
-                  fontSize: '0.75rem', fontWeight: 700, padding: '3px 10px', borderRadius: 999, flexShrink: 0,
-                  background: r.question_type === 'pain_point' ? '#EDE8FF' : '#D0FFF5',
-                  color: r.question_type === 'pain_point' ? '#6C3BF5' : '#00C9A7',
-                  border: `1.5px solid ${r.question_type === 'pain_point' ? '#6C3BF5' : '#00C9A7'}`,
+        {/* Perception customs */}
+        {perception.customs.length > 0 && (
+          <section className="glass-card" style={{ padding: 24 }}>
+            <p className="caption" style={{ marginBottom: 12 }}>Part 1 자유 응답 (회사 인상)</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {perception.customs.map((c, i) => (
+                <span key={i} style={{
+                  background: 'var(--glass-light)', borderRadius: 999, padding: '6px 14px',
+                  fontSize: '0.875rem', color: 'var(--text2)',
+                  border: '1px solid var(--glass-border)',
                 }}>
-                  {r.question_type === 'pain_point' ? 'Q1 불편함' : 'Q2 자동화'}
+                  {c.custom_text}
                 </span>
-                <span style={{ fontSize: '1rem', color: 'var(--text)', fontWeight: 500, lineHeight: 1.6 }}>{r.response_text}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
 }
+
+function Stat({ label, value, accent }: { label: string; value: number; accent: string }) {
+  return (
+    <div className="glass-card" style={{ padding: '20px 22px', borderLeft: `3px solid ${accent}` }}>
+      <p style={{ fontSize: '0.75rem', fontWeight: 800, color: accent, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>
+        {label}
+      </p>
+      <p style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '2rem', color: 'var(--text)', lineHeight: 1 }}>
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function Pill({ ok, label }: { ok: boolean; label: string }) {
+  const c = ok ? '#2DD4BF' : '#FF6B6B';
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 8,
+      background: `${c}18`, borderRadius: 999, padding: '6px 14px',
+      border: `1px solid ${c}55`,
+    }}>
+      <span style={{ width: 8, height: 8, borderRadius: '50%', background: c }} />
+      <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: c }}>{label}</span>
+    </div>
+  );
+}
+
+const btnGhost: React.CSSProperties = {
+  padding: '8px 16px',
+  borderRadius: 10,
+  fontWeight: 600,
+  fontSize: '0.8125rem',
+  background: 'var(--glass-light)',
+  color: 'var(--text)',
+  border: '1px solid var(--glass-border)',
+  cursor: 'pointer',
+};

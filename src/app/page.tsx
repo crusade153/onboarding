@@ -6,50 +6,50 @@ import Image from 'next/image';
 import { useTheme } from '@/components/ThemeProvider';
 
 const SLIDES = [
-  { 
-    href: '/prologue', 
-    step: '00', 
-    label: 'Prologue',  
-    desc: '가치사슬의 릴레이 경주', 
+  {
+    href: '/prologue',
+    step: '00',
+    label: 'Prologue · 8분',
+    desc: '오늘 우리가 함께 풀 질문',
     color: '#4F8EF7',
     image: '/cover-prologue.jpg',
-    message: '내 업무의 결과는 다음 사람의 시작점입니다. 마케팅에서 기획한 신제품이 영업의 수주로 이어지고, 구매가 자재를 발주하면, 생산 현장이 기계를 돌립니다. 물류가 트럭에 제품을 싣고 출발하면, 재무가 최종적으로 우리가 번 돈을 계산하며 결승선을 통과합니다. 우리는 각자의 부서에서 서로의 데이터를 믿고 이어달리는 거대한 가치사슬(Value Chain)의 릴레이 경주를 하고 있습니다.'
+    message: '청중 참여 등록을 열고, 오늘 강연이 답하려는 세 가지 질문을 미리 보여줍니다. 우리 회사는 어떤 회사인가? 어떻게 일하는가? 그 결과 무엇이 만들어졌는가?'
   },
-  { 
-    href: '/part1',   
-    step: '01', 
-    label: 'Part 1',    
-    desc: '기준이 무너지면 시스템이 무너진다', 
+  {
+    href: '/part1',
+    step: '01',
+    label: 'Part 1 · 20분',
+    desc: '우리 회사는 어떤 회사인가',
     color: '#F59E0B',
     image: '/cover-part1.jpg',
-    message: '나의 사소한 \'0\' 하나가 현장의 트럭을 멈추고, 10억 원의 결산 오류를 만듭니다. 각 부서의 데이터가 어떻게 연결되고, 한 줄의 오타가 어떤 나비효과를 부르는지 확인합니다.'
+    message: '회사 정체성을 먼저 잡습니다. 3개 공장(K1·K2·K3)과 파트너 기업 한 곳을 보여주고, 6,000만원짜리 단위 환산 사고를 통해 \"왜 시스템이 필요한가\"를 체감하게 합니다.'
   },
-  { 
-    href: '/part2',   
-    step: '02', 
-    label: 'Part 2',    
-    desc: '문제를 앞서가는 매일의 습관', 
+  {
+    href: '/part2',
+    step: '02',
+    label: 'Part 2 · 20분',
+    desc: '우리는 어떻게 일하는가 (HBH)',
     color: '#2DD4BF',
     image: '/cover-part2.jpg',
-    message: 'Part 1에서 본 끔찍한 나비효과를 막는 방법은 멀리 있지 않습니다. 손익의 왜곡을 역추적해보면 결국 시스템의 근간인 \'기준정보\'와 그것을 다루는 \'우리의 습관\'에 도달하게 됩니다.'
+    message: 'CEO 신년사가 정의한 HBH — 하림 사람의 4가지 행동 습관(현장경영·일일관리·수단과 목적의 분리·시스템으로 일하는 조직)과, 그 위에 서있는 우리의 인재상을 봅니다.'
   },
-  { 
-    href: '/part3',   
-    step: '03', 
-    label: 'Part 3',    
-    desc: '모두가 같은 곳을 보는 업무 표준', 
+  {
+    href: '/part3',
+    step: '03',
+    label: 'Part 3 · 12분',
+    desc: '그 결과 무엇이 만들어졌는가',
     color: '#C9A84C',
     image: '/cover-part3.jpg',
-    message: 'Part 1의 \'정확한 기준정보\'와 Part 2의 \'철저한 일일관리\'가 만나면 엑셀 수작업은 사라집니다. 단절된 지식을 연결하여 탄생한 10개의 무인 자동화 대시보드를 소개합니다.'
+    message: '자랑이 아니라 증거입니다. 신입이 가장 자주 마주칠 3개 라이브 데모(MIMS·MRP·52HR)를 직접 열어보고, 청중이 \"안 해도 되는 일\" 감사 리스트를 함께 만듭니다.'
   },
-  { 
+  {
     href: '/epilogue',
-    step: '04', 
-    label: 'Epilogue',  
-    desc: '시스템은 우리가 함께 세운 \'약속\'', 
+    step: '04',
+    label: 'Epilogue · 10분',
+    desc: '우리 모두의 약속이 지켜질 때',
     color: '#A78BFA',
     image: '/cover-epilogue.jpg',
-    message: '투명하고 정확한 손익 관리는 전 부서의 정확한 데이터 입력에서 시작됩니다. 시스템은 단순히 주어지는 것이 아닙니다. 시스템은 우리가 함께 세운 \'약속\'입니다.'
+    message: '오늘의 응답을 자동으로 집계해 보여드리고, 참여자 한 분 한 분의 입사 동기를 크레딧과 함께 흘려보냅니다. \"하림산업의 시스템은, 우리 모두의 약속이 지켜질 때 비로소 빛을 발합니다.\"'
   },
 ];
 
@@ -89,10 +89,10 @@ export default function Home() {
 
         {/* Header */}
         <div style={{ marginBottom: 56 }}>
-          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>하림산업 원가TFT 교육 플랫폼</p>
-          <h1 className="display text-gold" style={{ marginBottom: 16 }}>시스템으로 일하는 조직</h1>
-          <p style={{ fontSize: '1.25rem', color: 'var(--text2)', maxWidth: 700, lineHeight: 1.6, letterSpacing: '-0.01em', fontWeight: 500 }}>
-            데이터로 연결되는 우리의 업무: 신규 입사자 온보딩 교육
+          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>하림산업 신규입사자 온보딩 · 70분</p>
+          <h1 className="display text-gold" style={{ marginBottom: 16 }}>SYSTEM INNOVATION</h1>
+          <p style={{ fontSize: '1.25rem', color: 'var(--text2)', maxWidth: 720, lineHeight: 1.6, letterSpacing: '-0.01em', fontWeight: 500 }}>
+            시스템 혁신 — 우리가 어떤 회사이고, 어떻게 일하며, 그 결과 무엇을 만들어냈는지.
           </p>
         </div>
 
@@ -217,10 +217,10 @@ export default function Home() {
             {/* 하단 메시지 영역 */}
             <div style={{ textAlign: 'center', marginTop: '48px', paddingBottom: '24px' }}>
               <p style={{ fontSize: '1rem', color: 'var(--text2)', marginBottom: '8px' }}>
-                기준이 무너지면 시스템이 무너집니다.
+                시스템이란, 함께 세운 약속에 다른 이름을 붙인 것입니다.
               </p>
               <p style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text)' }}>
-                시스템은 단순히 주어지는 것이 아닙니다. 우리가 <span style={{ color: 'var(--gold)' }}>함께 세운 약속</span>입니다.
+                하림산업의 시스템은 — 우리 모두의 약속이 지켜질 때, <span style={{ color: 'var(--gold)' }}>비로소 빛을 발합니다.</span>
               </p>
             </div>
 
@@ -231,9 +231,8 @@ export default function Home() {
             <p className="caption" style={{ marginBottom: 4, paddingLeft: 8 }}>운영 및 도구</p>
 
             {[
-              { href: '/join', label: '청중 참여 (QR)', desc: '이름·부서 입력', color: 'var(--blue)' },
-              { href: '/vote', label: 'Part 2 투표', desc: '시나리오 선택', color: 'var(--teal)' },
-              { href: '/admin', label: 'Admin 패널', desc: 'DB·현황 관리', color: 'var(--gold)' },
+              { href: '/admin', label: 'Admin 패널', desc: '세션 시작 · DB · 현황', color: 'var(--gold)' },
+              { href: '/login', label: '발표자 로그인', desc: 'PIN 입력', color: 'var(--blue)' },
             ].map((u) => (
               <Link key={u.href} href={u.href} style={{ textDecoration: 'none' }}>
                 <div className="glass-card" style={{ padding: '24px', cursor: 'pointer' }}>
@@ -252,9 +251,10 @@ export default function Home() {
               <p className="caption" style={{ marginBottom: 16 }}>교육 개요</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
-                  { k: '주관', v: '원가TFT' },
-                  { k: '대상', v: '전 부서 임직원' },
-                  { k: '구성', v: 'Prologue + 3 Parts' },
+                  { k: '주관', v: '원가기획팀' },
+                  { k: '대상', v: '신규 입사자 + 전 부서' },
+                  { k: '구성', v: 'Prologue · 3 Parts · Epilogue' },
+                  { k: '시간', v: '70분' },
                 ].map(({ k, v }) => (
                   /* 구분선 제거 및 배경색 미묘한 차이로 항목 구분 */
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 12px', background: 'var(--glass-light)', borderRadius: '8px' }}>

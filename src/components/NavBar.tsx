@@ -44,8 +44,8 @@ export default function NavBar({ current, step }: { current: string; step?: stri
     }}>
       {/* 왼쪽: 로고 및 현재 파트 뱃지 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        <Link href="/" style={{ fontWeight: 900, fontSize: '1.25rem', color: 'var(--text)', textDecoration: 'none', letterSpacing: '-0.02em' }}>
-          SYSTEMA
+        <Link href="/" style={{ fontWeight: 900, fontSize: '1.125rem', color: 'var(--text)', textDecoration: 'none', letterSpacing: '-0.02em' }}>
+          SYSTEM <span style={{ color: 'var(--gold)' }}>INNOVATION</span>
         </Link>
         <span className="badge" style={{ color: 'var(--gold)', borderColor: 'var(--gold-dim)', background: 'var(--gold-dim)' }}>
           {current}
