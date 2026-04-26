@@ -129,7 +129,7 @@ export default function EpiloguePage() {
 
       {step === 'intro' && (
         <div className="slide-container anim-up" style={{ paddingTop: 60, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 'calc(100vh - 56px)' }}>
-          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 16 }}>Epilogue · 10분</p>
+          <p className="caption" style={{ color: 'var(--gold)', marginBottom: 16 }}>Epilogue · 7분</p>
           <h1 className="display text-gold" style={{ marginBottom: 24, wordBreak: 'keep-all' }}>
             우리 모두의 약속이 지켜질 때
           </h1>
@@ -137,6 +137,9 @@ export default function EpiloguePage() {
             오늘 70분 동안 우리는 — 우리 회사가 어떤 회사인지(<strong style={{ color: '#fff' }}>Part 1</strong>),<br />
             어떻게 일하기로 약속했는지(<strong style={{ color: '#fff' }}>Part 2</strong>),<br />
             그 결과 무엇이 만들어졌는지(<strong style={{ color: '#fff' }}>Part 3</strong>) 함께 보았습니다.<br /><br />
+            그리고 우리는 다시 첫 번째 질문으로 돌아갑니다 —<br />
+            <strong style={{ color: 'var(--gold)' }}>&ldquo;신뢰자본이 아직 쌓이지 않는 곳은 어디인가?&rdquo;</strong><br />
+            그 답을 또 정의하는 데서, 다음 한 해가 시작됩니다.<br /><br />
             이제, 오늘 이 자리를 함께 만들어주신 분들을 소개합니다.
           </p>
 

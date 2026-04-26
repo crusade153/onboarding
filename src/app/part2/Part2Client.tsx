@@ -49,6 +49,58 @@ const MONDAY_SCENARIOS = [
   },
 ];
 
+// S.P.A.C.E - X — 관리자의 역량을 6개 축으로 정의 (강연자 프레임)
+const SPACE_X = [
+  {
+    axis: 'S',
+    name: 'Support',
+    ko: '의사결정의 지원',
+    accent: '#4F8EF7',
+    oneliner: '동료가 결정해야 할 때 — 필요한 데이터를 먼저 꺼내 놓는다',
+    year1: '내 부서의 의사결정 회의에서 쓰이는 핵심 지표 3가지를 안다',
+  },
+  {
+    axis: 'P',
+    name: 'Plan',
+    ko: '기획역량',
+    accent: '#F59E0B',
+    oneliner: '문제를 정의하고, 가설과 측정 지표를 함께 설계한다',
+    year1: '월 1회 — 작은 개선 1건을 가설·지표·기간으로 문서화한다',
+  },
+  {
+    axis: 'A',
+    name: 'Analyze',
+    ko: '데이터 분석능력',
+    accent: '#2DD4BF',
+    oneliner: '결과가 아닌 원인을 분리해 본다 (Philosophy 02)',
+    year1: '엑셀 피벗·SQL 기본·시스템 로그 추적 중 1가지를 자력으로 한다',
+  },
+  {
+    axis: 'C',
+    name: 'Control',
+    ko: '계획 통제역량',
+    accent: '#F87171',
+    oneliner: '계획대로 안 될 때 — 빠르게 알리고, 빠르게 재계획한다',
+    year1: '주간 단위 KPI 이탈을 5일 안에 인지하고, 원인을 한 줄로 보고한다',
+  },
+  {
+    axis: 'E',
+    name: 'Evaluate',
+    ko: '평가역량',
+    accent: '#A78BFA',
+    oneliner: '데이터로 판단하고, 결정의 근거를 기록으로 남긴다',
+    year1: '내 의사결정 1건을 — 데이터·근거·결과로 회고할 수 있다',
+  },
+  {
+    axis: 'X',
+    name: 'eXperience',
+    ko: '경험에 대한 적극적 자세',
+    accent: '#C9A84C',
+    oneliner: '모르는 일·해보지 않은 일에 — 먼저 손을 든다',
+    year1: '한 해 동안 — 자기 직무 외 영역의 프로젝트에 1번 이상 참여한다',
+  },
+] as const;
+
 // 1년 차에 측정 가능한 행동 변화 (신입을 위한 구체적 기준)
 const ONE_YEAR_TRAJECTORY = [
   { month: '1개월', goal: '자기 부서의 데이터가 어떤 시스템에 저장되는지 안다', concrete: '내가 입력한 BOM이 ERP의 어떤 테이블에 저장되는지 그릴 수 있다' },
@@ -98,15 +150,16 @@ export default function Part2Client() {
             우리 회사는 어떻게 일하는가
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
-            CEO 신년사가 정의한 <strong style={{ color: 'var(--text)' }}>HBH (Harim Behavioral Habit)</strong> —
-            하림 사람의 4가지 행동 습관입니다. 추상이 아니라, 매일 책상에서 보이는 모습으로 설명합니다.
+            CEO 신년사가 정의한 <strong style={{ color: 'var(--text)' }}>HBH (Harim Behavioral Habit)</strong> — 하림 사람의 4가지 행동 습관.<br />
+            그 중심은 매일 정산하는 <strong style={{ color: 'var(--text)' }}>일일관리</strong>와 <strong style={{ color: 'var(--text)' }}>시스템의 약속을 따르는 조직</strong>입니다.<br />
+            시스템은 한 사람이 멈추는 순간 함께 멈춥니다.
           </p>
         </div>
 
         {/* 섹션 1: HBH 4가지 (6분) */}
         {section === 'hbh' && (
           <>
-            <p className="caption" style={{ marginBottom: 12 }}>6분 · 4가지 습관</p>
+            <p className="caption" style={{ marginBottom: 12 }}>7분 · 4가지 습관 + 측정의 사이클 + 신뢰자본</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, marginBottom: 32 }}>
               <HBHCard
@@ -143,13 +196,125 @@ export default function Part2Client() {
               />
             </div>
 
-            <div className="glass-card" style={{ padding: 36, background: 'rgba(201,168,76,0.06)' }}>
-              <p className="caption" style={{ color: 'var(--gold)', marginBottom: 12 }}>04번 카드 풀이</p>
-              <p style={{ fontSize: '1.125rem', color: 'var(--text)', lineHeight: 1.85, fontStyle: 'italic', wordBreak: 'keep-all' }}>
-                시스템으로 일한다는 건 결국, 우리가 서로 세운 약속을 지킨다는 뜻입니다.<br />
-                <strong style={{ color: 'var(--gold)', fontStyle: 'normal' }}>
-                  시스템이란, 함께 세운 약속에 다른 이름을 붙인 것입니다.
-                </strong>
+            <div
+              className="glass-card"
+              style={{
+                padding: 32,
+                marginBottom: 20,
+                background: 'rgba(45,212,191,0.06)',
+                borderLeft: '3px solid #2DD4BF',
+              }}
+            >
+              <p className="caption" style={{ color: '#2DD4BF', marginBottom: 14 }}>
+                PHILOSOPHY 02 · 측정의 사이클
+              </p>
+              <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
+                매일 측정하는 것은 <strong style={{ color: '#2DD4BF' }}>&ldquo;결과&rdquo;가 아니라 &ldquo;원인&rdquo;</strong>입니다.<br />
+                원가가 -3% 떨어졌다는 결과만 보면 어제와 오늘이 끊어집니다.<br />
+                원인(어제 입고 단가의 변동)을 매일 측정해야 — 내일을 결정할 수 있습니다.
+              </p>
+              <div
+                style={{
+                  background: 'rgba(45,212,191,0.10)',
+                  borderRadius: 10,
+                  padding: '16px 20px',
+                  fontSize: '0.9375rem',
+                  color: 'var(--text)',
+                  lineHeight: 1.75,
+                  marginBottom: 14,
+                  fontFamily: 'monospace',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                <strong style={{ color: '#2DD4BF' }}>측정 → 관리 → 개선</strong><br />
+                측정하지 않으면 관리할 수 없고,<br />
+                관리할 수 없으면 개선할 수 없습니다.
+              </div>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, fontStyle: 'italic', wordBreak: 'keep-all' }}>
+                → HBH 02 일일관리의 본 모습은 — 결과 정산이 아니라 <strong style={{ color: 'var(--text)', fontStyle: 'normal' }}>원인의 매일 측정</strong>입니다.
+              </p>
+            </div>
+
+            <div className="glass-card" style={{ padding: 32, background: 'rgba(201,168,76,0.06)', borderLeft: '3px solid var(--gold)' }}>
+              <p className="caption" style={{ color: 'var(--gold)', marginBottom: 14 }}>
+                PHILOSOPHY 03 · 시스템은 신뢰자본입니다
+              </p>
+              <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
+                시스템으로 일한다는 건 — 우리가 서로 세운 약속을 지킨다는 뜻입니다.<br />
+                그 약속이 매일 한 칸씩 지켜지면 쌓이는 것이 — <strong style={{ color: 'var(--gold)' }}>신뢰자본</strong>입니다.
+              </p>
+              <div
+                style={{
+                  background: 'rgba(201,168,76,0.10)',
+                  borderRadius: 10,
+                  padding: '16px 20px',
+                  fontSize: '0.9375rem',
+                  color: 'var(--text)',
+                  lineHeight: 1.85,
+                  marginBottom: 14,
+                }}
+              >
+                <strong style={{ color: 'var(--gold)' }}>시스템</strong> = 약속에 다른 이름을 붙인 것<br />
+                <strong style={{ color: 'var(--gold)' }}>신뢰자본</strong> = 그 약속이 매일 지켜지면서 쌓이는 회사의 자산
+              </div>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, fontStyle: 'italic', wordBreak: 'keep-all' }}>
+                → 측정(02)이 가능하려면 신뢰자본(04)이 먼저 쌓여 있어야 합니다.<br />
+                &nbsp;&nbsp;&nbsp;신뢰자본이 안 쌓이는 부분을 다시 정의하는 것 — 그게 다시 <strong style={{ color: 'var(--text)', fontStyle: 'normal' }}>Philosophy 01</strong>로 돌아가는 길입니다.
+              </p>
+            </div>
+
+            <div
+              className="glass-card"
+              style={{
+                padding: 32,
+                marginTop: 20,
+                background: 'rgba(248,113,113,0.06)',
+                borderLeft: '3px solid #F87171',
+              }}
+            >
+              <p className="caption" style={{ color: '#F87171', marginBottom: 16 }}>
+                신뢰자본이 0이 되는 일주일
+              </p>
+              <ul
+                style={{
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                }}
+              >
+                <li style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#F87171' }}>월요일</strong> — 한 사람이 어제의 입력을 빠뜨립니다.
+                </li>
+                <li style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#F87171' }}>화요일</strong> — 다음 부서는 빈칸 위에서 결정합니다.
+                </li>
+                <li style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#F87171' }}>수요일</strong> — 그 결정이 공장의 생산 지시가 됩니다.
+                </li>
+                <li style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#F87171' }}>목요일</strong> — 잘못 만들어진 제품이 출고를 기다립니다.
+                </li>
+                <li style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7 }}>
+                  <strong style={{ color: '#F87171' }}>금요일</strong> — 결산을 시작하지만, 어디서 어긋났는지 아무도 모릅니다.
+                </li>
+              </ul>
+              <p
+                style={{
+                  fontSize: '0.9375rem',
+                  color: 'var(--text2)',
+                  lineHeight: 1.75,
+                  marginTop: 18,
+                  paddingTop: 16,
+                  borderTop: '1px solid rgba(248,113,113,0.2)',
+                  fontStyle: 'italic',
+                  wordBreak: 'keep-all',
+                }}
+              >
+                → Part 1에서 본 6,000만원의 사고는 — 한 칸의 빈자리에서 시작되었습니다.<br />
+                <strong style={{ color: 'var(--text)', fontStyle: 'normal' }}>신뢰자본은 매일 한 칸씩 쌓이고, 한 칸씩 무너집니다.</strong>
               </p>
             </div>
 
@@ -164,7 +329,7 @@ export default function Part2Client() {
         {/* 섹션 2: 월요일 아침 시나리오 (7분) */}
         {section === 'scenarios' && (
           <>
-            <p className="caption" style={{ marginBottom: 12 }}>7분 · 추상이 아니라, 매일의 책상에서</p>
+            <p className="caption" style={{ marginBottom: 12 }}>7분 · 매일의 책상 위에서, 4가지 습관의 모습</p>
 
             <h2 style={{ fontSize: '1.625rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12, lineHeight: 1.4 }}>
               같은 상황, 다르게 일하는 두 사람
@@ -215,38 +380,89 @@ export default function Part2Client() {
         {/* 섹션 3: 인재상 + 1년 궤적 (4분) */}
         {section === 'profile' && (
           <>
-            <p className="caption" style={{ marginBottom: 12 }}>4분 · 1년 안에 측정 가능한 변화</p>
+            <p className="caption" style={{ marginBottom: 12 }}>7분 · S.P.A.C.E-X · 1년 차의 6개 좌표</p>
 
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
-              그래서 우리가 찾는 사람은
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12 }}>
+              그래서 우리가 함께 도착할 사람은
             </h2>
-            <p style={{ fontSize: '1rem', color: 'var(--text2)', marginBottom: 28, lineHeight: 1.6 }}>
-              추상적 인재상이 아니라, <strong style={{ color: 'var(--text)' }}>1년 안에 측정 가능한 행동 기준</strong>입니다.
+            <p style={{ fontSize: '1rem', color: 'var(--text2)', marginBottom: 28, lineHeight: 1.7, maxWidth: 820 }}>
+              <strong style={{ color: 'var(--text)' }}>S.P.A.C.E - X</strong> — 관리자의 역량을 6개 축으로 정의합니다.<br />
+              1년 차에 각 축의 어느 좌표에 서 있게 되는지, 측정 가능한 모습으로 보여드립니다.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 36 }}>
-              <ProfileItem
-                num="①"
-                title="모르는 것을 모른다고 말할 수 있는 사람"
-                desc="추측하지 않고, 가정하지 않고, 동료에게 묻거나 기록을 찾아 확인한다."
-              />
-              <ProfileItem
-                num="②"
-                title="자기 업무가 어디로 흘러가는지 궁금해하는 사람"
-                desc="내가 입력한 데이터의 다음 사용자가 누구인지 한 번이라도 생각해 본다."
-              />
-              <ProfileItem
-                num="③"
-                title="시스템에 입력하는 한 글자의 무게를 아는 사람"
-                desc="Part 1에서 본 그대로 — 한 칸의 오류가 6,000만원을 만들 수 있음을 안다."
-              />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+              {SPACE_X.map((s) => (
+                <div
+                  key={s.axis}
+                  className="glass-card"
+                  style={{
+                    padding: 24,
+                    borderLeft: `3px solid ${s.accent}`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                    <span style={{
+                      fontFamily: 'monospace',
+                      fontWeight: 900,
+                      fontSize: '2.5rem',
+                      lineHeight: 1,
+                      color: s.accent,
+                      minWidth: 36,
+                    }}>
+                      {s.axis}
+                    </span>
+                    <div style={{ flex: 1, paddingTop: 4 }}>
+                      <p style={{ fontSize: '0.875rem', fontWeight: 800, color: s.accent, letterSpacing: '0.04em' }}>
+                        {s.name}
+                      </p>
+                      <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text)' }}>
+                        {s.ko}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.65, wordBreak: 'keep-all' }}>
+                    {s.oneliner}
+                  </p>
+                  <p style={{
+                    fontSize: '0.8125rem',
+                    color: 'var(--text3)',
+                    lineHeight: 1.65,
+                    fontStyle: 'italic',
+                    wordBreak: 'keep-all',
+                    paddingTop: 10,
+                    borderTop: `1px solid ${s.accent}25`,
+                  }}>
+                    1년 차: {s.year1}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div
+              style={{
+                padding: '16px 20px',
+                marginBottom: 36,
+                borderRadius: 10,
+                background: 'rgba(201,168,76,0.08)',
+                borderLeft: '3px solid var(--gold)',
+                fontSize: '0.9375rem',
+                color: 'var(--text)',
+                lineHeight: 1.7,
+                wordBreak: 'keep-all',
+                fontStyle: 'italic',
+              }}
+            >
+              <strong style={{ color: 'var(--gold)', fontStyle: 'normal' }}>S·P·A·C·E</strong>는 역량의 골격, <strong style={{ color: 'var(--gold)', fontStyle: 'normal' }}>X</strong>는 그 골격을 자라게 하는 — 변화의 동력입니다.
             </div>
 
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
-              그렇게 1년 차의 모습은
+              그 6개 좌표를 시간 순으로 보면
             </h3>
             <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginBottom: 20, lineHeight: 1.6 }}>
-              아래 4개 지점이 — 신입 1년 차에 우리가 함께 도착할 좌표입니다.
+              S.P.A.C.E-X 6축이 1·3·6·12개월 마일스톤 위에서 어떻게 자라는지 — 입사 첫 1년의 시간표입니다.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -367,23 +583,3 @@ function Tab({ active, onClick, label }: { active: boolean; onClick: () => void;
   );
 }
 
-function ProfileItem({ num, title, desc }: { num: string; title: string; desc: string }) {
-  return (
-    <div className="glass-card" style={{ padding: 24, display: 'flex', gap: 20, alignItems: 'flex-start' }}>
-      <span style={{
-        fontFamily: 'monospace', fontWeight: 900, fontSize: '1.5rem',
-        color: 'var(--gold)', lineHeight: 1, flexShrink: 0,
-      }}>
-        {num}
-      </span>
-      <div>
-        <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)', marginBottom: 6, letterSpacing: '-0.01em' }}>
-          {title}
-        </p>
-        <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-          {desc}
-        </p>
-      </div>
-    </div>
-  );
-}

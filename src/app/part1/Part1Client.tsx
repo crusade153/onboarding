@@ -65,9 +65,9 @@ export default function Part1Client() {
             우리 회사는 무엇을 만드는가
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
-            대시보드 자랑이 아니라, 하림산업의 정체성에서 시작합니다.<br />
-            <strong style={{ color: 'var(--text)' }}>세 개의 공장</strong> · <strong style={{ color: 'var(--text)' }}>한국인의 식탁</strong> ·
-            그 사이를 이어달리는 <strong style={{ color: 'var(--text)' }}>데이터의 릴레이</strong>.
+            하림산업은 매일, 한국인의 식탁에 오를 식품을 만듭니다.<br />
+            <strong style={{ color: 'var(--text)' }}>세 개의 공장</strong>에서 시작해, <strong style={{ color: 'var(--text)' }}>한 끼의 음식</strong>으로 끝나는 길.<br />
+            그 길 위를 함께 달리는 것이 — <strong style={{ color: 'var(--text)' }}>데이터의 릴레이</strong>입니다.
           </p>
         </div>
 
@@ -202,7 +202,7 @@ export default function Part1Client() {
         {/* 섹션 3: 데이터 한 칸 (5분) */}
         {section === 'data' && (
           <>
-            <p className="caption" style={{ marginBottom: 12 }}>5분 · 실제 사례, 그리고 우리가 매일 마주칠 위험</p>
+            <p className="caption" style={{ marginBottom: 12 }}>7분 · 실제 사례, 그리고 우리가 매일 마주칠 위험</p>
 
             <div className="glass-card" style={{ padding: 36, marginBottom: 24 }}>
               <p className="caption" style={{ color: 'var(--red)', marginBottom: 16 }}>실제 사례 · 단 하나의 오타가</p>
@@ -257,6 +257,41 @@ export default function Part1Client() {
                 <span style={{ fontWeight: 700, color: 'var(--gold)', fontStyle: 'normal' }}>
                   오늘부터, 그 한 칸을 지키는 사람이 여러분입니다.
                 </span>
+              </p>
+            </div>
+
+            <div
+              className="glass-card"
+              style={{
+                padding: 32,
+                marginBottom: 24,
+                background: 'rgba(201,168,76,0.05)',
+                borderLeft: '3px solid var(--gold)',
+              }}
+            >
+              <p className="caption" style={{ color: 'var(--gold)', marginBottom: 14 }}>
+                PHILOSOPHY 01 · 문제 정의 = 에너지의 90%
+              </p>
+              <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
+                6,000만원의 사고는 결과의 오류처럼 보이지만,<br />
+                실은 누구도 <strong style={{ color: 'var(--gold)' }}>&ldquo;왜 그 칸이 비었는가&rdquo;</strong>를 정의하지 않은 결과입니다.
+              </p>
+              <div
+                style={{
+                  background: 'rgba(201,168,76,0.08)',
+                  borderRadius: 10,
+                  padding: '16px 20px',
+                  fontSize: '0.9375rem',
+                  color: 'var(--text)',
+                  lineHeight: 1.75,
+                  marginBottom: 14,
+                }}
+              >
+                문제 해결에 들어가는 에너지의 <strong style={{ color: 'var(--gold)' }}>90%는 정확한 문제 정의</strong>에 있습니다.<br />
+                나머지 10%가 — 어떤 도구로 풀 것인가의 선택입니다.
+              </div>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, fontStyle: 'italic', wordBreak: 'keep-all' }}>
+                → 시스템·AI·ERP는 모두 &ldquo;도구&rdquo;의 영역입니다. 그 앞에는 항상 <strong style={{ color: 'var(--text)', fontStyle: 'normal' }}>문제 정의</strong>가 먼저입니다.
               </p>
             </div>
 

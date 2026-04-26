@@ -120,8 +120,8 @@ export default function Part3Page() {
             그 결과 무엇이 만들어졌는가
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
-            <em>자랑이 아니라 증거입니다.</em><br />
-            앞에서 말한 일하는 방식의 결과로 이런 게 만들어졌습니다 — <strong style={{ color: 'var(--gold)' }}>3개만 직접 열어보고, 7개는 카탈로그로.</strong>
+            앞서 본 일하는 방식이, 실제로 이런 도구들을 만들어 냈습니다.<br />
+            <strong style={{ color: 'var(--gold)' }}>3개는 지금 이 자리에서 직접 열어보고</strong>, 나머지 7개는 카탈로그로 보여드립니다.
           </p>
         </div>
 

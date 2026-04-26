@@ -40,7 +40,7 @@ const SLIDES = [
     desc: '그 결과 무엇이 만들어졌는가',
     color: '#C9A84C',
     image: '/cover-part3.jpg',
-    message: '자랑이 아니라 증거입니다. 신입이 가장 자주 마주칠 3개 라이브 데모(MIMS·MRP·52HR)를 직접 열어보고, 청중이 \"안 해도 되는 일\" 감사 리스트를 함께 만듭니다.'
+    message: '앞서 본 일하는 방식이 만들어 낸 도구들입니다. 신입이 가장 자주 마주칠 3개 라이브 데모(S&OP·DAILYCOST·RAMS)를 직접 열어보고, 청중이 \"안 해도 되는 일\" 감사 리스트를 함께 만듭니다.'
   },
   {
     href: '/epilogue',
