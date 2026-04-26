@@ -4,13 +4,14 @@ interface Props {
   code: string;
   name: string;
   products: string;
+  productCount: string;
   lines: string;
   capacity: string;
   metaphor: string;
   accent: string;
 }
 
-export default function PlantCard({ code, name, products, lines, capacity, metaphor, accent }: Props) {
+export default function PlantCard({ code, name, products, productCount, lines, capacity, metaphor, accent }: Props) {
   return (
     <div className="glass-card" style={{ padding: 28, height: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* 헤더 */}
@@ -31,6 +32,7 @@ export default function PlantCard({ code, name, products, lines, capacity, metap
 
       {/* 메트릭 */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '14px 16px', background: 'var(--glass-light)', borderRadius: 12 }}>
+        <Row label="제품 수" value={productCount} />
         <Row label="라인" value={lines} />
         <Row label="일 생산 능력" value={capacity} accent={accent} bold />
       </div>

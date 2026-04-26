@@ -76,33 +76,64 @@ export default function Part1Client() {
           <>
             <p className="caption" style={{ marginBottom: 12 }}>5분 · 우리가 매일 만들어내는 양</p>
 
+            <div
+              className="glass-card"
+              style={{
+                padding: 28,
+                marginBottom: 24,
+                background: 'rgba(201,168,76,0.05)',
+                borderLeft: '3px solid var(--gold)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 18 }}>
+                <span style={{
+                  fontFamily: 'monospace', fontWeight: 900, fontSize: '2.5rem',
+                  color: 'var(--gold)', lineHeight: 1, flexShrink: 0,
+                }}>
+                  K
+                </span>
+                <div style={{ flex: 1 }}>
+                  <p className="caption" style={{ color: 'var(--gold)', marginBottom: 8 }}>
+                    WHY K · 공장이 아닌 키친
+                  </p>
+                  <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.8, wordBreak: 'keep-all' }}>
+                    P(Plant)가 아니라 <strong style={{ color: 'var(--gold)' }}>K(Kitchen)</strong>의 약자입니다.<br />
+                    하림산업의 K1·K2·K3는 단순 제조 공장이 아니라 — <strong style={{ color: 'var(--text)' }}>소비자의 식탁을 위한 공유주방</strong>입니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 24 }}>
               <PlantCard
-                code="K3"
-                name="라면 · FD 공장"
-                products="장인라면, FD(Freeze Dry), 분말 스프류"
-                lines="라면 4개 라인"
-                capacity="하루 100만 식 이상"
-                metaphor="광역시 한 도시의 시민이 하루 한 끼 라면을 먹을 수 있는 양"
-                accent="#F59E0B"
+                code="K1"
+                name="냉동 · 국탕 · HMR 공장"
+                products="냉동만두, 즉석국, 냉동 가정식"
+                productCount="(작성자 입력 예정)"
+                lines="(작성자 입력 예정)"
+                capacity="(작성자 입력 예정)"
+                metaphor="(작성자 확정 예정)"
+                accent="#A78BFA"
               />
               <PlantCard
                 code="K2"
                 name="즉석밥 공장"
                 products="더미식 즉석밥 등 즉석밥 제품군"
+                productCount="(작성자 입력 예정)"
                 lines="(작성자 입력 예정)"
                 capacity="(작성자 입력 예정)"
                 metaphor="OO만 명이 한 끼 식사를 해결할 수 있는 양"
                 accent="#2DD4BF"
               />
               <PlantCard
-                code="K1"
-                name="냉동 · 국탕 · HMR 공장"
-                products="냉동만두, 즉석국, 냉동 가정식"
+                code="K3"
+                name="라면 · FD 공장"
+                products="장인라면, FD(Freeze Dry), 분말 스프류"
+                productCount="(작성자 입력 예정)"
                 lines="(작성자 입력 예정)"
                 capacity="(작성자 입력 예정)"
-                metaphor="(작성자 확정 예정)"
-                accent="#A78BFA"
+                metaphor="광역시 한 도시의 시민이 하루 한 끼 라면을 먹을 수 있는 양"
+                accent="#F59E0B"
               />
             </div>
 
@@ -131,8 +162,8 @@ export default function Part1Client() {
 
             {/* 규모감 한 줄 요약 */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-              <ScaleStat n="3" unit="개 공장" caption="K1 · K2 · K3" accent="#F59E0B" />
-              <ScaleStat n="100만+" unit="식 / 일" caption="K3 라면 일일 생산 능력" accent="#2DD4BF" />
+              <ScaleStat n="3" unit="개 공장" caption="K1 · K2 · K3 — Kitchen" accent="#F59E0B" />
+              <ScaleStat n="?" unit="식 / 일" caption="(작성자 입력 예정)" accent="#2DD4BF" />
               <ScaleStat n="365" unit="일 멈춤 없이" caption="식탁은 하루도 쉬지 않습니다" accent="#A78BFA" />
               <ScaleStat n="?" unit="명의 약속" caption="오늘 등록된 참여자만큼" accent="#C9A84C" />
             </div>

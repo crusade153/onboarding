@@ -112,6 +112,7 @@ const ONE_YEAR_TRAJECTORY = [
 export default function Part2Client() {
   const [section, setSection] = useState<Section>('hbh');
   const [hbh, setHbh] = useState<HbhData>({ counts: [], byDept: [] });
+  const [spacexRevealed, setSpacexRevealed] = useState(false);
 
   useEffect(() => {
     if (section !== 'survey') return;
@@ -382,6 +383,101 @@ export default function Part2Client() {
           <>
             <p className="caption" style={{ marginBottom: 12 }}>7분 · S.P.A.C.E-X · 1년 차의 6개 좌표</p>
 
+            {!spacexRevealed && (
+              <div
+                className="glass-card anim-up"
+                style={{
+                  padding: '64px 40px',
+                  marginTop: 16,
+                  textAlign: 'center',
+                  background: 'rgba(201,168,76,0.04)',
+                  borderLeft: '3px solid var(--gold)',
+                }}
+              >
+                <p
+                  className="caption"
+                  style={{ color: 'var(--gold)', marginBottom: 28, letterSpacing: '0.3em' }}
+                >
+                  QUIZ ✦ 청중에게 묻습니다
+                </p>
+                <h2
+                  style={{
+                    fontSize: 'clamp(2.25rem, 5.5vw, 3.75rem)',
+                    fontWeight: 900,
+                    color: 'var(--text)',
+                    letterSpacing: '0.18em',
+                    marginBottom: 28,
+                    fontFamily: 'monospace',
+                    lineHeight: 1.1,
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  S . P . A . C . E&nbsp;&nbsp;-&nbsp;&nbsp;X
+                </h2>
+                <p
+                  style={{
+                    fontSize: '1.25rem',
+                    color: 'var(--text)',
+                    fontWeight: 700,
+                    marginBottom: 10,
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  이 용어, 들어보신 분 계신가요?
+                </p>
+                <p
+                  style={{
+                    fontSize: '0.9375rem',
+                    color: 'var(--text3)',
+                    marginBottom: 32,
+                    fontStyle: 'italic',
+                    wordBreak: 'keep-all',
+                  }}
+                >
+                  잠깐 손을 들어주세요 — 맞히신 분께는 박수를 약속드립니다
+                </p>
+                <button
+                  onClick={() => setSpacexRevealed(true)}
+                  className="btn btn-gold"
+                >
+                  정답 공개하기 ▶
+                </button>
+              </div>
+            )}
+
+            {spacexRevealed && (
+              <>
+            <div
+              className="glass-card anim-up"
+              style={{
+                padding: 28,
+                marginBottom: 28,
+                background: 'rgba(201,168,76,0.06)',
+                borderLeft: '3px solid var(--gold)',
+              }}
+            >
+              <p
+                className="caption"
+                style={{ color: 'var(--gold)', marginBottom: 12, letterSpacing: '0.25em' }}
+              >
+                ✦ SPOILER
+              </p>
+              <p
+                style={{
+                  fontSize: '1.0625rem',
+                  color: 'var(--text)',
+                  lineHeight: 1.85,
+                  wordBreak: 'keep-all',
+                }}
+              >
+                일론 머스크의 <strong style={{ color: 'var(--gold)' }}>SpaceX</strong>가 아닙니다.<br />
+                제가 — 관리자의 역량을 정리하면서 직접 만든 <strong style={{ color: 'var(--text)' }}>6개 축의 프레임</strong>입니다.<br />
+                <span style={{ fontStyle: 'italic', color: 'var(--text2)' }}>
+                  여기서 Space는 우주가 아니라, 여러분이 1년 차에 서 있게 될 — 6개 좌표가 만드는 공간입니다.
+                </span>
+              </p>
+            </div>
+
             <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12 }}>
               그래서 우리가 함께 도착할 사람은
             </h2>
@@ -491,6 +587,8 @@ export default function Part2Client() {
                 다음 → 청중에게 묻습니다
               </button>
             </div>
+              </>
+            )}
           </>
         )}
 
