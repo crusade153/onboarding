@@ -14,6 +14,40 @@ const HABIT_LABELS: Record<string, string> = {
   system_org: '시스템으로 일하는 조직',
 };
 
+// 설문 결과 1위 항목에 따른 강연자 맞춤 멘트
+const RESPONSE_SCRIPTS: Record<string, {
+  emoji: string; accent: string; title: string; script: string; bridge: string;
+}> = {
+  site_first: {
+    emoji: '🔍',
+    accent: '#F59E0B',
+    title: '현장경영 — 당연합니다.',
+    script: '우리는 학교에서 12년을 보고서와 텍스트로 배웠습니다. 그런데 하림산업에서 중요한 데이터는 대부분 현장에서 발생합니다. 라인이 멈춘 이유, 수율이 떨어진 시점 — 이것들은 보고서에 오기 전에 이미 현장에 있습니다. 보고서는 그 현장의 그림자입니다. 그림자를 보고 판단하면 항상 한 발 늦습니다.',
+    bridge: '데이터를 입력하기 전에 — 현장을 먼저 눈에 담는 습관. 그게 HBH 01입니다.',
+  },
+  daily_mgmt: {
+    emoji: '📅',
+    accent: '#2DD4BF',
+    title: '일일관리 — 솔직히 처음엔 제일 힘듭니다.',
+    script: '오늘의 데이터를 오늘 마감하는 습관이 없으면, 내일의 회의는 어제의 데이터로 합니다. 어제로 오늘을 결정하는 것 — 그게 쌓이면 한 달 뒤 결산은 이미 한 달 전의 현실입니다. 일일관리는 "부지런함"이 아닙니다. 내일의 결정을 오늘 가능하게 하는 구조입니다.',
+    bridge: 'Part 1에서 본 1.6억 사고도 — 표준공정 변경이 "오늘" 반영되지 않았기 때문에 생긴 일입니다.',
+  },
+  tools_means: {
+    emoji: '🎯',
+    accent: '#A78BFA',
+    title: '수단과 목적의 분리 — AI 시대의 가장 큰 함정입니다.',
+    script: '도구가 너무 좋아지면, 도구를 쓰는 것 자체가 목적처럼 느껴집니다. "AI 써서 만들었어요"가 성과가 되는 순간 — 뭘 위해 썼는지 사라집니다. ERP도 마찬가지입니다. 입력하는 것이 목적이 되면, 왜 그 칸이 있는지 묻지 않게 됩니다. 그 칸이 비는 순간이 — Part 1에서 본 그 사고입니다.',
+    bridge: '도구를 쓰기 전 "왜?"를 먼저 묻는 것 — 이게 없으면 시스템은 쌓이고 목적은 사라집니다.',
+  },
+  system_org: {
+    emoji: '🤝',
+    accent: '#C9A84C',
+    title: '시스템으로 일하는 것 — 경험이 쌓일수록 오히려 더 어렵습니다.',
+    script: '"내 경험"이 시스템보다 빠르게 느껴지기 때문입니다. 3년 차쯤 되면 더 강해집니다. 경험이 쌓이면 쌓일수록, 시스템보다 내 판단을 믿고 싶어집니다. 그러나 내 경험은 나만 압니다. 시스템에 남은 것은 나 다음 사람도 씁니다. 경험은 나에서 끝나지만, 시스템은 이어집니다.',
+    bridge: '신뢰자본이 쌓이는 것은 바로 이 순간입니다 — 내 판단 대신 시스템의 약속을 지키는 매일의 선택.',
+  },
+};
+
 const HABIT_ORDER = ['site_first', 'daily_mgmt', 'tools_means', 'system_org'] as const;
 
 interface HbhData {
@@ -161,6 +195,35 @@ export default function Part2Client() {
         {section === 'hbh' && (
           <>
             <p className="caption" style={{ marginBottom: 12 }}>7분 · 4가지 습관 + 측정의 사이클 + 신뢰자본</p>
+
+            {/* 신년사 CEO 카드 */}
+            <div className="glass-card" style={{
+              padding: 28, marginBottom: 28,
+              background: 'rgba(201,168,76,0.05)',
+              borderLeft: '3px solid var(--gold)',
+            }}>
+              <p className="caption" style={{ color: 'var(--gold)', marginBottom: 14, letterSpacing: '0.12em' }}>
+                2026 신년사 · CEO 회장님이 올해 강조한 것
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, wordBreak: 'keep-all', fontStyle: 'italic' }}>
+                  &ldquo;우리는 <strong style={{ color: 'var(--gold)', fontStyle: 'normal' }}>HBH(Harim Behavioral Habit)</strong>를<br />
+                  하림그룹의 핵심 기업행동으로 정의하고 나아가고 있습니다.&rdquo;
+                </p>
+                <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, wordBreak: 'keep-all', fontStyle: 'italic' }}>
+                  &ldquo;<strong style={{ color: 'var(--gold)', fontStyle: 'normal' }}>ONE ERP</strong> 시스템을 새롭게 구축하고 있습니다.<br />
+                  우리가 같은 언어로 일하고, 토론하고, 성찰하는 것 —<br />
+                  이것이 없이는 시스템을 통해 사전사고를 실행할 수 없습니다.&rdquo;
+                </p>
+              </div>
+              <p style={{
+                fontSize: '0.875rem', color: 'var(--text3)', marginTop: 16,
+                paddingTop: 14, borderTop: '1px solid rgba(201,168,76,0.2)',
+                lineHeight: 1.6,
+              }}>
+                → 신년사에서 말씀하신 &ldquo;핵심 기업행동&rdquo;이 바로 아래 4가지입니다.
+              </p>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20, marginBottom: 32 }}>
               <HBHCard
@@ -333,11 +396,23 @@ export default function Part2Client() {
             <p className="caption" style={{ marginBottom: 12 }}>7분 · 매일의 책상 위에서, 4가지 습관의 모습</p>
 
             <h2 style={{ fontSize: '1.625rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12, lineHeight: 1.4 }}>
-              같은 상황, 다르게 일하는 두 사람
+              월요일 아침 9시 — 같은 상황, 다르게 일하는 두 사람
             </h2>
-            <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.6, marginBottom: 28, maxWidth: 820 }}>
-              4가지 습관이 실제 책상에서 어떻게 다르게 나타나는지 — 한 줄짜리 발언으로 비교해 봅니다.
+            <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.6, marginBottom: 12, maxWidth: 820 }}>
+              신년사에서 회장님이 강조한 4가지 습관이 신입의 실제 책상에서 어떻게 다르게 나타나는지 —<br />
+              한 줄짜리 발언으로 비교해 봅니다.
             </p>
+            <div className="glass-card" style={{
+              padding: '10px 18px', marginBottom: 24,
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: 'rgba(201,168,76,0.07)',
+              borderLeft: '2px solid var(--gold)',
+            }}>
+              <span style={{ fontSize: '1.125rem' }}>💡</span>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.5 }}>
+                이 네 가지 장면, 끝까지 보고 나면 설문이 기다리고 있습니다.
+              </p>
+            </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {MONDAY_SCENARIOS.map((s) => (
@@ -595,53 +670,110 @@ export default function Part2Client() {
         {/* 섹션 4: 투표 (3분) */}
         {section === 'survey' && (
           <>
-            <p className="caption" style={{ marginBottom: 12 }}>3분 · 휴대폰을 꺼내주세요</p>
+            <p className="caption" style={{ marginBottom: 12 }}>3분 · 방금 본 월요일 아침 — 솔직하게 골라주세요</p>
 
             <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 32 }}>
               <div style={{ flex: '1 1 480px', minWidth: 320 }}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12 }}>
-                  4가지 습관 중,<br />가장 어려워 보이는 것은?
-                </h2>
-                <p style={{ fontSize: '1rem', color: 'var(--text2)', marginBottom: 20, lineHeight: 1.6 }}>
-                  부서별 분포가 함께 표시됩니다. — 같은 회사, 다른 자리에서 보는 어려움이 다를 수 있습니다.
+                <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, marginBottom: 16, wordBreak: 'keep-all' }}>
+                  방금 월요일 아침 9시의 네 가지 장면을 봤습니다.<br />
+                  신입사원인 내가 지금 당장 실천하기 <strong style={{ color: '#F87171' }}>가장 어려울 것 같은 행동</strong>은?
                 </p>
+                <h2 style={{ fontSize: '1.625rem', fontWeight: 800, color: 'var(--text)', marginBottom: 20, lineHeight: 1.4 }}>
+                  솔직하게 — 딱 하나만 고르세요.
+                </h2>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-                  {HABIT_ORDER.map((key) => {
-                    const c = hbh.counts.find((c) => c.hardest_habit === key)?.count ?? 0;
-                    const pct = total ? Math.round((c / total) * 100) : 0;
-                    return (
-                      <div key={key} className="glass-card" style={{ padding: 18, position: 'relative', overflow: 'hidden' }}>
-                        <div style={{
-                          position: 'absolute', inset: 0, width: `${pct}%`,
-                          background: 'rgba(201,168,76,0.10)', transition: 'width 0.6s ease',
-                        }} />
-                        <div style={{ position: 'relative' }}>
-                          <p style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>
-                            {HABIT_LABELS[key]}
+                {/* 선택지: 월요일 시나리오와 1:1 대응 */}
+                {([
+                  { key: 'site_first',   emoji: '🔍', accent: '#F59E0B', behavior: '보고서를 읽기 전, 현장에 먼저 나가보는 것' },
+                  { key: 'daily_mgmt',   emoji: '📅', accent: '#2DD4BF', behavior: '월말 결산 대신, 오늘 데이터를 오늘 정리하는 것' },
+                  { key: 'tools_means',  emoji: '🎯', accent: '#A78BFA', behavior: 'AI·도구를 쓰기 전, "왜?"를 먼저 정의하는 것' },
+                  { key: 'system_org',   emoji: '🤝', accent: '#C9A84C', behavior: '내 경험보다 시스템 데이터를 먼저 확인하는 것' },
+                ] as const).map(({ key, emoji, accent, behavior }) => {
+                  const c = hbh.counts.find((c) => c.hardest_habit === key)?.count ?? 0;
+                  const pct = total ? Math.round((c / total) * 100) : 0;
+                  return (
+                    <div key={key} className="glass-card" style={{
+                      padding: '14px 18px', marginBottom: 10,
+                      position: 'relative', overflow: 'hidden',
+                      borderLeft: `3px solid ${accent}`,
+                    }}>
+                      <div style={{
+                        position: 'absolute', inset: 0, width: `${pct}%`,
+                        background: `${accent}12`, transition: 'width 0.6s ease',
+                      }} />
+                      <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <span style={{ fontSize: '1.375rem', flexShrink: 0 }}>{emoji}</span>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text)', lineHeight: 1.5 }}>
+                            {behavior}
                           </p>
-                          <p style={{ fontSize: '0.75rem', color: 'var(--text3)' }}>
-                            {c}명 ({pct}%)
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text3)', marginTop: 3 }}>
+                            {HABIT_LABELS[key]} · {c}명 ({pct}%)
                           </p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                    </div>
+                  );
+                })}
               </div>
 
               <SurveyQR
                 path="/hbh"
                 label="Part 2 응답"
-                hint="4가지 중 1가지 선택"
+                hint="응답이 실시간으로 집계됩니다"
                 accent="#2DD4BF"
               />
             </div>
 
+            {/* 강연자 맞춤 멘트 — 1위 항목에 따라 동적 표시 */}
+            {total > 0 && (() => {
+              const topKey = HABIT_ORDER.reduce((best, key) => {
+                const c = hbh.counts.find((c) => c.hardest_habit === key)?.count ?? 0;
+                const b = hbh.counts.find((c) => c.hardest_habit === best)?.count ?? 0;
+                return c > b ? key : best;
+              }, HABIT_ORDER[0]);
+              const res = RESPONSE_SCRIPTS[topKey];
+              if (!res) return null;
+              return (
+                <div className="glass-card anim-up" style={{
+                  padding: 32, marginTop: 8,
+                  background: `${res.accent}08`,
+                  borderLeft: `3px solid ${res.accent}`,
+                }}>
+                  <p className="caption" style={{ color: res.accent, marginBottom: 14, letterSpacing: '0.1em' }}>
+                    강연자 멘트 · 1위 응답 기준 자동 생성
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    <span style={{ fontSize: '1.75rem' }}>{res.emoji}</span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', lineHeight: 1.3 }}>
+                      {res.title}
+                    </h3>
+                  </div>
+                  <p style={{
+                    fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85,
+                    wordBreak: 'keep-all', marginBottom: 18,
+                    fontStyle: 'italic',
+                  }}>
+                    &ldquo;{res.script}&rdquo;
+                  </p>
+                  <div style={{
+                    padding: '12px 18px', borderRadius: 8,
+                    background: 'rgba(255,255,255,0.04)',
+                    borderLeft: `2px solid ${res.accent}50`,
+                    fontSize: '0.9375rem', color: res.accent,
+                    lineHeight: 1.7, wordBreak: 'keep-all',
+                    fontWeight: 600,
+                  }}>
+                    → {res.bridge}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* 부서별 분포 */}
             {Object.keys(deptTop).length > 0 && (
-              <div>
-                <p className="caption" style={{ marginBottom: 12 }}>부서별 가장 많이 선택한 습관</p>
+              <div style={{ marginTop: 20 }}>
+                <p className="caption" style={{ marginBottom: 12 }}>부서별 가장 많이 선택한 행동</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                   {Object.entries(deptTop).map(([dept, info]) => (
                     <div key={dept} className="glass-card" style={{ padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center' }}>

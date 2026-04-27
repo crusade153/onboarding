@@ -27,10 +27,10 @@ interface GratitudeData {
 type Step = 'intro' | 'roll' | 'stats' | 'thanks';
 
 const PERCEPTION_LABELS: Record<string, string> = {
-  big_company: '생각보다 큰 회사',
-  real_food: '진짜 식품을 만드는 회사',
-  data_driven: '데이터로 일하는 회사',
-  collaborative: '부서 협업이 중요한 회사',
+  data_habit:    '데이터를 정확하게 입력하는 습관',
+  problem_def:   '문제가 생기기 전에 먼저 정의하는 것',
+  communication: '부서 간 명확한 변경 알림 체계',
+  better_system: '더 좋은 ERP · 시스템 도입',
 };
 
 const HABIT_LABELS: Record<string, string> = {
@@ -41,10 +41,10 @@ const HABIT_LABELS: Record<string, string> = {
 };
 
 const GRATITUDE_LABELS: Record<string, string> = {
-  excel_calc: '엑셀로 수율 계산',
-  phone_sync: '부서 간 숫자 맞추는 전화',
-  manual_log: '수기 일보 작성',
-  overtime: '월말 야근',
+  excel_calc: '내 데이터를 오늘 정확하게 입력하는 것',
+  phone_sync: '숫자가 현장 실제와 맞는지 직접 확인하는 것',
+  manual_log: '알람 오기 전에 이상을 먼저 알아채는 것',
+  overtime:   '같은 숫자로 다음 부서와 먼저 소통하는 것',
 };
 
 function topKey(rows: { count: number }[], keyName: string): string | null {
@@ -287,7 +287,7 @@ export default function EpiloguePage() {
               <StatCard label="참여 인원" value={`${totalParticipants}명`} accent="#C9A84C" />
               <StatCard label="응답 합계" value={`${totalResponses}건`} accent="#2DD4BF" />
               <StatCard
-                label="가장 많이 본 회사 인상"
+                label="사고를 막으려면 가장 먼저 (Part 1)"
                 value={perceptionTop ? PERCEPTION_LABELS[perceptionTop] ?? '—' : '—'}
                 accent="#F59E0B"
               />
@@ -308,10 +308,10 @@ export default function EpiloguePage() {
               }}
             >
               <p style={{ fontSize: '0.75rem', color: 'var(--teal)', letterSpacing: '0.3em', fontWeight: 800, marginBottom: 12 }}>
-                MOST GRATEFUL FOR
+                AFTER를 유지하는 방법 (Part 3)
               </p>
               <p style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff' }}>
-                {gratitudeTop ? `안 해도 되는 일 — "${GRATITUDE_LABELS[gratitudeTop] ?? gratitudeTop}"` : '—'}
+                {gratitudeTop ? `"${GRATITUDE_LABELS[gratitudeTop] ?? gratitudeTop}"` : '—'}
               </p>
             </div>
 

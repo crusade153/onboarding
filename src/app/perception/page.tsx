@@ -4,10 +4,10 @@ import { Suspense, useEffect, useState } from 'react';
 import SessionGate from '@/components/v2/SessionGate';
 
 const OPTIONS = [
-  { key: 'big_company', emoji: '🏭', label: '생각보다 훨씬 큰 회사' },
-  { key: 'real_food', emoji: '🍚', label: '진짜 식품을 만드는 회사' },
-  { key: 'data_driven', emoji: '📊', label: '데이터로 일하는 회사' },
-  { key: 'collaborative', emoji: '🤝', label: '부서 협업이 중요한 회사' },
+  { key: 'data_habit',    emoji: '✍️', label: '데이터를 정확하게 입력하는 습관' },
+  { key: 'problem_def',   emoji: '🔍', label: '문제가 생기기 전에 먼저 정의하는 것' },
+  { key: 'communication', emoji: '🤝', label: '부서 간 명확한 변경 알림 체계' },
+  { key: 'better_system', emoji: '🛠️', label: '더 좋은 ERP · 시스템 도입' },
 ];
 
 function Inner() {
@@ -80,7 +80,7 @@ function Inner() {
     <Wrap>
       <p className="caption" style={{ color: 'var(--gold)', marginBottom: 8 }}>Part 1 · 응답</p>
       <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text)', marginBottom: 20, lineHeight: 1.4 }}>
-        오늘 본 하림산업,<br />어떤 회사처럼 느껴지나요?
+        이 사고를 막으려면,<br /><span style={{ color: 'var(--gold)' }}>가장 먼저 필요한 것</span>은?
       </h2>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>

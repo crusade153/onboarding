@@ -4,10 +4,10 @@ import { Suspense, useEffect, useState } from 'react';
 import SessionGate from '@/components/v2/SessionGate';
 
 const OPTIONS = [
-  { key: 'excel_calc', emoji: '🧮', label: '엑셀로 수율 계산', desc: 'MIMS가 실시간으로 해줍니다' },
-  { key: 'phone_sync', emoji: '📞', label: '부서 간 숫자 맞추는 전화', desc: '시스템이 단일 진실을 보장합니다' },
-  { key: 'manual_log', emoji: '📋', label: '수기 일보 작성', desc: '일일관리가 자동 집계합니다' },
-  { key: 'overtime', emoji: '🌙', label: '월말 야근', desc: '매일 정산되어 월말 폭주가 없습니다' },
+  { key: 'excel_calc', emoji: '📋', label: '내 데이터를 오늘 정확하게 입력하는 것',      desc: '데이터 정확성 — 시스템은 입력된 것만 보여줍니다' },
+  { key: 'phone_sync', emoji: '🔍', label: '숫자가 현장 실제와 맞는지 직접 확인하는 것', desc: '현장경영 — HBH 01' },
+  { key: 'manual_log', emoji: '⚡', label: '알람 오기 전에 이상을 먼저 알아채는 것',      desc: '일일관리 — HBH 02' },
+  { key: 'overtime',   emoji: '🤝', label: '같은 숫자로 다음 부서와 먼저 소통하는 것',    desc: '부서 협업 — 신뢰자본' },
 ];
 
 function Inner() {
@@ -64,9 +64,9 @@ function Inner() {
     return (
       <Wrap>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🙏</div>
+          <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>✨</div>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
-            감사 리스트 등록 완료
+            응답 완료
           </h2>
           <p style={{ color: 'var(--text2)', lineHeight: 1.6 }}>
             강연 화면에서 결과를 확인해 보세요.
@@ -87,11 +87,11 @@ function Inner() {
     <Wrap>
       <p className="caption" style={{ color: 'var(--teal)', marginBottom: 8 }}>Part 3 · 응답</p>
       <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text)', marginBottom: 8, lineHeight: 1.4 }}>
-        이 시스템들 덕분에<br />
-        신입인 내가 <span style={{ color: 'var(--teal)' }}>안 해도 되는 일</span>은?
+        이 시스템들의 AFTER를<br />
+        <span style={{ color: 'var(--teal)' }}>유지하는 사람</span>이 되려면?
       </h2>
       <p style={{ fontSize: '0.875rem', color: 'var(--text3)', marginBottom: 20, lineHeight: 1.6 }}>
-        <em>위시리스트가 아니라 감사 리스트입니다.</em> · 중복 선택 가능
+        <em>늦게 발견이 미리 발견으로 바뀐 세계, 그것을 유지하는 건 결국 사람입니다.</em> · 중복 선택 가능
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
@@ -132,7 +132,7 @@ function Inner() {
           opacity: picked.size === 0 ? 0.6 : 1,
         }}
       >
-        {submitting ? '전송 중…' : `감사 리스트 보내기 (${picked.size})`}
+        {submitting ? '전송 중…' : `응답 보내기 (${picked.size})`}
       </button>
     </Wrap>
   );

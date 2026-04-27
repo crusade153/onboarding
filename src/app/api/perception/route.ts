@@ -3,10 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getActiveSession } from '@/lib/session';
 
+const VALID = new Set(['data_habit', 'problem_def', 'communication', 'better_system']);
+
 export async function POST(req: NextRequest) {
   const { participant_id, perception_choice, custom_text } = await req.json();
   if (!participant_id) {
     return NextResponse.json({ error: 'missing participant_id' }, { status: 400 });
+  }
+  if (perception_choice !== null && perception_choice !== undefined && !VALID.has(perception_choice)) {
+    return NextResponse.json({ error: 'invalid perception_choice' }, { status: 400 });
   }
 
   // 참여자에 묶인 session_code 사용 (참여자가 가진 코드 = 그 강연 회차)

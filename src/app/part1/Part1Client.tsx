@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
 import PlantCard from '@/components/v2/PlantCard';
 import SurveyQR from '@/components/v2/SurveyQR';
@@ -13,21 +13,22 @@ interface PerceptionData {
 }
 
 const PERCEPTION_OPTIONS = [
-  { key: 'big_company', emoji: '🏭', label: '생각보다 훨씬 큰 회사' },
-  { key: 'real_food', emoji: '🍚', label: '진짜 식품을 만드는 회사' },
-  { key: 'data_driven', emoji: '📊', label: '데이터로 일하는 회사' },
-  { key: 'collaborative', emoji: '🤝', label: '부서 협업이 중요한 회사' },
+  { key: 'data_habit',    emoji: '✍️', label: '데이터를 정확하게 입력하는 습관' },
+  { key: 'problem_def',  emoji: '🔍', label: '문제가 생기기 전에 먼저 정의하는 것' },
+  { key: 'communication',emoji: '🤝', label: '부서 간 명확한 변경 알림 체계' },
+  { key: 'better_system',emoji: '🛠️', label: '더 좋은 ERP · 시스템 도입' },
 ];
 
 // 가치사슬 릴레이: 한 데이터가 어떻게 흐르는가
 const RELAY_STAGES = [
-  { dept: '마케팅', emoji: '📣', action: '신제품 컨셉을 정의하고', hands: 'BOM 초안과 목표 단가를' },
-  { dept: '영업', emoji: '🤝', action: '거래처 수주를 받아', hands: '주차별 발주 수량을' },
-  { dept: '구매', emoji: '🛒', action: '자재 발주를 걸고', hands: '입고 예정일과 단가를' },
-  { dept: '생산', emoji: '🏭', action: '라인을 돌리고', hands: '실제 투입량과 수율을' },
-  { dept: '품질', emoji: '🧪', action: '검사를 통과시키고', hands: '합격률과 클레임 데이터를' },
-  { dept: '물류', emoji: '🚚', action: '트럭에 싣고', hands: '출고 시간과 차량 번호를' },
-  { dept: '재무', emoji: '💰', action: '결산하며 결승선을 통과합니다', hands: '매출과 원가를' },
+  { dept: '마케팅', emoji: '📣', action: '신제품 컨셉을 정의하고', hands: '컨셉과 목표 단가를' },
+  { dept: 'R&D',   emoji: '🔬', action: 'BOM·공정표준서를 개발·확정하고', hands: 'BOM과 목표원가를' },
+  { dept: '영업',  emoji: '🤝', action: '거래처 수주를 받아', hands: '주차별 발주 수량을' },
+  { dept: '구매',  emoji: '🛒', action: '자재 발주를 걸고', hands: '입고 예정일과 단가를' },
+  { dept: '생산',  emoji: '🏭', action: '라인을 가동하고', hands: '실제 투입량과 수율을' },
+  { dept: '품질',  emoji: '🧪', action: '기준에 맞게 검사하고', hands: '합격률과 클레임 데이터를' },
+  { dept: '물류',  emoji: '🚚', action: '완제품을 싣고', hands: '출고 시간과 차량 번호를' },
+  { dept: '재무',  emoji: '💰', action: '결산하며 손익을 확정합니다', hands: '매출·원가 데이터를' },
 ];
 
 export default function Part1Client() {
@@ -52,7 +53,7 @@ export default function Part1Client() {
 
         {/* 섹션 탭 */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}>
-          <SectionTab active={section === 'plants'} onClick={() => setSection('plants')} label="① 3개의 공장" />
+          <SectionTab active={section === 'plants'} onClick={() => setSection('plants')} label="① 3개의 키친" />
           <SectionTab active={section === 'chain'} onClick={() => setSection('chain')} label="② 데이터의 릴레이" />
           <SectionTab active={section === 'data'} onClick={() => setSection('data')} label="③ 한 칸의 무게" />
           <SectionTab active={section === 'survey'} onClick={() => setSection('survey')} label="④ 어떤 회사로 느껴지나요" />
@@ -66,7 +67,7 @@ export default function Part1Client() {
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
             하림산업은 매일, 한국인의 식탁에 오를 식품을 만듭니다.<br />
-            <strong style={{ color: 'var(--text)' }}>세 개의 공장</strong>에서 시작해, <strong style={{ color: 'var(--text)' }}>한 끼의 음식</strong>으로 끝나는 길.<br />
+            <strong style={{ color: 'var(--text)' }}>세 개의 키친</strong>에서 시작해, <strong style={{ color: 'var(--text)' }}>한 끼의 음식</strong>으로 끝나는 길.<br />
             그 길 위를 함께 달리는 것이 — <strong style={{ color: 'var(--text)' }}>데이터의 릴레이</strong>입니다.
           </p>
         </div>
@@ -107,32 +108,32 @@ export default function Part1Client() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 24 }}>
               <PlantCard
                 code="K1"
-                name="냉동 · 국탕 · HMR 공장"
-                products="냉동만두, 즉석국, 냉동 가정식"
-                productCount="(작성자 입력 예정)"
-                lines="(작성자 입력 예정)"
-                capacity="(작성자 입력 예정)"
-                metaphor="(작성자 확정 예정)"
+                name="냉동 · HMR · 국탕찌개 키친"
+                products="만두 · 튀김 · 핫도그 · 국탕찌개 · 소스류"
+                productCount="200여 개"
+                lines="10개"
+                capacity="162톤 · 81만 식/일"
+                metaphor="잠실 올림픽주경기장을 12번 꽉 채운 관중 전원이 오늘 한 끼를 해결할 수 있는 양"
                 accent="#A78BFA"
               />
               <PlantCard
                 code="K2"
-                name="즉석밥 공장"
-                products="더미식 즉석밥 등 즉석밥 제품군"
-                productCount="(작성자 입력 예정)"
-                lines="(작성자 입력 예정)"
-                capacity="(작성자 입력 예정)"
-                metaphor="OO만 명이 한 끼 식사를 해결할 수 있는 양"
+                name="즉석밥 키친"
+                products="더미식 · 푸디버디 즉석밥류 · FD가공식품"
+                productCount="25개"
+                lines="2개"
+                capacity="25만 7천 식/일"
+                metaphor="서울 지하철 강남역을 오늘 지나간 사람들이 모두 밥 한 끼씩 받아갈 수 있는 양"
                 accent="#2DD4BF"
               />
               <PlantCard
                 code="K3"
-                name="라면 · FD 공장"
-                products="장인라면, FD(Freeze Dry), 분말 스프류"
-                productCount="(작성자 입력 예정)"
-                lines="(작성자 입력 예정)"
-                capacity="(작성자 입력 예정)"
-                metaphor="광역시 한 도시의 시민이 하루 한 끼 라면을 먹을 수 있는 양"
+                name="라면 키친"
+                products="장인라면 · 더미식 · 푸디버디 라면류"
+                productCount="50여 개"
+                lines="4개"
+                capacity="110만 식/일"
+                metaphor="전국 편의점(5만 개) 한 곳마다 라면 22봉지씩 — K3 풀가동이면 오늘 대한민국 편의점 전체를 채웁니다"
                 accent="#F59E0B"
               />
             </div>
@@ -144,17 +145,30 @@ export default function Part1Client() {
                 <div style={{ flex: 1 }}>
                   <p className="caption" style={{ color: 'var(--gold)', marginBottom: 6 }}>어디로 흘러가는가</p>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', marginBottom: 10 }}>
-                    거래처 · 납품처
+                    거래처 · 납품처 — 월평균 <span style={{ color: 'var(--gold)' }}>1,411개사</span>
                   </h3>
-                  <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', marginBottom: 12, lineHeight: 1.7 }}>
-                    대형마트 · 편의점 · 온라인 커머스 · B2B (작성자 추후 입력)
-                  </p>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+                    {['쿠팡', '네이버', '카카오', '컬리', '11번가'].map((name) => (
+                      <span key={name} style={{
+                        padding: '4px 12px', borderRadius: 999,
+                        background: 'rgba(201,168,76,0.12)',
+                        border: '1px solid rgba(201,168,76,0.35)',
+                        color: 'var(--gold)', fontSize: '0.8125rem', fontWeight: 700,
+                      }}>{name}</span>
+                    ))}
+                    <span style={{
+                      padding: '4px 12px', borderRadius: 999,
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      color: 'var(--text3)', fontSize: '0.8125rem',
+                    }}>외 1,406개사</span>
+                  </div>
                   <p style={{
                     fontSize: '1.0625rem', fontWeight: 600, color: 'var(--text)',
                     fontStyle: 'italic', lineHeight: 1.7,
                     borderLeft: '2px solid var(--gold)', paddingLeft: 14,
                   }}>
-                    &ldquo;우리가 만든 식품은 OO곳을 거쳐 매일 한국인의 식탁에 오릅니다&rdquo;
+                    &ldquo;한국 주요 유통채널 전체로, 오늘도 하림산업의 식품이 흘러갑니다.&rdquo;
                   </p>
                 </div>
               </div>
@@ -162,9 +176,9 @@ export default function Part1Client() {
 
             {/* 규모감 한 줄 요약 */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
-              <ScaleStat n="3" unit="개 공장" caption="K1 · K2 · K3 — Kitchen" accent="#F59E0B" />
-              <ScaleStat n="?" unit="식 / 일" caption="(작성자 입력 예정)" accent="#2DD4BF" />
-              <ScaleStat n="365" unit="일 멈춤 없이" caption="식탁은 하루도 쉬지 않습니다" accent="#A78BFA" />
+              <ScaleStat n="3" unit="개의 키친" caption="K1 · K2 · K3 — 모두 Kitchen" accent="#F59E0B" />
+              <ScaleStat n="217만+" unit="식 / 일" caption="K1 81만 + K2 25.7만 + K3 110만 (풀가동 합산)" accent="#2DD4BF" />
+              <ScaleStat n="1,411" unit="개 거래처" caption="월평균 납품처 수" accent="#A78BFA" />
               <ScaleStat n="?" unit="명의 약속" caption="오늘 등록된 참여자만큼" accent="#C9A84C" />
             </div>
 
@@ -189,26 +203,67 @@ export default function Part1Client() {
               한 명이 손에서 놓친 데이터 한 칸은 — 다음 주자에게는 거짓말이 됩니다.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 28 }}>
-              {RELAY_STAGES.map((s, i) => (
-                <div key={s.dept} className="glass-card" style={{ padding: '18px 24px', display: 'flex', alignItems: 'center', gap: 20 }}>
-                  <span style={{
-                    fontFamily: 'monospace', fontWeight: 900, fontSize: '1.5rem',
-                    color: 'var(--gold)', minWidth: 40,
-                  }}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span style={{ fontSize: '2rem', flexShrink: 0 }}>{s.emoji}</span>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>
-                      <span style={{ color: 'var(--gold)' }}>{s.dept}</span>이 {s.action},
-                    </p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.6 }}>
-                      <strong style={{ color: 'var(--text)' }}>{s.hands}</strong> 다음 주자에게 넘깁니다.
-                    </p>
+            {/* 수직 타임라인 */}
+            <div style={{ position: 'relative', paddingLeft: 56, marginBottom: 28 }}>
+              {/* 세로 골드 라인 */}
+              <div style={{
+                position: 'absolute', left: 20, top: 0, bottom: 0,
+                width: 2,
+                background: 'linear-gradient(to bottom, var(--gold) 0%, rgba(201,168,76,0.08) 100%)',
+                borderRadius: 1,
+              }} />
+
+              {RELAY_STAGES.map((s, i) => {
+                const isLast = i === RELAY_STAGES.length - 1;
+                return (
+                  <div key={s.dept} style={{ position: 'relative', marginBottom: isLast ? 0 : 6 }}>
+                    {/* 스텝 번호 원 */}
+                    <div style={{
+                      position: 'absolute', left: -56, top: '50%', transform: 'translateY(-50%)',
+                      width: 32, height: 32, borderRadius: '50%',
+                      background: isLast ? 'rgba(201,168,76,0.15)' : 'var(--gold)',
+                      border: isLast ? '2px solid var(--gold)' : 'none',
+                      color: isLast ? 'var(--gold)' : '#0B0E1A',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: 'monospace', fontWeight: 900, fontSize: '0.75rem',
+                      zIndex: 1,
+                    }}>
+                      {isLast ? '🔄' : String(i + 1)}
+                    </div>
+
+                    {/* 카드 */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 16,
+                      padding: '13px 20px', borderRadius: 10,
+                      background: isLast
+                        ? 'rgba(201,168,76,0.06)'
+                        : 'rgba(255,255,255,0.03)',
+                      border: `1px solid ${isLast ? 'rgba(201,168,76,0.25)' : 'rgba(255,255,255,0.06)'}`,
+                    }}>
+                      <span style={{ fontSize: '1.375rem', flexShrink: 0 }}>{s.emoji}</span>
+
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{
+                          fontWeight: 800, color: 'var(--gold)',
+                          fontSize: '0.9375rem', marginRight: 8,
+                        }}>{s.dept}</span>
+                        <span style={{ fontSize: '0.875rem', color: 'var(--text2)' }}>{s.action}</span>
+                      </div>
+
+                      <div style={{
+                        flexShrink: 0,
+                        padding: '5px 14px', borderRadius: 999,
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        fontSize: '0.8rem', color: 'var(--text3)',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {s.hands} {isLast ? '→ 마케팅으로' : '↓'}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="glass-card" style={{
@@ -217,7 +272,7 @@ export default function Part1Client() {
             }}>
               <p className="caption" style={{ color: '#F87171', marginBottom: 10 }}>그래서 — 멈추는 순간은</p>
               <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, fontWeight: 500, wordBreak: 'keep-all' }}>
-                7명 중 한 명이 한 줄을 잘못 넘기면, 뒤따르는 6명은 <strong style={{ color: '#F87171' }}>모두 거짓말로 일합니다.</strong><br />
+                한 명이 한 줄을 잘못 넘기면, 뒤따르는 모든 주자는 <strong style={{ color: '#F87171' }}>거짓말로 일합니다.</strong><br />
                 그리고 그 거짓말이 어디서 시작됐는지 — 결산 시점에는 아무도 모릅니다.
               </p>
             </div>
@@ -236,21 +291,32 @@ export default function Part1Client() {
             <p className="caption" style={{ marginBottom: 12 }}>7분 · 실제 사례, 그리고 우리가 매일 마주칠 위험</p>
 
             <div className="glass-card" style={{ padding: 36, marginBottom: 24 }}>
-              <p className="caption" style={{ color: 'var(--red)', marginBottom: 16 }}>실제 사례 · 단 하나의 오타가</p>
+              <p className="caption" style={{ color: '#F87171', marginBottom: 16 }}>실제 사례 · 표준제조공정 한 칸이 빠졌습니다</p>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text)', marginBottom: 20, lineHeight: 1.4 }}>
-                6,000만원 수출 사고
+                최대 <span style={{ color: '#F87171' }}>1억 6천만원</span>이 흔들린 하루
               </h2>
               <p style={{ fontSize: '1.0625rem', color: 'var(--text2)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
-                BOM 한 줄에서 단가 단위가 잘못 기입됐습니다.
-                결재는 정상적으로 흘러갔고, 시스템은 멈추지 않았습니다.
-                선적이 끝난 뒤에야 차이를 발견했고, 그 시점엔 이미 <strong style={{ color: '#F87171' }}>6,000만원을 회수할 방법이 없었습니다.</strong>
+                &ldquo;이 제품의 일부인(부속 부품)은 이 모양으로 찍혀야 한다&rdquo;는
+                표준제조공정 규칙이 변경됐습니다.<br />
+                그런데 그 변경사항이 시스템에 반영되지 않았습니다.<br /><br />
+                영업에서 발주가 들어왔지만 명확한 이상 알림은 없었고,
+                품질 단계에서도 변경 전 기준으로 검사가 통과됐습니다.
               </p>
+              <div style={{
+                background: 'rgba(201,168,76,0.08)', borderRadius: 10,
+                padding: '16px 20px', fontSize: '0.9375rem', color: 'var(--text)', lineHeight: 1.8,
+                marginBottom: 12,
+              }}>
+                K3(라면 키친) 평균 하루 생산량 <strong style={{ color: 'var(--gold)' }}>30만 봉지</strong>,
+                라면 한 봉지 평균 원가 <strong style={{ color: 'var(--gold)' }}>550원</strong> 기준 —<br />
+                하루치 전량이 불용 손실이 되면 <strong style={{ color: '#F87171' }}>1억 6,500만원</strong>입니다.
+              </div>
               <div style={{
                 background: 'rgba(248,113,113,0.08)', borderRadius: 10,
                 padding: '14px 18px', fontSize: '0.875rem', color: 'var(--text2)', lineHeight: 1.7,
               }}>
-                <strong style={{ color: '#F87171' }}>핵심:</strong> 시스템은 &ldquo;0&rdquo; 하나의 진위를 검증하지 않습니다.
-                그것을 검증하는 건 <strong style={{ color: 'var(--text)' }}>입력하는 사람의 습관</strong>뿐입니다.
+                <strong style={{ color: '#F87171' }}>다행히</strong> 이번 사고는 일부 라인에서만 발생해 손실은 훨씬 작게 끝났습니다.
+                하지만 — 그것은 운이었지, <strong style={{ color: 'var(--text)' }}>시스템이 막은 것이 아니었습니다.</strong>
               </div>
             </div>
 
@@ -266,8 +332,8 @@ export default function Part1Client() {
                 color="#F59E0B"
               />
               <ErrorCard
-                title="기준정보 누락"
-                desc="신제품 BOM에 부자재 1종이 빠짐 → 6개월간 원가가 과소 계상, 흑자처럼 보였던 SKU가 사실 적자"
+                title="표준공정 미반영"
+                desc="표준제조공정 변경 시 일부인 규격 한 칸이 미반영 → 구 기준으로 생산·검사 통과 → 불용 손실"
                 color="#A78BFA"
               />
               <ErrorCard
@@ -277,20 +343,37 @@ export default function Part1Client() {
               />
             </div>
 
-            {/* v2 캐치프레이즈 */}
+            {/* 캐치프레이즈 */}
             <div className="glass-card" style={{ padding: 40, marginBottom: 24, background: 'rgba(201,168,76,0.06)' }}>
               <p style={{
                 fontSize: '1.375rem', color: 'var(--text)', lineHeight: 1.85,
-                fontWeight: 500, fontStyle: 'italic', wordBreak: 'keep-all', textAlign: 'center',
+                fontWeight: 500, wordBreak: 'keep-all', textAlign: 'center',
               }}>
-                여러분이 어젯밤 끓여 드셨던 라면 한 봉지 —<br />
-                그 뒤에는 누군가 정확하게 입력한 <span style={{ color: 'var(--gold)', fontWeight: 800 }}>데이터 한 칸</span>이 있었습니다.<br />
-                <span style={{ fontWeight: 700, color: 'var(--gold)', fontStyle: 'normal' }}>
-                  오늘부터, 그 한 칸을 지키는 사람이 여러분입니다.
+                평균 <span style={{ color: 'var(--gold)', fontWeight: 800 }}>30만 봉지</span> — 오늘도 K3에서 라면이 나옵니다.<br />
+                봉지 하나의 원가 550원. 데이터 한 칸이 비어있다면?<br />
+                <span style={{ fontWeight: 700, color: '#F87171' }}>
+                  하루에만 1억 6천만원이 흔들립니다.
                 </span>
+              </p>
+              <p style={{
+                fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.7,
+                textAlign: 'center', marginTop: 20, fontStyle: 'italic',
+              }}>
+                모든 것은 결국 <strong style={{ color: 'var(--gold)', fontStyle: 'normal' }}>원가</strong>로 귀결됩니다.<br />
+                그래서 원가기획팀이 여러분에게 이 이야기를 먼저 꺼내는 겁니다.
               </p>
             </div>
 
+            {/* 원가기획팀 브리지 */}
+            <div className="glass-card" style={{ padding: 28, marginBottom: 24, background: 'rgba(255,255,255,0.03)' }}>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.85, wordBreak: 'keep-all' }}>
+                원가기획팀은 숫자를 집계하는 팀이 아닙니다.<br />
+                데이터의 흐름에서 <strong style={{ color: 'var(--text)' }}>&ldquo;어디에 구멍이 뚫렸는가&rdquo;</strong>를 가장 먼저 발견하는 팀입니다.<br />
+                그래서 — 우리는 문제가 생긴 뒤가 아니라, <strong style={{ color: 'var(--text)' }}>문제가 정의되기 전부터</strong> 움직입니다.
+              </p>
+            </div>
+
+            {/* PHILOSOPHY 01 */}
             <div
               className="glass-card"
               style={{
@@ -301,11 +384,13 @@ export default function Part1Client() {
               }}
             >
               <p className="caption" style={{ color: 'var(--gold)', marginBottom: 14 }}>
-                PHILOSOPHY 01 · 문제 정의 = 에너지의 90%
+                PHILOSOPHY 01 · 원가기획팀이 일하는 방식
               </p>
               <p style={{ fontSize: '1.0625rem', color: 'var(--text)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
-                6,000만원의 사고는 결과의 오류처럼 보이지만,<br />
-                실은 누구도 <strong style={{ color: 'var(--gold)' }}>&ldquo;왜 그 칸이 비었는가&rdquo;</strong>를 정의하지 않은 결과입니다.
+                이 사고를 막으려면 더 좋은 <strong>ERP와 시스템</strong>이 필요했을까요?<br /><br />
+                아닙니다.<br />
+                먼저 필요한 것은 — <strong style={{ color: 'var(--gold)' }}>&ldquo;왜 그 항목이 표준공정에서 빠졌는가&rdquo;</strong>라는<br />
+                정확한 문제 정의였습니다.
               </p>
               <div
                 style={{
@@ -337,15 +422,19 @@ export default function Part1Client() {
         {/* 섹션 4: 회사 인상 + QR (3분) */}
         {section === 'survey' && (
           <>
-            <p className="caption" style={{ marginBottom: 12 }}>3분 · 휴대폰을 꺼내주세요</p>
+            <p className="caption" style={{ marginBottom: 12 }}>3분 · 방금 본 사례 — 가장 중요한 것은 무엇이었나요?</p>
 
             <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 32 }}>
               <div style={{ flex: '1 1 480px', minWidth: 320 }}>
+                <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, marginBottom: 16, wordBreak: 'keep-all' }}>
+                  표준제조공정 한 칸이 빠져 하루 <strong style={{ color: '#F87171' }}>1.6억이 흔들린 사고</strong>를 방금 같이 봤습니다.<br />
+                  여러분이라면 무엇을 가장 먼저 바꾸겠습니까?
+                </p>
                 <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12 }}>
-                  오늘 본 하림산업,<br />
-                  어떤 회사처럼 느껴지나요?
+                  이 사고를 막으려면,<br />
+                  가장 먼저 필요한 것은?
                 </h2>
-                <p style={{ fontSize: '1rem', color: 'var(--text2)', lineHeight: 1.6, marginBottom: 20 }}>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text3)', lineHeight: 1.6, marginBottom: 20 }}>
                   오른쪽 QR을 스캔하면 응답 화면이 열립니다. 응답이 실시간으로 집계됩니다.
                 </p>
 
@@ -377,7 +466,7 @@ export default function Part1Client() {
               <SurveyQR
                 path="/perception"
                 label="Part 1 응답"
-                hint="1분이면 됩니다"
+                hint="응답이 실시간으로 집계됩니다"
               />
             </div>
 
