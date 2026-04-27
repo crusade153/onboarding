@@ -377,7 +377,7 @@ export default function Part2Client() {
                   wordBreak: 'keep-all',
                 }}
               >
-                → Part 1에서 본 6,000만원의 사고는 — 한 칸의 빈자리에서 시작되었습니다.<br />
+                → Part 1에서 본 1억 6천만원의 사고는 — 바로 이 일주일의 결과였습니다.<br />
                 <strong style={{ color: 'var(--text)', fontStyle: 'normal' }}>신뢰자본은 매일 한 칸씩 쌓이고, 한 칸씩 무너집니다.</strong>
               </p>
             </div>
@@ -445,7 +445,14 @@ export default function Part2Client() {
               ))}
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: 32 }}>
+            <div className="glass-card" style={{ padding: '20px 24px', marginTop: 32, marginBottom: 16, background: 'rgba(201,168,76,0.05)', borderLeft: '3px solid var(--gold)' }}>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.75, wordBreak: 'keep-all' }}>
+                HBH는 <strong style={{ color: 'var(--text)' }}>회사의 약속</strong>입니다.<br />
+                그렇다면 신입인 나는 — 1년 차 동안 어떤 <strong style={{ color: 'var(--gold)' }}>개인의 좌표</strong>를 쌓아야 할까요?
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
               <button onClick={() => setSection('profile')} className="btn btn-gold">
                 다음 → 1년 차 궤적
               </button>

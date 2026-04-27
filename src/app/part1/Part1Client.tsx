@@ -296,7 +296,7 @@ export default function Part1Client() {
                 최대 <span style={{ color: '#F87171' }}>1억 6천만원</span>이 흔들린 하루
               </h2>
               <p style={{ fontSize: '1.0625rem', color: 'var(--text2)', lineHeight: 1.85, wordBreak: 'keep-all', marginBottom: 16 }}>
-                &ldquo;이 제품의 일부인(부속 부품)은 이 모양으로 찍혀야 한다&rdquo;는
+                &ldquo;이 제품의 일부인(* 쉽게 도장)은 이 모양으로 찍혀야 한다&rdquo;는
                 표준제조공정 규칙이 변경됐습니다.<br />
                 그런데 그 변경사항이 시스템에 반영되지 않았습니다.<br /><br />
                 영업에서 발주가 들어왔지만 명확한 이상 알림은 없었고,
@@ -426,6 +426,11 @@ export default function Part1Client() {
 
             <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 32 }}>
               <div style={{ flex: '1 1 480px', minWidth: 320 }}>
+                <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, marginBottom: 12, wordBreak: 'keep-all', fontStyle: 'italic' }}>
+                  그 한 칸은 왜 빠졌을까요?{' '}
+                  <strong style={{ color: 'var(--text)', fontStyle: 'normal' }}>부서 간 변경 알림 체계가 없었기 때문입니다.</strong>{' '}
+                  귀찮아서도, 몰라서도 아닙니다.
+                </p>
                 <p style={{ fontSize: '0.9375rem', color: 'var(--text2)', lineHeight: 1.7, marginBottom: 16, wordBreak: 'keep-all' }}>
                   표준제조공정 한 칸이 빠져 하루 <strong style={{ color: '#F87171' }}>1.6억이 흔들린 사고</strong>를 방금 같이 봤습니다.<br />
                   여러분이라면 무엇을 가장 먼저 바꾸겠습니까?

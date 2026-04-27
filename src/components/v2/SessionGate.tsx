@@ -11,8 +11,9 @@ const STORAGE_KEY = 'sysinno_session';
 
 export default function SessionGate({ children }: Props) {
   const params = useSearchParams();
-  const [state, setState] = useState<'loading' | 'valid' | 'invalid'>('loading');
+  const [state, setState] = useState<'loading' | 'valid' | 'invalid' | 'error'>('loading');
   const [code, setCode] = useState<string>('');
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     const urlCode = params.get('session');
@@ -36,11 +37,41 @@ export default function SessionGate({ children }: Props) {
           setState('invalid');
         }
       })
-      .catch(() => setState('invalid'));
-  }, [params]);
+      .catch(() => {
+        if (stored) setState('error');
+        else setState('invalid');
+      });
+  }, [params, retry]);
 
   if (state === 'loading') {
     return <div style={{ minHeight: '100vh', background: 'var(--bg)' }} />;
+  }
+
+  if (state === 'error') {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 24, background: 'var(--bg)',
+      }}>
+        <div className="glass-card" style={{ padding: 36, maxWidth: 380, width: '100%', textAlign: 'center' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>📶</div>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', marginBottom: 12 }}>
+            네트워크 연결을 확인해 주세요
+          </h2>
+          <p style={{ color: 'var(--text2)', fontSize: '0.9375rem', lineHeight: 1.7, marginBottom: 20, wordBreak: 'keep-all' }}>
+            일시적인 연결 오류입니다.<br />
+            잠시 후 다시 시도해 주세요.
+          </p>
+          <button
+            onClick={() => { setState('loading'); setRetry((n) => n + 1); }}
+            className="btn btn-gold"
+            style={{ width: '100%' }}
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (state === 'invalid') {

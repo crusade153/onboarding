@@ -8,6 +8,7 @@ import SurveyQR from '@/components/v2/SurveyQR';
 const LIVE_DEMOS = [
   {
     code: 'S&OP',
+    hbh: 'HBH 04',
     title: '판매·운영 계획 통합 뷰',
     why: '부서 협업의 실체 — 같은 회사, 같은 숫자',
     impact: '영업 ↔ 생산 ↔ 구매 계획을 한 화면에서 정합성 검증',
@@ -18,6 +19,7 @@ const LIVE_DEMOS = [
   },
   {
     code: 'DAILYCOST',
+    hbh: 'HBH 02',
     title: '제조원가 일일결산',
     why: '일일관리 HBH의 정수 — 매일 결정의 근거',
     impact: 'D+1 원가가 자동 산출, 월말 결산 폭주가 매일 5분의 점검으로',
@@ -28,6 +30,7 @@ const LIVE_DEMOS = [
   },
   {
     code: 'RAMS',
+    hbh: 'HBH 01',
     title: '자재 소진율 · 유통기한 가시화',
     why: '진짜 식품 회사의 정체성 — 안전과 손실의 경계',
     impact: '부자재가 유통기한 전에 모두 소진되는지 실시간 추적',
@@ -150,7 +153,8 @@ export default function Part3Page() {
             그 결과 무엇이 만들어졌는가
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'var(--text2)', lineHeight: 1.7, maxWidth: 820 }}>
-            앞서 본 일하는 방식이, 실제로 이런 도구들을 만들어 냈습니다.<br />
+            HBH 4가지 습관을 — 매일, 전사가, 같은 기준으로 실행하려면 도구가 필요합니다.<br />
+            원가기획팀이 직접 만든 시스템들입니다.{' '}
             <strong style={{ color: 'var(--gold)' }}>3개는 지금 이 자리에서 직접 열어보고</strong>, 나머지 7개는 카탈로그로 보여드립니다.
           </p>
         </div>
@@ -166,12 +170,18 @@ export default function Part3Page() {
                   onClick={() => setActiveDemo(open ? null : i)}
                   style={{ padding: '20px 28px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 20 }}
                 >
-                  <span style={{
-                    fontFamily: 'monospace', fontWeight: 900, fontSize: '1.5rem',
-                    color: d.accent, minWidth: 90, letterSpacing: '0.02em',
-                  }}>
-                    {d.code}
-                  </span>
+                  <div style={{ minWidth: 90, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-start' }}>
+                    <span style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: '1.5rem', color: d.accent, letterSpacing: '0.02em' }}>
+                      {d.code}
+                    </span>
+                    <span style={{
+                      fontSize: '0.6875rem', fontWeight: 800, color: d.accent,
+                      background: `${d.accent}18`, borderRadius: 999, padding: '2px 8px',
+                      border: `1px solid ${d.accent}40`, letterSpacing: '0.05em',
+                    }}>
+                      {d.hbh}
+                    </span>
+                  </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--text)', marginBottom: 4 }}>
                       {d.title}
