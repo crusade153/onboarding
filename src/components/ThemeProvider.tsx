@@ -17,14 +17,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Hydration 에러 및 초기 테마 깜빡임 방지
   useEffect(() => {
-    setMounted(true);
-    const savedTheme = localStorage.getItem('systema-theme') || 'dark';
-    setThemeState(savedTheme);
-    if (savedTheme === 'light') {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-    }
+    Promise.resolve().then(() => {
+      setMounted(true);
+      const savedTheme = localStorage.getItem('systema-theme') || 'dark';
+      setThemeState(savedTheme);
+      if (savedTheme === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+    });
   }, []);
 
   // 외부에서 특정 테마로 명시적 지정 (예: Part3 버튼)

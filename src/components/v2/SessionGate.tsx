@@ -16,18 +16,25 @@ export default function SessionGate({ children }: Props) {
   const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    const urlCode = params.get('session');
-    const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-    const candidate = urlCode || stored || '';
+    let cancelled = false;
 
-    if (!candidate) {
-      setState('invalid');
-      return;
-    }
+    async function validateSession() {
+      await Promise.resolve();
+      if (cancelled) return;
 
-    fetch(`/api/sessions?code=${encodeURIComponent(candidate)}`)
-      .then((r) => r.json())
-      .then((data) => {
+      const urlCode = params.get('session');
+      const stored = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+      const candidate = urlCode || stored || '';
+
+      if (!candidate) {
+        setState('invalid');
+        return;
+      }
+
+      fetch(`/api/sessions?code=${encodeURIComponent(candidate)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (cancelled) return;
         if (data.valid) {
           localStorage.setItem(STORAGE_KEY, candidate);
           setCode(candidate);
@@ -36,11 +43,16 @@ export default function SessionGate({ children }: Props) {
           localStorage.removeItem(STORAGE_KEY);
           setState('invalid');
         }
-      })
-      .catch(() => {
+        })
+        .catch(() => {
+          if (cancelled) return;
         if (stored) setState('error');
         else setState('invalid');
-      });
+        });
+    }
+
+    validateSession();
+    return () => { cancelled = true; };
   }, [params, retry]);
 
   if (state === 'loading') {

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 세션 코드 필수 (V2)
-  let code = typeof session_code === 'string' ? session_code : '';
+  const code = typeof session_code === 'string' ? session_code : '';
   if (!code || !(await isSessionValid(code))) {
     return NextResponse.json({ error: 'invalid or missing session_code' }, { status: 403 });
   }

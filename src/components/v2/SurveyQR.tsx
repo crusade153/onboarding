@@ -30,10 +30,9 @@ export default function SurveyQR({
   accent = 'var(--gold)',
 }: Props) {
   const [code, setCode] = useState<string>('');
-  const [origin, setOrigin] = useState<string>('');
+  const [origin] = useState<string>(() => (typeof window === 'undefined' ? '' : window.location.origin));
 
   useEffect(() => {
-    setOrigin(window.location.origin);
     fetch('/api/sessions')
       .then((r) => r.json())
       .then((data: { active: Session | null }) => {

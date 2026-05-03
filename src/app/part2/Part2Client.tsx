@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
 import HBHCard from '@/components/v2/HBHCard';
 import SurveyQR from '@/components/v2/SurveyQR';
+import SummaryComic from '@/components/v2/SummaryComic';
+import { SUMMARY_COMICS } from '@/lib/summaryComics';
 
 type Section = 'hbh' | 'scenarios' | 'profile' | 'survey';
 
@@ -799,6 +801,8 @@ export default function Part2Client() {
                 응답: <strong style={{ color: 'var(--gold)' }}>{total}</strong>건
               </p>
             </div>
+
+            <SummaryComic {...SUMMARY_COMICS.part2} />
           </>
         )}
       </div>

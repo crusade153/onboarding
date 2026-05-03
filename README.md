@@ -2,6 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Create `.env.local` from `.env.example` and set the real database URL:
+
+```bash
+cp .env.example .env.local
+```
+
+`PRESENTER_PIN` defaults to `820119` when omitted, but set it explicitly in Netlify or `.env.local` if you want to change it.
+
 First, run the development server:
 
 ```bash

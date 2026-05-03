@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
 import PlantCard from '@/components/v2/PlantCard';
 import SurveyQR from '@/components/v2/SurveyQR';
+import SummaryComic from '@/components/v2/SummaryComic';
+import { SUMMARY_COMICS } from '@/lib/summaryComics';
 
 type Section = 'plants' | 'chain' | 'data' | 'survey';
 
@@ -108,7 +110,7 @@ export default function Part1Client() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 24 }}>
               <PlantCard
                 code="K1"
-                name="냉동 · HMR · 국탕찌개 키친"
+                name="냉동 · HMI · 국탕찌개 키친"
                 products="만두 · 튀김 · 핫도그 · 국탕찌개 · 소스류"
                 productCount="200여 개"
                 lines="10개"
@@ -498,6 +500,8 @@ export default function Part1Client() {
                 응답: <strong style={{ color: 'var(--gold)' }}>{totalVotes}</strong>건
               </p>
             </div>
+
+            <SummaryComic {...SUMMARY_COMICS.part1} />
           </>
         )}
       </div>

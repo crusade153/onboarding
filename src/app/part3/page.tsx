@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import NavBar from '@/components/NavBar';
 import SurveyQR from '@/components/v2/SurveyQR';
+import SummaryComic from '@/components/v2/SummaryComic';
+import { SUMMARY_COMICS } from '@/lib/summaryComics';
 
 // 메인 대시보드 3개 — 회사의 정체성을 가장 잘 보여주는 라이브 데모
 const LIVE_DEMOS = [
@@ -384,6 +386,8 @@ export default function Part3Page() {
               </div>
             );
           })()}
+
+          <SummaryComic {...SUMMARY_COMICS.part3} />
         </div>
       </div>
     </div>

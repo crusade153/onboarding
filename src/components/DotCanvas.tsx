@@ -21,7 +21,10 @@ export default function DotCanvas({ participants, connected }: DotCanvasProps) {
   const dotsRef = useRef<DotState[]>([]);
   const rafRef = useRef<number>(0);
   const connectedRef = useRef(connected);
-  connectedRef.current = connected;
+
+  useEffect(() => {
+    connectedRef.current = connected;
+  }, [connected]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

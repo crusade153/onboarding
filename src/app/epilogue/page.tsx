@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import NavBar from '@/components/NavBar';
+import SummaryComic from '@/components/v2/SummaryComic';
+import { SUMMARY_COMICS } from '@/lib/summaryComics';
 
 interface Participant {
   id: number;
@@ -24,7 +26,7 @@ interface GratitudeData {
   counts: { saved_from: string; count: number }[];
 }
 
-type Step = 'intro' | 'roll' | 'stats' | 'thanks';
+type Step = 'intro' | 'roll' | 'stats' | 'comic' | 'thanks';
 
 const PERCEPTION_LABELS: Record<string, string> = {
   data_habit:    '데이터를 정확하게 입력하는 습관',
@@ -122,7 +124,8 @@ export default function EpiloguePage() {
       }}
       onClick={() => {
         if (step === 'roll') setStep('stats');
-        else if (step === 'stats') setStep('thanks');
+        else if (step === 'stats') setStep('comic');
+        else if (step === 'comic') setStep('thanks');
       }}
     >
       {step === 'intro' && <NavBar current="Epilogue" step="04/04" />}
@@ -316,6 +319,17 @@ export default function EpiloguePage() {
             </div>
 
             <p style={{ marginTop: 40, textAlign: 'center', fontSize: '0.875rem', color: '#888' }}>
+              화면을 클릭하면 마무리 4컷으로 넘어갑니다.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {step === 'comic' && (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, animation: 'fade-in 1.2s ease forwards' }}>
+          <div style={{ maxWidth: 1080, width: '100%' }}>
+            <SummaryComic {...SUMMARY_COMICS.epilogue} dark />
+            <p style={{ marginTop: 24, textAlign: 'center', fontSize: '0.875rem', color: '#888' }}>
               화면을 클릭하면 마지막 인사로 넘어갑니다.
             </p>
           </div>
